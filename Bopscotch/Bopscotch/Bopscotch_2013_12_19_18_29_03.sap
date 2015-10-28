@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProfilerSession Type="ExecutionPerformanceAnalysis" Name="Bopscotch1557363586">
+  <TargetApplication Name="Bopscotch_Debug_ARM" SourceProject="Bopscotch.csproj" Type="WindowsPhone">
+    <ApplicationBinary Path="bin\WindowsPhone\ARM\Debug\Bopscotch_Debug_ARM.xap" Timestamp="01/12/2013 22:38:50" />
+    <ApplicationIconPath Path="" />
+    <SymbolPaths>
+      <Path Value="bin\WindowsPhone\ARM\Debug\" />
+    </SymbolPaths>
+  </TargetApplication>
+  <Settings>
+    <Probe Name="Visual">
+      <CollectElementLevelCosting Enabled="True" />
+      <CollectSnapshots Enabled="True" Interval="1000" Resampling="2" />
+      <CollectMediaEvents Enabled="False" />
+      <CollectCacheDetails Enabled="False" />
+    </Probe>
+    <Probe Name="Code">
+      <SampleCallStack Enabled="True" Depth="4294967295" Interval="10" />
+      <CollectPerformanceCounters Enabled="False" />
+    </Probe>
+    <Probe Name="Memory">
+      <MemoryCallStack Enabled="False" Depth="4294967295" />
+      <ObjectTree Enabled="False" Interval="10" />
+    </Probe>
+  </Settings>
+  <Data>
+    <Logs>
+      <File Type="NativeFormat" Path="PerfLogs\Bopscotch1557363586\tmp21F2.spl" />
+      <File Type="SRUMData" Path="PerfLogs\Bopscotch1557363586\tmp2202.srum" />
+    </Logs>
+  </Data>
+  <TargetDeviceSettings OSVersion="8.0.10328" AvailablePhysicalMemoryAtStartup="0" ProcessorArchitectureType="Arm" ProcessorInformation="Unknown" IsEmulator="False" />
+</ProfilerSession>
