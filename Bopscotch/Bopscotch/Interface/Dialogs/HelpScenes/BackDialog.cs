@@ -24,15 +24,7 @@ namespace Bopscotch.Interface.Dialogs
             AddIconButton("Facebook", new Vector2(Definitions.Right_Button_Column_X + Social_Button_Spacing, Button_Y), Button.ButtonIcon.Facebook, Color.DodgerBlue, 0.6f);
             AddIconButton("Twitter", new Vector2(Definitions.Right_Button_Column_X, Button_Y), Button.ButtonIcon.Twitter, Color.DodgerBlue, 0.6f);
             AddIconButton("Leda", new Vector2(Definitions.Right_Button_Column_X - Social_Button_Spacing, Button_Y), Button.ButtonIcon.Website, Color.DodgerBlue, 0.6f);
-
-            if (Data.Profile.IsTrialVersion)
-            {
-                AddIconButton("Full Game", new Vector2(Definitions.Right_Button_Column_X - (Social_Button_Spacing * 2), Button_Y), Button.ButtonIcon.Store, Color.Orange, 0.6f);
-            }
-            else
-            {
-                AddIconButton("Rate", new Vector2(Definitions.Right_Button_Column_X - (Social_Button_Spacing * 2), Button_Y), Button.ButtonIcon.Rate, Color.Orange, 0.6f);
-            }
+            AddIconButton("Rate", new Vector2(Definitions.Right_Button_Column_X - (Social_Button_Spacing * 2), Button_Y), Button.ButtonIcon.Rate, Color.Orange, 0.6f);
 
             base.Activate();
         }

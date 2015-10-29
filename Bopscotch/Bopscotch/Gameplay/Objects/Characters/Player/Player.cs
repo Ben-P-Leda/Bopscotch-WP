@@ -249,6 +249,8 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
             IsDead = true;
             LifeCycleState = Leda.Core.LifeCycleStateValue.Exiting;
             SoundEffectManager.PlayEffect("player-death");
+
+            Data.Profile.HandlePlayerDeath();
         }
 
         private void DisableAllMovement()

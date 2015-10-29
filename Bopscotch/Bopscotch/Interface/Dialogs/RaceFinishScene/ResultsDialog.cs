@@ -121,20 +121,6 @@ namespace Bopscotch.Interface.Dialogs.RaceFinishScene
 
             _avatar.Draw(spriteBatch);
             _glowBurst.Draw(spriteBatch);
-
-			if (Profile.IsTrialVersion)
-			{
-				TextWriter.Write(
-					string.Format("{0} trial races left", Math.Max(Profile.TrialRacesRemaining, 0)),
-					spriteBatch,
-					new Vector2(Definitions.Back_Buffer_Center.X, 590.0f + WorldPosition.Y),
-					Color.White,
-					Color.Black,
-					3.0f,
-					0.7f,
-					0.1f,
-					TextWriter.Alignment.Left);
-			}
         }
 
         private const float Top_Y_When_Active = 100.0f;

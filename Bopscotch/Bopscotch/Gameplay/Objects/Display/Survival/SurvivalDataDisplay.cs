@@ -19,17 +19,20 @@ namespace Bopscotch.Gameplay.Objects.Display.Survival
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            TextWriter.Write(string.Concat(Translator.Translation("Score:"), " ", TotalScore), spriteBatch, _position, Color.White, Color.Black, 
-                Outline_Thickness, Text_Scale, Render_Depth, TextWriter.Alignment.Left);
+            TextWriter.Write(string.Concat(Translator.Translation("Lives:"), " ", Profile.Lives.ToString()), spriteBatch, _position,
+                Color.White, Color.Black, Outline_Thickness, Text_Scale, Render_Depth, TextWriter.Alignment.Left);
+
+            TextWriter.Write(string.Concat(Translator.Translation("Score:"), " ", TotalScore), spriteBatch, _position + new Vector2(0.0f, Line_Height), 
+                Color.White, Color.Black, Outline_Thickness, Text_Scale, Render_Depth, TextWriter.Alignment.Left);
 
             TextWriter.Write(string.Concat(Translator.Translation("Level:"), " ", Profile.CurrentAreaData.LastSelectedLevel + 1), spriteBatch, 
-                _position + new Vector2(0.0f, Line_Height), Color.White, Color.Black, Outline_Thickness, Text_Scale, Render_Depth, TextWriter.Alignment.Left);
+                _position + new Vector2(0.0f, Line_Height * 2.0f), Color.White, Color.Black, Outline_Thickness, Text_Scale, Render_Depth, TextWriter.Alignment.Left);
 
-            spriteBatch.Draw(TextureManager.Textures[Golden_Ticket_Texture], GameBase.ScreenPosition(_position + new Vector2(0.0f, Line_Height * 2.3f)), null, 
+            spriteBatch.Draw(TextureManager.Textures[Golden_Ticket_Texture], GameBase.ScreenPosition(_position + new Vector2(0.0f, Line_Height * 3.3f)), null, 
                 Color.White, 0.0f, Vector2.Zero, GameBase.ScreenScale(), SpriteEffects.None, Render_Depth);
 
             TextWriter.Write(Translator.Translation("unit-count").Replace("[QUANTITY]", Profile.GoldenTickets.ToString()), spriteBatch,
-                _position + new Vector2(TextureManager.Textures[Golden_Ticket_Texture].Width, Line_Height * 2.0f), Color.White, Color.Black,
+                _position + new Vector2(TextureManager.Textures[Golden_Ticket_Texture].Width, Line_Height * 3.0f), Color.White, Color.Black,
                 Outline_Thickness, Text_Scale, Render_Depth, TextWriter.Alignment.Left);
         }
 

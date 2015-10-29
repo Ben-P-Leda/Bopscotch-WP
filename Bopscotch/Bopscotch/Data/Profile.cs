@@ -28,13 +28,13 @@ namespace Bopscotch.Data
             }
         }
 
-		public static bool IsTrialVersion { get { return Instance._isTrialMode; } set { } }
-		public static int TrialRacesRemaining { get { return Instance._trialModeRacesRemaining; } }
-		public static bool AndroidPurchaseAttempted { get { return Instance._androidPurchaseInitiated; } }
 		public static bool HasRated { get { return Instance._hasRated; } }
 
         public static PhoneSettings Settings { get { return Instance._settings; } }
 
+        public static int Lives { get { return Instance._livesRemaining; } }
+        public static bool NotAtFullLives { get { return Lives < Maximum_Life_Count; } }
+        public static DateTime NextLifeRestoreTime { get { return _instance._lastLivesUpdateTime.AddSeconds(Life_Restore_Interval); } }
         public static int GoldenTickets { get { return Instance._goldenTicketCount; } set { Instance._goldenTicketCount = value; } }
         public static bool PlayingRaceMode { get; set; }
         public static bool PauseOnSceneActivation { get; set; }
@@ -53,19 +53,19 @@ namespace Bopscotch.Data
 
         public static void Initialize() { Instance.InitializeInstance(); }
         public static void Save() { Instance.SaveData(); }
+        public static void HandlePlayerDeath() { if (!PlayingRaceMode) { Instance.HandleLifeLoss(); } }
+        public static void SyncPlayerLives() { Instance.RestoreLives(); }
         public static void UnlockCurrentAreaContent() { Instance.UnlockLockedContentForCurrentArea(); }
         public static string AreaSelectionTexture(string areaName) { return Instance._areaLevelData[areaName].SelectionTexture; }
         public static bool AvatarComponentUnlocked(string set, string component) { return Instance.CheckForAvatarComponentUnlock(set, component); }
         public static bool AvatarCostumeUnlocked(string name) { return Instance.CheckForAvatarCostumeUnlock(name); }
         public static void FlagAsRated() { Instance.HandleRatingTrigger(); }
         public static void ResetAreas() { Instance.ResetAllAreas(); }
-		public static void UnlockFullGame() { Instance._isTrialMode = false; Instance.SaveData(); }
-		public static void UseTrialRace() { Instance._trialModeRacesRemaining--; Instance.SaveData(); }
-		public static void PurchaseAndroidVersion() { Instance._androidPurchaseInitiated = true; Instance.SaveData(); }
 
         private bool _rateBuyRemindersOn;
         private bool _hasRated;
         private DateTime _nextReminderDate;
+        private DateTime _lastLivesUpdateTime;
 
         public static bool AreaHasBeenCompleted(string areaName) { return Instance._areaLevelData[areaName].Completed; }
         public static bool AreaIsLocked(string areaName)
@@ -93,15 +93,11 @@ namespace Bopscotch.Data
 
         private Dictionary<string, AreaDataContainer> _areaLevelData;
         private string _currentArea;
-
+        private bool _livesElementAdded;
+        private int _livesRemaining;
         private int _goldenTicketCount;
         private List<XElement> _newlyUnlockedItems;
-        private List<XElement> _fullVersionOnlyUnlockables;
         private List<XElement> _unlockedAvatarComponents;
-
-		private bool _isTrialMode;
-        private int _trialModeRacesRemaining;
-		private bool _androidPurchaseInitiated;
 
         private PhoneSettings _settings;
 
@@ -156,14 +152,11 @@ namespace Bopscotch.Data
             _nextReminderDate = new DateTime();
             _hasRated = false;
 
-			_isTrialMode = true;
-			_trialModeRacesRemaining = 0;
-			_androidPurchaseInitiated = false;
-
+            _livesRemaining = 0;
+            _lastLivesUpdateTime = new DateTime();
             _goldenTicketCount = 0;
             _newlyUnlockedItems = new List<XElement>();
             _unlockedAvatarComponents = new List<XElement>();
-            _fullVersionOnlyUnlockables = new List<XElement>();
         }
 
         private Profile GetProfile()
@@ -173,9 +166,6 @@ namespace Bopscotch.Data
             if (FileManager.FileExists(Profile_FileName)) { PopulateFromXml(FileManager.LoadXMLFile(Profile_FileName)); }
             else { CreateProfile(); }
 
-#if WINDOWS_PHONE
-            if (_isTrialMode && !Guide.IsTrialMode) { _isTrialMode = false; SaveData(); }
-#endif
             CreateAreaData(FileManager.LoadXMLContentFile(Additional_Areas_FileName));
             EnsureAreaLockStateSynchronisation();
 
@@ -187,6 +177,13 @@ namespace Bopscotch.Data
         private void PopulateFromXml(XDocument profileData)
         {
             Deserialize(profileData.Element("profile-data").Element("object"));
+
+            if (!_livesElementAdded)
+            {
+                _livesElementAdded = true;
+                _livesRemaining = Maximum_Life_Count;
+                SaveData();
+            }
         }
 
         private void InitializeInstance()
@@ -198,12 +195,11 @@ namespace Bopscotch.Data
             Serializer serializer = new Serializer(serializedData);
             _settings = serializer.GetDataItem<PhoneSettings>("config-settings");
 
-			_isTrialMode = serializer.GetDataItem<bool>("trial-mode");
             _hasRated = serializer.GetDataItem<bool>("has-rated");
             _nextReminderDate = serializer.GetDataItem<DateTime>("next-reminder");
-			_trialModeRacesRemaining = serializer.GetDataItem<int>("trial-races");
-			_androidPurchaseInitiated = serializer.GetDataItem<bool>("android-purchase");
-
+            _livesElementAdded = serializer.GetDataItem<bool>("lives-added");
+            _livesRemaining = serializer.GetDataItem<int>("lives-remaining");
+            _lastLivesUpdateTime = serializer.GetDataItem<DateTime>("lives-updated");
             _goldenTicketCount = serializer.GetDataItem<int>("golden-tickets");
             _currentArea = serializer.GetDataItem<string>("last-area");
 
@@ -237,13 +233,6 @@ namespace Bopscotch.Data
             _currentArea = _areaLevelData.Keys.First();
 
             _nextReminderDate = DateTime.Now.AddDays(Days_Before_Reminders_Start);
-
-#if DEBUG
-			_isTrialMode = Definitions.Trial_Version;
-#else
-            _isTrialMode = true;
-#endif
-			_trialModeRacesRemaining = Trial_Mode_Race_Count;
         }
 
         private void CreateAreaData(XDocument areaData)
@@ -280,7 +269,7 @@ namespace Bopscotch.Data
         {
             _rateBuyRemindersOn = true;
 
-			if ((!_isTrialMode) && (_hasRated)) { _rateBuyRemindersOn = false; }
+			if (_hasRated) { _rateBuyRemindersOn = false; }
             if ((DateTime.Now < _nextReminderDate) && (DateTime.Now.AddDays(Days_Before_Reminders_Start) > _nextReminderDate)) { _rateBuyRemindersOn = false; }
         }
 
@@ -300,10 +289,10 @@ namespace Bopscotch.Data
 
             serializer.AddDataItem("config-settings", _settings);
             serializer.AddDataItem("has-rated", _hasRated);
-			serializer.AddDataItem("trial-mode",_isTrialMode);
-			serializer.AddDataItem("trial-races", _trialModeRacesRemaining);
-			serializer.AddDataItem("android-purchase", _androidPurchaseInitiated);
             serializer.AddDataItem("next-reminder",_nextReminderDate);
+            serializer.AddDataItem("lives-added", true);
+            serializer.AddDataItem("lives-remaining", _livesRemaining);
+            serializer.AddDataItem("lives-updated", _lastLivesUpdateTime);
             serializer.AddDataItem("golden-tickets", _goldenTicketCount);
             serializer.AddDataItem("last-area", _currentArea);
             serializer.AddDataElement(SerializedAreaData);
@@ -339,7 +328,6 @@ namespace Bopscotch.Data
         private void UnlockLockedContentForCurrentArea()
         {
             _newlyUnlockedItems.Clear();
-            _fullVersionOnlyUnlockables.Clear();
 
             if (_areaLevelData[_currentArea].ContentToUnlockOnCompletion != null)
             {
@@ -347,37 +335,21 @@ namespace Bopscotch.Data
                 {
                     if (!(bool)el.Attribute("unlocked"))
                     {
-                        if (ItemCanBeUnlocked(el))
-                        {
-                            el.SetAttributeValue("unlocked", true);
-                            _newlyUnlockedItems.Add(el);
+                        el.SetAttributeValue("unlocked", true);
+                        _newlyUnlockedItems.Add(el);
 
-                            switch (el.Attribute("type").Value)
-                            {
-                                case "area": UnlockNamedArea(el.Attribute("name").Value); break;
-                                case "golden-ticket": UnlockGoldenTickets((int)el.Attribute("units")); break;
-                                case "avatar-component": UnlockAvatarComponent(el.Attribute("set").Value, el.Attribute("name").Value); break;
-                                case "avatar-costume": UnlockAvatarCostume(el.Attribute("name").Value); break;
-                            }
-                        }
-                        else
+                        switch (el.Attribute("type").Value)
                         {
-                            _fullVersionOnlyUnlockables.Add(el);
+                            case "area": UnlockNamedArea(el.Attribute("name").Value); break;
+                            case "golden-ticket": UnlockGoldenTickets((int)el.Attribute("units")); break;
+                            case "avatar-component": UnlockAvatarComponent(el.Attribute("set").Value, el.Attribute("name").Value); break;
+                            case "avatar-costume": UnlockAvatarCostume(el.Attribute("name").Value); break;
                         }
                     }
                 }
 
                 SaveData();
             }
-        }
-
-        private bool ItemCanBeUnlocked(XElement item)
-        {
-            if (!IsTrialVersion) { return true; }
-            if (item.Attribute("trial-unlockable") == null) { return false; }
-            if ((bool)item.Attribute("trial-unlockable")) { return true; }
-
-            return false;
         }
 
         private void UnlockArea(string areaName)
@@ -423,7 +395,7 @@ namespace Bopscotch.Data
                 switch (state)
                 {
                     case LockState.Locked:
-                        if ((!(bool)el.Attribute("unlocked")) && (ItemCanBeUnlocked(el))) { content.Add(el); }
+                        if (!(bool)el.Attribute("unlocked")) { content.Add(el); }
                         break;
                     case LockState.Unlocked:
                         if (((bool)el.Attribute("unlocked")) && (!_newlyUnlockedItems.Contains(el))) { content.Add(el); }
@@ -432,7 +404,7 @@ namespace Bopscotch.Data
                         if (((bool)el.Attribute("unlocked")) && (_newlyUnlockedItems.Contains(el))) { content.Add(el); }
                         break;
                     case LockState.FullVersionOnly:
-                        if ((!(bool)el.Attribute("unlocked")) && (!ItemCanBeUnlocked(el))) { content.Add(el); }
+                        if (!(bool)el.Attribute("unlocked")) { content.Add(el); }
                         break;
 
                 }
@@ -453,8 +425,7 @@ namespace Bopscotch.Data
         private void HandleRatingTrigger()
         {
             _hasRated = true; 
-            
-            if (!IsTrialVersion) { _rateBuyRemindersOn = false; }
+            _rateBuyRemindersOn = false;
 
             SaveData();
         }
@@ -475,6 +446,34 @@ namespace Bopscotch.Data
             SaveData();
         }
 
+        private void HandleLifeLoss()
+        {
+            if (_currentArea != "Tutorial")
+            {
+                _livesRemaining--;
+                if (_lastLivesUpdateTime < DateTime.Now) { _lastLivesUpdateTime = DateTime.Now; }
+            }
+        }
+
+        private void RestoreLives()
+        {
+            if (_livesRemaining < Maximum_Life_Count)
+            {
+                bool updated = false;
+
+                while (_lastLivesUpdateTime.AddSeconds(Life_Restore_Interval) < DateTime.Now)
+                {
+                    _livesRemaining++;
+                    updated = true;
+
+                    if (_livesRemaining == Maximum_Life_Count) { _lastLivesUpdateTime = DateTime.Now; }
+                    else { _lastLivesUpdateTime = _lastLivesUpdateTime.AddSeconds(Life_Restore_Interval); }
+                }
+
+                if (updated) { SaveData(); }
+            }
+        }
+
         public enum LockState
         {
             Locked,
@@ -490,6 +489,7 @@ namespace Bopscotch.Data
         private const string Difficulty_Sequence_CSV = "n/a,easy,simple,medium,hard,insane";
         private const int Days_Before_Reminders_Start = 3;
         private const int Days_Between_Reminders = 2;
-		private const int Trial_Mode_Race_Count = 7;
+        private const int Maximum_Life_Count = 10;
+        private const int Life_Restore_Interval = 40;
     }
 }

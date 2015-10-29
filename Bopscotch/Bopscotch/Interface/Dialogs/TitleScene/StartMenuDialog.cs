@@ -19,7 +19,8 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
     public class StartMenuDialog : ButtonDialog
     {
         private bool _networkIsAvailable;
-        private string _raceAvailabilityMessage;
+        private bool _displayingStoreOption;
+        private string _statusMessage;
 
         public StartMenuDialog()
             : base()
@@ -29,11 +30,12 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
 
             _boxCaption = "Select Game Mode";
             _networkIsAvailable = true;
+            _displayingStoreOption = false;
         }
 
         public override void Activate()
         {
-            _raceAvailabilityMessage = "";
+            _statusMessage = "";
 #if WINDOWS_PHONE
             _networkIsAvailable = DeviceNetworkInformation.IsWiFiEnabled && DeviceNetworkInformation.IsNetworkAvailable;
 #endif
@@ -41,93 +43,85 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
 			_networkIsAvailable = (MainActivity.NetManager.GetNetworkInfo(ConnectivityType.Wifi).GetState() == NetworkInfo.State.Connected);
 #endif
 
-            ClearButtons();
-            if (Profile.IsTrialVersion) { SetForTrialVersion(); }
-            else { SetForFullVersion(); }
+            Profile.SyncPlayerLives();
+            _displayingStoreOption = (Data.Profile.Lives < 1);
 
-            if ((!_networkIsAvailable) && ((!Profile.IsTrialVersion) || (Profile.TrialRacesRemaining > 0))) { DisableRaceOption(); }
+            Height = Dialog_Height;
+            TopYWhenActive = Top_Y_When_Active;
+
+            SetUpButtons();
+
+            if (!_networkIsAvailable) { _statusMessage = Translator.Translation("no-wifi"); }
 
             base.Activate();
         }
 
-        private void SetForTrialVersion()
+        private void SetUpButtons()
         {
-            _raceAvailabilityMessage = string.Format("{0} trial races left", Math.Max(Profile.TrialRacesRemaining, 0));
+            ClearButtons();
 
-            SetMetricsDependentOnMessageRequirement();
-
-            if (Profile.TrialRacesRemaining > 0) 
-            { 
-                SetUpButtonsWithRaceModeAvailable(); 
-            }
-            else 
-            { 
-                SetUpButtonsWithRaceModeUnavailable();
-                _raceAvailabilityMessage = string.Concat(_raceAvailabilityMessage, " - buy full game for more");
-            }
-        }
-
-        private void SetMetricsDependentOnMessageRequirement()
-        {
-            if ((!_networkIsAvailable) || (Profile.IsTrialVersion))
+            if (_displayingStoreOption)
             {
-                Height = Dialog_Height_With_Message;
-                TopYWhenActive = Top_Y_When_Active_With_Message;
+                AddButton("Add Lives", new Vector2(Definitions.Left_Button_Column_X, 200), Button.ButtonIcon.Store, Color.Orange);
             }
             else
             {
-                Height = Dialog_Height_No_Message;
-                TopYWhenActive = Top_Y_When_Active_No_Message;
+                AddButton("Adventure", new Vector2(Definitions.Left_Button_Column_X, 200), Button.ButtonIcon.Adventure, Color.LawnGreen);
+            }
+
+            AddButton("Race", new Vector2(Definitions.Right_Button_Column_X, 200), Button.ButtonIcon.Race, Color.LawnGreen);
+            AddButton("Back", new Vector2(Definitions.Back_Buffer_Center.X, 320.0f), Button.ButtonIcon.Back, Color.Red, 0.7f);
+
+            if (!_networkIsAvailable)
+            {
+                DisableButton("Race");
+                _buttons["Race"].IconBackgroundTint = Color.Gray;
             }
         }
 
-        private void SetUpButtonsWithRaceModeAvailable()
+        public override void Update(int millisecondsSinceLastUpdate)
         {
-            SetUpDefaultButtons();
-            AddButton("Race", new Vector2(Definitions.Right_Button_Column_X, 200), Button.ButtonIcon.Race, Color.LawnGreen);
+            _statusMessage = Translator.Translation("lives-count").Replace("[COUNT]", Profile.Lives.ToString());
+
+            if (Data.Profile.NotAtFullLives)
+            {
+                CheckForLifeRestoration();
+
+                TimeSpan remaining = Profile.NextLifeRestoreTime - DateTime.Now;
+
+                _statusMessage += Translator.Translation("next-life-time")
+                    .Replace("[MIN]", remaining.Minutes.ToString())
+                    .Replace("[SEC]", (remaining.Seconds < 10 ? "0" : "") + remaining.Seconds.ToString());
+            }
+
+            if (!_networkIsAvailable) { _statusMessage += Translator.Translation("no-wifi"); }
+
+            base.Update(millisecondsSinceLastUpdate);
         }
 
-        private void SetUpButtonsWithRaceModeUnavailable()
+        private void CheckForLifeRestoration()
         {
-            SetUpDefaultButtons();
-            AddButton("Full Game", new Vector2(Definitions.Right_Button_Column_X, 200), Button.ButtonIcon.Store, Color.Orange);
-        }
-
-        private void SetUpDefaultButtons()
-        {
-            AddButton("Adventure", new Vector2(Definitions.Left_Button_Column_X, 200), Button.ButtonIcon.Adventure, Color.LawnGreen);
-            AddButton("Back", new Vector2(Definitions.Back_Buffer_Center.X, 320.0f), Button.ButtonIcon.Back, Color.Red, 0.7f);
-        }
-
-        private void SetForFullVersion()
-        {
-            SetMetricsDependentOnMessageRequirement();
-            SetUpButtonsWithRaceModeAvailable();
-        }
-
-        private void DisableRaceOption()
-        {
-            DisableButton("Race");
-            _buttons["Race"].IconBackgroundTint = Color.Gray;
-
-            _raceAvailabilityMessage = "Wifi must be connected to race";
+            if (Data.Profile.NextLifeRestoreTime < DateTime.Now)
+            {
+                Data.Profile.SyncPlayerLives();
+                _displayingStoreOption = false;
+                SetUpButtons();
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            if (!string.IsNullOrEmpty(_raceAvailabilityMessage))
+            if (!string.IsNullOrEmpty(_statusMessage))
             {
                 TextWriter.Write(
-                    Translator.Translation(_raceAvailabilityMessage), spriteBatch, new Vector2(Definitions.Back_Buffer_Center.X, 380.0f + WorldPosition.Y), 
+                    Translator.Translation(_statusMessage), spriteBatch, new Vector2(Definitions.Back_Buffer_Center.X, 380.0f + WorldPosition.Y), 
                     Color.White, Color.Black, 3.0f, 0.7f, 0.1f, TextWriter.Alignment.Center);
             }
 
             base.Draw(spriteBatch);
         }
 
-        private const int Dialog_Height_With_Message = 480;
-        private const float Top_Y_When_Active_With_Message = 350.0f;
-        private const int Dialog_Height_No_Message = 420;
-        private const float Top_Y_When_Active_No_Message = 400.0f;
+        private const int Dialog_Height = 480;
+        private const float Top_Y_When_Active = 350.0f;
     }
 }

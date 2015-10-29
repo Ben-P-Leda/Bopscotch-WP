@@ -34,8 +34,7 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
 
             AddButton("Back", new Vector2(Definitions.Left_Button_Column_X, 360), Button.ButtonIcon.Back, Color.DodgerBlue, 0.7f);
 
-			if (Data.Profile.IsTrialVersion) { SetUpForBuyFullVersionReminder(); }
-            else { SetUpForRatingReminder(); }
+			SetUpForRatingReminder();
         }
 
         private void SetUpForBuyFullVersionReminder()

@@ -27,7 +27,7 @@ namespace Bopscotch.Scenes.NonGame
         private string _firstDialog;
         private string _musicToStartOnDeactivation;
         private bool _doNotExitOnTitleDismiss;
-        private bool _returningFromRateOrBuy;
+        private bool _returningFromRating;
 
         private NewContentUnlockedDialog _unlockNotificationDialog;
 
@@ -70,16 +70,15 @@ namespace Bopscotch.Scenes.NonGame
                     Scale = 0.65f
                 });
 
-            _returningFromRateOrBuy = false;
+            _returningFromRating = false;
         }
 
         private void HandlePopupAnimationComplete()
         {
             if (_titlePopup.AwaitingDismissal)
             {
-                if (_firstDialog == "purchase") { OpenPurchaseMechanism(); }
-                //else if (_firstDialog == Rate_Game_Dialog) { OpenRatingMechanism(); } - don't need this on WP
-                else { ActivateDialog(_firstDialog); _doNotExitOnTitleDismiss = false; }
+                ActivateDialog(_firstDialog); 
+                _doNotExitOnTitleDismiss = false;
             }
             else if (!_doNotExitOnTitleDismiss)
             {
@@ -112,15 +111,8 @@ namespace Bopscotch.Scenes.NonGame
             switch (selectedOption)
             {
                 case "Rate Game": RateGame(); break;
-                case "Buy Full": OpenPurchaseMechanism(); break;
                 case "Back": ActivateDialog("main"); break;
             }
-        }
-
-        private void OpenPurchaseMechanism()
-        {
-            Guide.ShowMarketplace(PlayerIndex.One);
-            _returningFromRateOrBuy = true;
         }
 
         private void RateGame()
@@ -136,7 +128,7 @@ namespace Bopscotch.Scenes.NonGame
             }
             else
             {
-                _returningFromRateOrBuy = true;
+                _returningFromRating = true;
             }
         }
 
@@ -150,7 +142,6 @@ namespace Bopscotch.Scenes.NonGame
                 case "Options": ActivateDialog("options"); break;
                 case "More Games": OpenLedaPageOnStore(); ActivateDialog("main"); break;
                 case "Rate": DisplayRatingUnlockedContent(); break;
-                case "Full Game": OpenPurchaseMechanism(); break;
                 case "Quit": ExitGame(); break;
             }
         }
@@ -198,7 +189,6 @@ namespace Bopscotch.Scenes.NonGame
             {
                 case "Adventure": Data.Profile.PlayingRaceMode = false; ActivateDialog("survival-levels"); break;
                 case "Race": HandleRaceStartSelection(); break;
-                case "Full Game": OpenPurchaseMechanism(); break;
                 case "Back": ActivateDialog("main"); break;
             }
         }
@@ -319,8 +309,7 @@ namespace Bopscotch.Scenes.NonGame
             else if (string.IsNullOrEmpty(_firstDialog)) { _firstDialog = Default_First_Dialog; }
             else if ((_firstDialog == "start") && (Data.Profile.RateBuyRemindersOn)) { _firstDialog = Reminder_Dialog; }
 
-            if ((Data.Profile.IsTrialVersion) && (!Guide.IsTrialMode)) { Data.Profile.UnlockFullGame(); }
-            if ((!Data.Profile.IsTrialVersion) && (_firstDialog != "unlocks")) { UnlockFullVersionContent(); }
+            if (_firstDialog != "unlocks") { UnlockFullVersionContent(); }
 
             _titlePopup.Activate(); 
             _doNotExitOnTitleDismiss = false;
@@ -367,22 +356,7 @@ namespace Bopscotch.Scenes.NonGame
         {
             base.HandleFastResume();
 
-            if (_returningFromRateOrBuy) 
-            {
-                if ((Data.Profile.IsTrialVersion) && (!Guide.IsTrialMode))
-                {
-                    Data.Profile.UnlockFullGame();
-                    UnlockFullVersionContent();
-                    _firstDialog = "";
-                    ActivateDialog("unlocks");
-                }
-                else
-                {
-                    ActivateDialog("main");
-                }
-
-                _returningFromRateOrBuy = false; 
-            }
+             ActivateDialog("main");
         }
 
         private const string Background_Texture_Name = "background-1";

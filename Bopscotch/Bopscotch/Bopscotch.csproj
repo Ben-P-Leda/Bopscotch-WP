@@ -167,6 +167,7 @@
     <Compile Include="Input\TouchControls.cs" />
     <Compile Include="Interface\Dialogs\HelpScenes\BackDialog.cs" />
     <Compile Include="Interface\Dialogs\Carousel\AvatarSelectionCarouselDialog.cs" />
+    <Compile Include="Interface\Dialogs\SurvivalGameplayScene\NoLivesDialog.cs" />
     <Compile Include="Interface\Dialogs\TitleScene\CharacterSelectionCarouselDialog.cs" />
     <Compile Include="Interface\Dialogs\KeyboardDialog.cs" />
     <Compile Include="Interface\Dialogs\TitleScene\NewContentUnlockedDialog.cs" />

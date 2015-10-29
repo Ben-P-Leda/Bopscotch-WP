@@ -24,6 +24,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         private PopupRequiringDismissal _readyPopup;
         private PauseButton _pauseButton;
         private PauseDialog _pauseDialog;
+        private NoLivesDialog _noLivesDialog;
         private TutorialRunner _tutorialRunner;
         private bool _levelComplete;
 
@@ -38,10 +39,14 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _readyPopup = new PopupRequiringDismissal() { ID = "get-ready-popup" };
             _pauseButton = new PauseButton();
             _pauseDialog = new PauseDialog();
+            _noLivesDialog = new NoLivesDialog();
             _tutorialRunner = new TutorialRunner();
 
             _pauseDialog.InputSources.Add(_inputProcessor);
             _pauseDialog.ExitCallback = HandleDialogClose;
+
+            _noLivesDialog.InputSources.Add(_inputProcessor);
+            _noLivesDialog.ExitCallback = HandleDialogClose;
 
             _playerEventPopup.AnimationCompletionHandler = HandlePlayerEventAnimationComplete;
         }
@@ -77,9 +82,15 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         {
             switch (_player.LastEvent)
             {
-                case Player.PlayerEvent.Died: RefreshScene(); break;
+                case Player.PlayerEvent.Died: HandlePlayerDeath(); break;
                 case Player.PlayerEvent.Goal_Passed: HandleLevelCleared(); break;
             }
+        }
+
+        private void HandlePlayerDeath()
+        {
+            if (Data.Profile.Lives < 1) { _noLivesDialog.Activate(); }
+            else { RefreshScene(); }
         }
 
         private void RefreshScene()
@@ -134,6 +145,8 @@ namespace Bopscotch.Scenes.Gameplay.Survival
 
         public override void Activate()
         {
+            Profile.SyncPlayerLives();
+
             _levelComplete = false;
             _levelData = new SurvivalLevelData();
             ObjectsToSerialize.Add(LevelData);
@@ -165,6 +178,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             RegisterGameObject(_pauseDialog);
 
             if (Profile.CurrentAreaData.Name == "Tutorial") { RegisterGameObject(_tutorialRunner); }
+            else { RegisterGameObject(_noLivesDialog); }
         }
 
         protected override void HandlePlayerEvent()
@@ -244,7 +258,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
 
         protected bool AttemptToPauseGame()
         {
-            if (!_paused || (_tutorialRunner.DisplayingHelp && !_pauseDialog.Active))
+            if ((!_paused || (_tutorialRunner.DisplayingHelp && !_pauseDialog.Active)) && (!_noLivesDialog.Active))
             {
                 if (CurrentState == Status.Deactivating) { Profile.PauseOnSceneActivation = true; }
                 else { EnablePause(); }

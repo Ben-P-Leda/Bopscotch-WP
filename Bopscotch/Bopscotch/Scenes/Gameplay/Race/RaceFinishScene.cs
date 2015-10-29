@@ -52,8 +52,6 @@ namespace Bopscotch.Scenes.Gameplay.Race
             Definitions.RaceOutcome outcome = NextSceneParameters.Get<Definitions.RaceOutcome>(Outcome_Parameter_Name);
 
             ((ResultsDialog)_dialogs["results"]).Outcome = outcome;
-
-            if ((Profile.IsTrialVersion) && (outcome != Definitions.RaceOutcome.Incomplete)) { Profile.UseTrialRace(); }
         }
 
         protected override void CompleteActivation()

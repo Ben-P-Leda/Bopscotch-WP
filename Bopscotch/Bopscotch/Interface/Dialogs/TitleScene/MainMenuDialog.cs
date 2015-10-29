@@ -27,30 +27,14 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
             AddButton("Character", new Vector2(Definitions.Right_Button_Column_X, 215), Button.ButtonIcon.Character, Color.DodgerBlue, 0.7f);
             AddButton("Start!", new Vector2(Definitions.Back_Buffer_Center.X, 360), Button.ButtonIcon.Play, Color.LawnGreen);
             AddButton("Quit", new Vector2(Definitions.Back_Buffer_Center.X, 1500), Button.ButtonIcon.None, Color.Transparent);
+            AddButton("More Games", new Vector2(Definitions.Right_Button_Column_X, 85), Button.ButtonIcon.Store, Color.DodgerBlue, 0.7f);
 
             AddIconButton("Facebook", new Vector2(Social_Button_Spacing * 2.0f, Social_Button_Y), Button.ButtonIcon.Facebook, Color.DodgerBlue, 0.6f);
             AddIconButton("Twitter", new Vector2(Social_Button_Spacing * 3.0f, Social_Button_Y), Button.ButtonIcon.Twitter, Color.DodgerBlue, 0.6f);
             AddIconButton("Leda", new Vector2(Definitions.Back_Buffer_Width - (Social_Button_Spacing * 3.0f), Social_Button_Y), Button.ButtonIcon.Website, Color.DodgerBlue, 0.6f);
             AddIconButton("Rate", new Vector2(Definitions.Back_Buffer_Width - (Social_Button_Spacing * 2.0f), Social_Button_Y), Button.ButtonIcon.Rate, Color.Orange, 0.6f);
 
-            AddStoreOrBuyFullButtonDependentOnTrialStatus();
-
             base.Activate();
-        }
-
-        private void AddStoreOrBuyFullButtonDependentOnTrialStatus()
-        {
-            bool addBuyFullVersionButton = Data.Profile.IsTrialVersion;
-            string buttonLink = "More Games";
-            Color buttonTint = Color.DodgerBlue;
-
-            if (addBuyFullVersionButton)
-            {
-                buttonLink = "Full Game";
-                buttonTint = Color.Orange;
-            }
-
-            AddButton(buttonLink, new Vector2(Definitions.Right_Button_Column_X, 85), Button.ButtonIcon.Store, buttonTint, 0.7f);
         }
 
         protected override void ActivateButton(string caption)

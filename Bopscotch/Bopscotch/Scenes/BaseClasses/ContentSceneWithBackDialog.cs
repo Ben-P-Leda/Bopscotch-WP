@@ -150,19 +150,6 @@ namespace Bopscotch.Scenes.NonGame
             if (CurrentState == Status.Active) { _backDialog.Cancel(); }
         }
 
-        public override void HandleFastResume()
-        {
-            base.HandleFastResume();
-
-#if WINDOWS_PHONE
-            if ((Data.Profile.IsTrialVersion) && (!Guide.IsTrialMode))
-            {
-                Data.Profile.IsTrialVersion = false;
-                Deactivate();
-            }
-#endif
-        }
-
         private const float Element_Render_Depth = 0.5f;
     }
 }
