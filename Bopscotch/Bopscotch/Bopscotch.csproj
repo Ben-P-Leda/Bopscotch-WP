@@ -167,6 +167,8 @@
     <Compile Include="Input\TouchControls.cs" />
     <Compile Include="Interface\Dialogs\HelpScenes\BackDialog.cs" />
     <Compile Include="Interface\Dialogs\Carousel\AvatarSelectionCarouselDialog.cs" />
+    <Compile Include="Interface\Dialogs\StoreScene\StoreCarouselItem.cs" />
+    <Compile Include="Interface\Dialogs\StoreScene\StorePurchaseDialog.cs" />
     <Compile Include="Interface\Dialogs\StoreScene\StoreStatusDialog.cs" />
     <Compile Include="Interface\Dialogs\SurvivalGameplayScene\NoLivesDialog.cs" />
     <Compile Include="Interface\Dialogs\TitleScene\CharacterSelectionCarouselDialog.cs" />
