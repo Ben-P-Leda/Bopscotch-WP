@@ -19,7 +19,7 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>Bopscotch_1.1.0.1_Release_ARM.xap</XapFilename>
+    <XapFilename>Bopscotch_Free_1.2.1.1_Release_ARM.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>Bopscotch.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>

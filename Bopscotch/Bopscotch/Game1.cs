@@ -7,7 +7,7 @@ using Leda.Core;
 using Leda.Core.Asset_Management;
 
 #if WINDOWS_PHONE
-using Microsoft.Xna.Framework.GamerServices;
+using Windows.ApplicationModel.Store;
 #endif
 
 namespace Bopscotch
@@ -20,9 +20,6 @@ namespace Bopscotch
             TombstoneFileName = Tombstone_File_Name;
 
 #if WINDOWS_PHONE
-            // THIS DOES NOT WORK IN RELEASE BUILD!
-            //Guide.SimulateTrialMode = true;
-
             // Needed by WP8.1 to handle notification center action
             Bopscotch.App.RootFrame.Obscured += HandleGameObscured;
             Bopscotch.App.RootFrame.Unobscured += HandleGameUnobscured;
@@ -47,6 +44,8 @@ namespace Bopscotch
 
             base.Initialize();
 
+            GetIAPs();
+
             SetResolutionMetrics(Definitions.Back_Buffer_Width, Definitions.Back_Buffer_Height, ScalingAxis.X);
             SceneTransitionCrossFadeTextureName = "pixel";
 
@@ -66,6 +65,21 @@ namespace Bopscotch
             MusicManager.StopMusic();
 
             base.OnExiting(sender, args);
+        }
+
+        private async void GetIAPs()
+        {
+            ListingInformation listing = await CurrentApp.LoadListingInformationAsync();
+
+            foreach (string key in listing.ProductListings.Keys)
+            {
+                Console.WriteLine(string.Format("{0}, {1}, {2},{3}, {4}",
+                  key,
+                  listing.ProductListings[key].Name,
+                  listing.ProductListings[key].FormattedPrice,
+                  listing.ProductListings[key].ProductType,
+                  listing.ProductListings[key].Description));
+            }
         }
 
         public const string Tombstone_File_Name = "ts-temp.xml";
