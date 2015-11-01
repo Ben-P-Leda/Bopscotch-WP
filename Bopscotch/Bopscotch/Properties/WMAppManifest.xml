@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{0a411660-ab74-4455-bc9b-8fce410c1703}" Title="Bopscotch" RuntimeType="Silverlight" Version="1.0.1.2" Genre="apps.normal" Author="Leda Entertainment" Description="Sample description" Publisher="Bopscotch" PublisherID="{0df4bf76-7146-42eb-ba7c-83daa7249a23}">
+  <App xmlns="" ProductID="{0a411660-ab74-4455-bc9b-8fce410c1703}" Title="Bopscotch FREE" RuntimeType="Silverlight" Version="1.2.1.2" Genre="apps.normal" Author="Leda Entertainment" Description="Sample description" Publisher="Bopscotch" PublisherID="{0df4bf76-7146-42eb-ba7c-83daa7249a23}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />

@@ -185,12 +185,15 @@
     <Compile Include="Utility\Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\MonoGame.Framework\MonoGame.Framework.WindowsPhone.csproj">
-      <Project>{BAA9A6E4-7690-4DE0-9531-DE0EAEEC9739}</Project>
+    <ProjectReference Include="..\..\..\MonoGame\MonoGame-develop\MonoGame.Framework\MonoGame.Framework.Net.WindowsPhone.csproj">
+      <Project>{c6da906e-9e4a-428b-8870-07a39b172f83}</Project>
+      <Name>MonoGame.Framework.Net.WindowsPhone</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\MonoGame\MonoGame-develop\MonoGame.Framework\MonoGame.Framework.WindowsPhone.csproj">
+      <Project>{baa9a6e4-7690-4de0-9531-de0eaeec9739}</Project>
       <Name>MonoGame.Framework.WindowsPhone</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <ProjectExtensions />
