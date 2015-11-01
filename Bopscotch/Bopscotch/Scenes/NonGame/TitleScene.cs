@@ -141,6 +141,7 @@ namespace Bopscotch.Scenes.NonGame
                 case "About": NextSceneType = typeof(CreditsScene); Deactivate(); break;
                 case "Options": ActivateDialog("options"); break;
                 case "More Games": OpenLedaPageOnStore(); ActivateDialog("main"); break;
+                case "Store": NextSceneType = typeof(StoreScene); Deactivate(); break;
                 case "Rate": DisplayRatingUnlockedContent(); break;
                 case "Quit": ExitGame(); break;
             }

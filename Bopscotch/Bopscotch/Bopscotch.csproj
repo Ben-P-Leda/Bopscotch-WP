@@ -167,6 +167,7 @@
     <Compile Include="Input\TouchControls.cs" />
     <Compile Include="Interface\Dialogs\HelpScenes\BackDialog.cs" />
     <Compile Include="Interface\Dialogs\Carousel\AvatarSelectionCarouselDialog.cs" />
+    <Compile Include="Interface\Dialogs\StoreScene\StoreStatusDialog.cs" />
     <Compile Include="Interface\Dialogs\SurvivalGameplayScene\NoLivesDialog.cs" />
     <Compile Include="Interface\Dialogs\TitleScene\CharacterSelectionCarouselDialog.cs" />
     <Compile Include="Interface\Dialogs\KeyboardDialog.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="Scenes\NonGame\CreditsScene.cs" />
     <Compile Include="Scenes\NonGame\LoadingScene.cs" />
     <Compile Include="Scenes\BaseClasses\StaticSceneBase.cs" />
+    <Compile Include="Scenes\NonGame\StoreScene.cs" />
     <Compile Include="Scenes\NonGame\TitleScene.cs" />
   </ItemGroup>
   <ItemGroup>
