@@ -18,14 +18,9 @@ namespace Bopscotch.Interface.Dialogs.StoreScene
 {
     public class StorePurchaseDialog : CarouselDialog
     {
-        private List<AvatarComponentSet> _selectableComponentSets;
-
-        public AvatarComponentSet SelectedComponentSet { get { return _selectableComponentSets[SelectedItem]; } }
-
         public StorePurchaseDialog(Scene.ObjectRegistrationHandler registrationHandler, Scene.ObjectUnregistrationHandler unregistrationHandler)
             : base(registrationHandler, unregistrationHandler)
         {
-            _selectableComponentSets = new List<AvatarComponentSet>();
 
             Height = Dialog_Height;
             TopYWhenActive = (Definitions.Back_Buffer_Height - Dialog_Height) * 0.5f;
@@ -39,6 +34,8 @@ namespace Bopscotch.Interface.Dialogs.StoreScene
 
             AddButton("Back", new Vector2(Definitions.Left_Button_Column_X, 500), Button.ButtonIcon.Back, Color.DodgerBlue, 0.7f);
             AddButton("Buy", new Vector2(Definitions.Right_Button_Column_X, 500), Button.ButtonIcon.Tick, Color.Orange, 0.7f);
+
+            _nonSpinButtonCaptions.Add("Buy");
 
             ActionButtonPressHandler = HandleActionButtonPress;
             TopYWhenInactive = Definitions.Back_Buffer_Height;
@@ -64,12 +61,12 @@ namespace Bopscotch.Interface.Dialogs.StoreScene
             _defaultButtonCaption = "Change";
             _activeButtonCaption = "Change";
             _nonSpinButtonCaptions.Add("Change");
+            _cancelButtonCaption = "Back";
         }
 
         public override void Activate()
         {
             FlushItems();
-            _selectableComponentSets.Clear();
 
             base.Activate();
 
@@ -88,7 +85,7 @@ namespace Bopscotch.Interface.Dialogs.StoreScene
             for (int i = 0; i < 6; i++) { AddItem(texts[i], bg[i]); }
         }
 
-        protected void AddItem(string areaName, string textureName)
+        private void AddItem(string areaName, string textureName)
         {
             StoreCarouselItem area = new StoreCarouselItem(areaName, textureName);
             area.RenderLayer = RenderLayer;
