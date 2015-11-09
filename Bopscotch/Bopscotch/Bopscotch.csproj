@@ -19,7 +19,7 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>Bopscotch_FREE_1.2.1.2_Release_ARM.xap</XapFilename>
+    <XapFilename>Bopscotch_FREE_1.2.1.4_Release_ARM.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>Bopscotch.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
@@ -167,8 +167,10 @@
     <Compile Include="Input\TouchControls.cs" />
     <Compile Include="Interface\Dialogs\HelpScenes\BackDialog.cs" />
     <Compile Include="Interface\Dialogs\Carousel\AvatarSelectionCarouselDialog.cs" />
+    <Compile Include="Interface\Dialogs\StoreScene\ConsumablesDialog.cs" />
     <Compile Include="Interface\Dialogs\StoreScene\StoreCarouselItem.cs" />
     <Compile Include="Interface\Dialogs\StoreScene\StorePurchaseDialog.cs" />
+    <Compile Include="Interface\Dialogs\StoreScene\PurchaseCompleteDialog.cs" />
     <Compile Include="Interface\Dialogs\StoreScene\StoreStatusDialog.cs" />
     <Compile Include="Interface\Dialogs\SurvivalGameplayScene\NoLivesDialog.cs" />
     <Compile Include="Interface\Dialogs\TitleScene\CharacterSelectionCarouselDialog.cs" />
@@ -251,6 +253,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Content\Fonts\komika-title-axis.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Fonts\arial.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Music\avatar-build.xnb">
@@ -454,10 +459,16 @@
     <None Include="Content\Textures\Interface\edge-fader.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Textures\Interface\Icons\lives.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Textures\Interface\Icons\tick.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Interface\InDialog\help.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Interface\InDialog\iap-items.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Interface\InDialog\podium.xnb">

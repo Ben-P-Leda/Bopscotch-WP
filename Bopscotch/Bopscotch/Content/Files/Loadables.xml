@@ -8,8 +8,10 @@
     <texture name="button-icons" file="Textures/Interface/button-icon-strip" />
     <texture name="dialog-presenter" file="Textures/Interface/dialog-presenter" />
     <texture name="in-dialog-podium" file="Textures/Interface/InDialog/podium" />
+    <texture name="iap-items" file="Textures/Interface/InDialog/iap-items" />
     <texture name="icon-locked" file="Textures/Interface/Icons/padlock" />
     <texture name="icon-tick" file="Textures/Interface/Icons/tick" />
+    <texture name="icon-lives" file="Textures/Interface/Icons/lives" />
     <texture name="speedo-base" file="Textures/Interface/InGame/speedo-base" />
     <texture name="speedo-segment" file="Textures/Interface/InGame/speedo-segment" />
     <texture name="speedo-needle" file="Textures/Interface/InGame/speedo-needle" />

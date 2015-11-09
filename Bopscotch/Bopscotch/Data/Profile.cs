@@ -32,7 +32,7 @@ namespace Bopscotch.Data
 
         public static PhoneSettings Settings { get { return Instance._settings; } }
 
-        public static int Lives { get { return Instance._livesRemaining; } }
+        public static int Lives { get { return Instance._livesRemaining; } set { Instance._livesRemaining = value; } }
         public static bool NotAtFullLives { get { return Lives < Maximum_Life_Count; } }
         public static DateTime NextLifeRestoreTime { get { return _instance._lastLivesUpdateTime.AddSeconds(Life_Restore_Interval); } }
         public static int GoldenTickets { get { return Instance._goldenTicketCount; } set { Instance._goldenTicketCount = value; } }

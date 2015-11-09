@@ -5,28 +5,44 @@ using System.Windows;
 
 using Windows.ApplicationModel.Store;
 
+using Microsoft.Xna.Framework;
+
+using Leda.Core.Asset_Management;
+
 using Bopscotch.Scenes.BaseClasses;
 using Bopscotch.Interface.Dialogs;
 using Bopscotch.Interface.Dialogs.StoreScene;
+using Bopscotch.Interface.Content;
 
 namespace Bopscotch.Scenes.NonGame
 {
     public class StoreScene : MenuDialogScene
     {
         private ListingInformation _products;
-        private string _lastAttemptedPurchase;
+
+        private PurchaseCompleteDialog _purchaseCompleteDialog;
+        private ConsumablesDialog _consumablesDialog;
 
         public StoreScene()
             : base()
         {
-            _products = null;
-
-            LoadProducts();
-
+            _purchaseCompleteDialog = new PurchaseCompleteDialog("");
+            _purchaseCompleteDialog.SelectionCallback = PurchaseDialogButtonCallback;
+            _consumablesDialog = new ConsumablesDialog();
+            
             _dialogs.Add("store-status", new StoreStatusDialog());
             _dialogs.Add("store-items", new StorePurchaseDialog(RegisterGameObject, UnregisterGameObject));
+            _dialogs.Add("purchase-complete", _purchaseCompleteDialog);
+            _dialogs.Add("consumables", _consumablesDialog);
 
             BackgroundTextureName = Background_Texture_Name;
+
+            LoadProducts();
+        }
+
+        private void PurchaseDialogButtonCallback(string buttonCaption)
+        {
+            if ((buttonCaption == "Back") && (_consumablesDialog.Active)) { _consumablesDialog.DismissWithReturnValue(""); }
         }
 
         protected override void CompletePostStartupLoadInitialization()
@@ -40,28 +56,49 @@ namespace Bopscotch.Scenes.NonGame
         {
             base.Activate();
 
-            _lastAttemptedPurchase = "";
+            MusicManager.StopMusic();
 
-            if ((_products == null) || (_products.ProductListings.Count < 1)) { ActivateDialog("store-status"); }
-            else { ActivateDialog("store-items"); }
+            if ((_products == null) || (_products.ProductListings.Count < 1)) 
+            { 
+                ActivateDialog("store-status"); 
+            }
+            else 
+            { 
+                ActivateDialog("store-items");
+                _consumablesDialog.Activate();
+            }
         }
 
         private async void LoadProducts()
         {
-            _products = await CurrentApp.LoadListingInformationAsync();
+            try
+            {
+                _products = await CurrentApp.LoadListingInformationAsync();
+            }
+            catch (Exception)
+            {
+                _products = null;
+            }
+
+            if (_products != null)
+            {
+                ((StorePurchaseDialog)_dialogs["store-items"]).InitializeProducts(_products);
+            }
         }
 
         private void HandleActiveDialogExit(string selectedOption)
         {
             if (selectedOption == "Buy")
             {
-                _lastAttemptedPurchase = "";
                 InitiatePurchase(((StorePurchaseDialog)_dialogs["store-items"]).Selection);
+            }
+            else if (_lastActiveDialogName == "purchase-complete")
+            {
+                ActivateDialog("store-items");
             }
             else
             {
                 NextSceneType = typeof(TitleScene);
-                NextSceneParameters.Set("music-already-running", true);
                 Deactivate();
             }
         }
@@ -78,44 +115,43 @@ namespace Bopscotch.Scenes.NonGame
 
                     if (CurrentApp.LicenseInformation.ProductLicenses[selection].IsActive)
                     {
-                        _lastAttemptedPurchase = selection;
-
                         CurrentApp.ReportProductFulfillment(selection);
 
                         FulfillPurchase(selection);
 
+                        _purchaseCompleteDialog.ItemCode = selection;
+                        ActivateDialog("purchase-complete");
+                    }
+                    else
+                    {
+                        ActivateDialog("store-items");
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    string err = ex.ToString();
+                    ActivateDialog("store-items");
                 }
             });
         }
 
         private void FulfillPurchase(string productCode)
         {
-            // TODO: make this work
-            Console.WriteLine("Fulfill: " + productCode);
-        }
-
-        public override void HandleFastResume()
-        {
-            Console.WriteLine("Last purchase: " + _lastAttemptedPurchase);
-            base.HandleFastResume();
-
-
-
-            if (!string.IsNullOrEmpty(_lastAttemptedPurchase))
+            switch (productCode)
             {
-                // TODO: Open success dialog with appropriate captioning
+                case "Bopscotch_Test_Product": Data.Profile.Lives += 1; Data.Profile.GoldenTickets += 1; break;
+                case "Bopscotch_10_Lives": Data.Profile.Lives += 10; break;
+                case "Bopscotch_20_Lives": Data.Profile.Lives += 20; break;
+                case "Bopscotch_50_Lives": Data.Profile.Lives += 50; break;
+                case "Bopscotch_2_Tickets": Data.Profile.GoldenTickets += 2; break;
+                case "Bopscotch_5_tickets": Data.Profile.GoldenTickets += 5; break;
+                case "Bopscotch_10_Tickets": Data.Profile.GoldenTickets += 10; break;
             }
-            else
-            {
-                ActivateDialog("store-items");
-            }
+
+            Data.Profile.Save();
         }
 
         private const string Background_Texture_Name = "background-1";
+        
+        public const float Dialog_Margin = 40.0f;
     }
 }

@@ -13,7 +13,6 @@ namespace Bopscotch.Interface.Content
         private string _text;
 
         public TextWriter.Alignment Alignment { private get; set; }
-        public Dictionary<string, string> Placeholders { get; private set; }
 
         public TextContent(string text, Vector2 position)
             : base(position)
@@ -21,12 +20,11 @@ namespace Bopscotch.Interface.Content
             _text = text;
 
             Alignment = TextWriter.Alignment.Center;
-            Placeholders = new Dictionary<string, string>();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            TextWriter.Write(_text, spriteBatch, _position + Offset, FadedTint, Color.Lerp(Color.Transparent, Color.Black, FadeFraction), 
+            TextWriter.Write(_text, spriteBatch, _position + Offset, FadedTint, Color.Lerp(Color.Transparent, Color.Black, FadeFraction),
                 Outline_Thickness, Scale, RenderDepth, Alignment);
         }
 
