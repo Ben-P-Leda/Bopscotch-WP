@@ -55,5 +55,6 @@
     <translation key="no-wifi"> - wifi needed to race</translation>
     <translation key="purchase-complete">Purchased [ITEM]!</translation>
     <translation key="store-unavailable">Store not available</translation>
+    <translation key="race-lives-award">Awarded [QUANTITY] adventure lives!</translation>
   </translations>
 </localisation>
