@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using Leda.Core.Asset_Management;
 
 using Bopscotch.Scenes.BaseClasses;
+using Bopscotch.Scenes.Gameplay.Survival;
 using Bopscotch.Interface.Dialogs;
 using Bopscotch.Interface.Dialogs.StoreScene;
 using Bopscotch.Interface.Content;
@@ -18,7 +19,8 @@ namespace Bopscotch.Scenes.NonGame
 {
     public class StoreScene : MenuDialogScene
     {
-        private ListingInformation _products;
+        private bool _loadedProducts;
+        private bool _returnToGame;
 
         private PurchaseCompleteDialog _purchaseCompleteDialog;
         private ConsumablesDialog _consumablesDialog;
@@ -37,6 +39,7 @@ namespace Bopscotch.Scenes.NonGame
 
             BackgroundTextureName = Background_Texture_Name;
 
+            _loadedProducts = false;
             LoadProducts();
         }
 
@@ -54,11 +57,13 @@ namespace Bopscotch.Scenes.NonGame
 
         public override void Activate()
         {
+            _returnToGame = NextSceneParameters.Get<bool>("return-to-game");
+
             base.Activate();
 
             MusicManager.StopMusic();
 
-            if ((_products == null) || (_products.ProductListings.Count < 1)) 
+            if (!_loadedProducts) 
             { 
                 ActivateDialog("store-status"); 
             }
@@ -71,18 +76,22 @@ namespace Bopscotch.Scenes.NonGame
 
         private async void LoadProducts()
         {
+            ListingInformation products = null;
+
             try
             {
-                _products = await CurrentApp.LoadListingInformationAsync();
+                products = await CurrentApp.LoadListingInformationAsync();
             }
             catch (Exception)
             {
-                _products = null;
+                products = null;
             }
 
-            if (_products != null)
+            if ((products != null) && (products.ProductListings.Count > 0))
             {
-                ((StorePurchaseDialog)_dialogs["store-items"]).InitializeProducts(_products);
+                ((StorePurchaseDialog)_dialogs["store-items"]).InitializeProducts(products);
+                _purchaseCompleteDialog.Products = products;
+                _loadedProducts = true;
             }
         }
 
@@ -98,15 +107,20 @@ namespace Bopscotch.Scenes.NonGame
             }
             else
             {
-                NextSceneType = typeof(TitleScene);
+                if ((_returnToGame) && (Data.Profile.Lives > 0))
+                {
+                    NextSceneType = typeof(SurvivalGameplayScene);
+                }
+                else
+                {
+                    NextSceneType = typeof(TitleScene);
+                }
                 Deactivate();
             }
         }
 
         private void InitiatePurchase(string selection)
         {
-            selection = "Bopscotch_Test_Product";
-
             Deployment.Current.Dispatcher.BeginInvoke(async () =>
             {
                 try
