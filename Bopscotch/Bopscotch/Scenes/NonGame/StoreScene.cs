@@ -19,7 +19,6 @@ namespace Bopscotch.Scenes.NonGame
 {
     public class StoreScene : MenuDialogScene
     {
-        private bool _loadedProducts;
         private bool _returnToGame;
 
         private PurchaseCompleteDialog _purchaseCompleteDialog;
@@ -31,16 +30,14 @@ namespace Bopscotch.Scenes.NonGame
             _purchaseCompleteDialog = new PurchaseCompleteDialog("");
             _purchaseCompleteDialog.SelectionCallback = PurchaseDialogButtonCallback;
             _consumablesDialog = new ConsumablesDialog();
-            
-            _dialogs.Add("store-status", new StoreStatusDialog());
+
+            _dialogs.Add("loading-store", new LoadingDialog(LoadProducts));
+            _dialogs.Add("store-closed", new StoreClosedDialog());
             _dialogs.Add("store-items", new StorePurchaseDialog(RegisterGameObject, UnregisterGameObject));
             _dialogs.Add("purchase-complete", _purchaseCompleteDialog);
             _dialogs.Add("consumables", _consumablesDialog);
 
             BackgroundTextureName = Background_Texture_Name;
-
-            _loadedProducts = false;
-            LoadProducts();
         }
 
         private void PurchaseDialogButtonCallback(string buttonCaption)
@@ -63,15 +60,7 @@ namespace Bopscotch.Scenes.NonGame
 
             MusicManager.StopMusic();
 
-            if (!_loadedProducts) 
-            { 
-                ActivateDialog("store-status"); 
-            }
-            else 
-            { 
-                ActivateDialog("store-items");
-                _consumablesDialog.Activate();
-            }
+            ActivateDialog("loading-store");
         }
 
         private async void LoadProducts()
@@ -87,11 +76,18 @@ namespace Bopscotch.Scenes.NonGame
                 products = null;
             }
 
+            _dialogs["loading-store"].DismissWithReturnValue("");
+
             if ((products != null) && (products.ProductListings.Count > 0))
             {
                 ((StorePurchaseDialog)_dialogs["store-items"]).InitializeProducts(products);
                 _purchaseCompleteDialog.Products = products;
-                _loadedProducts = true;
+                ActivateDialog("store-items");
+                _consumablesDialog.Activate();
+            }
+            else
+            {
+                ActivateDialog("store-closed");
             }
         }
 
@@ -105,7 +101,7 @@ namespace Bopscotch.Scenes.NonGame
             {
                 ActivateDialog("store-items");
             }
-            else
+            else if (!string.IsNullOrWhiteSpace(selectedOption))
             {
                 if ((_returnToGame) && (Data.Profile.Lives > 0))
                 {
