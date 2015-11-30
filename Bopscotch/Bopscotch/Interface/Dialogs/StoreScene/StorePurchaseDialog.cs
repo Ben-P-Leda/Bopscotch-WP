@@ -82,6 +82,8 @@ namespace Bopscotch.Interface.Dialogs.StoreScene
 
         public void InitializeProducts(ListingInformation products)
         {
+            FlushItems();
+
             Dictionary<string, Point> iapImageMappings = new Dictionary<string, Point>()
             {
                 { "Bopscotch_10_Lives", new Point(1,0) },
@@ -110,6 +112,7 @@ namespace Bopscotch.Interface.Dialogs.StoreScene
             CarouselFlatImage item = new CarouselFlatImage(itemCode, Items_Texture);
             item.RenderLayer = RenderLayer;
             item.Frame = new Rectangle(Item_Image_Width * matrixTopLeft.X, Item_Image_Height * matrixTopLeft.Y, Item_Image_Width, Item_Image_Height);
+            item.Origin = new Vector2(Item_Image_Width, Item_Image_Height) / 2.0f;
 
             AddItem(item);
         }
