@@ -40,12 +40,16 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
         private AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator _smashBlockRegenerationCallback;
         private AnimationController _animationController;
 
+        private List<BombBlock> _bombs;
+
         private void Reset()
         {
         }
 
         private BlockMap GenerateBlockMap(XElement blockDataGroup)
         {
+            _bombs = new List<BombBlock>();
+
             List<Block> blocks = new List<Block>();
             Point worldDimensions = Point.Zero;
 
@@ -75,6 +79,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
                 case SpikeBlock.Data_Node_Name: newBlock = CreateSpikeBlock(node); break;
                 case ObstructionBlock.Data_Node_Name: newBlock = CreateObstructionBlock(node); break;
                 case IceBlock.Data_Node_Name: newBlock = CreateIceBlock(node); break;
+                case BombBlock.Data_Node_Name: newBlock = CreateBombBlock(node); break;
                 case Block.Data_Node_Name: newBlock = CreateBlock(node); break;
             }
 
@@ -109,6 +114,19 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
             IceBlock newBlock = new IceBlock();
             newBlock.WorldPosition = new Vector2((float)node.Attribute("x"), (float)node.Attribute("y"));
             newBlock.Texture = TextureManager.Textures[node.Attribute("texture").Value];
+
+            return newBlock;
+        }
+
+        private BombBlock CreateBombBlock(XElement node)
+        {
+            BombBlock newBlock = new BombBlock();
+            newBlock.WorldPosition = new Vector2((float)node.Attribute("x"), (float)node.Attribute("y"));
+            newBlock.Texture = TextureManager.Textures[node.Attribute("texture").Value];
+            newBlock.ShouldRegenerate = Data.Profile.PlayingRaceMode;
+            newBlock.TickCallback = _registerTimerTick;
+
+            _bombs.Add(newBlock);
 
             return newBlock;
         }
@@ -194,6 +212,14 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
                     (int)(tiles[i].WorldPosition.X / Definitions.Grid_Cell_Pixel_Size), 
                     (int)(tiles[i].WorldPosition.Y / Definitions.Grid_Cell_Pixel_Size), 
                     tiles[i]);
+            }
+
+            for (int i = 0; i < _bombs.Count; i++ )
+            {
+                _bombs[i].Map = map;
+                _bombs[i].MapLocation = new Point(
+                    (int)(_bombs[i].WorldPosition.X / Definitions.Grid_Cell_Pixel_Size),
+                    (int)(_bombs[i].WorldPosition.Y / Definitions.Grid_Cell_Pixel_Size));
             }
 
             return map;
