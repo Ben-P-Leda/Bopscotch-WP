@@ -15,6 +15,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
         public BlockMap Map { private get; set; }
         public Point MapLocation { private get; set; }
         public bool ShouldRegenerate { private get; set; }
+        public BombBlockBlastCollider BlastCollider { get; private set; }
 
         public AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator RegenerationParticleEffect { private get; set; }
         public AdditiveLayerParticleEffectManager.FireballEffectInitiator DetonationParticleEffect { private get; set; }
@@ -32,6 +33,8 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
             : base()
         {
             _actionTimer = null;
+
+            BlastCollider = new BombBlockBlastCollider();
         }
 
         public void TriggerByImpact()
@@ -62,6 +65,9 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 
             Visible = false;
             Collidable = false;
+
+            BlastCollider.WorldPosition = WorldPosition;
+            BlastCollider.Collidable = true;
 
             TriggerNext(-1);
             TriggerNext(1);
@@ -103,6 +109,6 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
         public new const string Data_Node_Name = "bomb-block";
 
         private const float Impact_Detonation_Delay = 150.0f;
-        private const float Chain_Detonation_Delay = 50.0f;
+        private const float Chain_Detonation_Delay = 30.0f;
     }
 }

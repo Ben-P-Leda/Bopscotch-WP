@@ -138,6 +138,7 @@
     <Compile Include="Gameplay\Objects\Environment\Blocks\Block.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\BlockFactory.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\BombBlock.cs" />
+    <Compile Include="Gameplay\Objects\Environment\Blocks\BombBlockBlastCollider.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\IceBlock.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\ObstructionBlock.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\RaceModePowerUpSmashBlock.cs" />

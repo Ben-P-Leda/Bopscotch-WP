@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using Leda.Core.Game_Objects.Behaviours;
 using Leda.Core.Game_Objects.Tile_Map;
 using Leda.Core.Game_Objects.Controllers;
+using Leda.Core.Game_Objects.Controllers.Collisions;
 using Leda.Core.Gamestate_Management;
 using Leda.Core.Asset_Management;
 using Leda.Core.Timing;
@@ -22,6 +23,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 
         public static TimerController.TickCallbackRegistrationHandler TimerTickHandler { set { Factory._registerTimerTick = value; } }
         public static AnimationController AnimationController { set { Factory._animationController = value; } }
+        public static OneToManyCollisionController CollisionController { set { Factory._collisionController = value; } }
         public static SmashBlock.SmashCallbackMethod SmashBlockCallback { set { Factory._smashBlockCallback = value; } }
         public static AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator SmashBlockRegerationCallback { set { Factory._smashBlockRegenerationCallback = value; } }
         public static AdditiveLayerParticleEffectManager.FireballEffectInitiator BombBlockDetonationCallback { set { Factory._bombBlockDetonationCallback = value; } }
@@ -41,6 +43,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
         private AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator _smashBlockRegenerationCallback;
         private AdditiveLayerParticleEffectManager.FireballEffectInitiator _bombBlockDetonationCallback;
         private AnimationController _animationController;
+        private OneToManyCollisionController _collisionController;
 
         private List<BombBlock> _bombs;
 
@@ -129,6 +132,8 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
             newBlock.DetonationParticleEffect = _bombBlockDetonationCallback;
             newBlock.RegenerationParticleEffect = _smashBlockRegenerationCallback;
             newBlock.TickCallback = _registerTimerTick;
+
+            _collisionController.AddCollidableObject(newBlock.BlastCollider);
 
             _bombs.Add(newBlock);
 

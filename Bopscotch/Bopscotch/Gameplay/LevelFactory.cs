@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Leda.Core.Game_Objects.Behaviours;
 using Leda.Core.Game_Objects.Tile_Map;
 using Leda.Core.Game_Objects.Controllers;
+using Leda.Core.Game_Objects.Controllers.Collisions;
 using Leda.Core.Gamestate_Management;
 using Leda.Core.Asset_Management;
 using Leda.Core.Timing;
@@ -32,6 +33,7 @@ namespace Bopscotch.Gameplay
         public Player Player { get; private set; }
         public BlockMap Map { get; private set; }
         public AnimationController AnimationController { set { BlockFactory.AnimationController = value; } }
+        public OneToManyCollisionController CollisionController { set { BlockFactory.CollisionController = value; } }
         public SmashBlock.SmashCallbackMethod SmashBlockCallback { set { BlockFactory.SmashBlockCallback = value; } }
         public AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator SmashBlockRegenerationCallback { set { BlockFactory.SmashBlockRegerationCallback = value; } }
         public AdditiveLayerParticleEffectManager.FireballEffectInitiator BombBlockDetonationCallback { set { BlockFactory.BombBlockDetonationCallback = value; } }
