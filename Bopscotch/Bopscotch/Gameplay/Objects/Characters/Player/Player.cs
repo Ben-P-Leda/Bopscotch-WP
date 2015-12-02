@@ -322,8 +322,9 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
         public override void HandleCollision(ICollidable collider)
         {
             if (collider is Block) { HandleBlockCollision((Block)collider); }
-            if (collider is SignpostBase) { HandleSignpostCollision((SignpostBase)collider); }
-            if (collider is Flag) { HandleFlagCollision((Flag)collider); }
+            else if (collider is SignpostBase) { HandleSignpostCollision((SignpostBase)collider); }
+            else if (collider is Flag) { HandleFlagCollision((Flag)collider); }
+            else if (collider is BombBlockBlastCollider) { StartDeathSequence(); }
         }
 
         private void HandleBlockCollision(Block collidingBlock)

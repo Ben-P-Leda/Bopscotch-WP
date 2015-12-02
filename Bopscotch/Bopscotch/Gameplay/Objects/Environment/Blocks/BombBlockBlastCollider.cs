@@ -5,7 +5,7 @@ using Leda.Core.Shapes;
 
 namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 {
-    public class BombBlockBlastCollider : ICircularCollidable
+    public class BombBlockBlastCollider : ICircularCollidable, IGameObject
     {
         public Circle CollisionBoundingCircle { get; private set; }
         public Circle PositionedCollisionBoundingCircle { get; set; }
@@ -16,6 +16,14 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
         public BombBlockBlastCollider()
         {
             CollisionBoundingCircle = new Circle(Vector2.Zero, Collision_Radius);
+        }
+
+        public void Initialize()
+        {
+        }
+
+        public void Reset()
+        {
             Collidable = false;
         }
 
