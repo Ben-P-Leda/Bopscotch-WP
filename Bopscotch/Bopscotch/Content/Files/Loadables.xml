@@ -24,6 +24,7 @@
     <texture name="particle-cloud" file="Textures/Effects/Particles/cloud" />
     <texture name="particle-wood" file="Textures/Effects/Particles/wood" />
     <texture name="particle-star" file="Textures/Effects/Particles/star" />
+    <texture name="particle-fireball" file="Textures/Effects/Particles/fireball" />
     <texture name="glow-effect" file="Textures/Effects/glow-effect" />
     <texture name="background-tutorial" file="Textures/Backgrounds/background-tutorial" />
     <texture name="background-1" file="Textures/Backgrounds/background-1" />

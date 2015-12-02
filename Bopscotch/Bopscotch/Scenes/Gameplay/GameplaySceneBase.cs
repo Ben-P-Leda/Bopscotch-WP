@@ -153,7 +153,8 @@ namespace Bopscotch.Scenes.Gameplay
             _pauseController.Paused = false;
             _levelFactory.AnimationController = _animationController;
             _levelFactory.SmashBlockCallback = HandleSmashBlockSmash;
-            _levelFactory.SmashBlockRegenrationCallback = _additiveParticleEffectManager.LaunchCloudBurst;
+            _levelFactory.SmashBlockRegenerationCallback = _additiveParticleEffectManager.LaunchCloudBurst;
+            _levelFactory.BombBlockDetonationCallback = _additiveParticleEffectManager.LaunchFireball;
 
             base.Activate();
 

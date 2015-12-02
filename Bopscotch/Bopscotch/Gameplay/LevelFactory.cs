@@ -33,7 +33,8 @@ namespace Bopscotch.Gameplay
         public BlockMap Map { get; private set; }
         public AnimationController AnimationController { set { BlockFactory.AnimationController = value; } }
         public SmashBlock.SmashCallbackMethod SmashBlockCallback { set { BlockFactory.SmashBlockCallback = value; } }
-        public AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator SmashBlockRegenrationCallback { set { BlockFactory.SmashBlockRegerationCallback = value; } }
+        public AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator SmashBlockRegenerationCallback { set { BlockFactory.SmashBlockRegerationCallback = value; } }
+        public AdditiveLayerParticleEffectManager.FireballEffectInitiator BombBlockDetonationCallback { set { BlockFactory.BombBlockDetonationCallback = value; } }
 
         public Point BackgroundDimensions { private get; set; }
 

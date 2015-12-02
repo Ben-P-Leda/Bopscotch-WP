@@ -24,6 +24,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
         public static AnimationController AnimationController { set { Factory._animationController = value; } }
         public static SmashBlock.SmashCallbackMethod SmashBlockCallback { set { Factory._smashBlockCallback = value; } }
         public static AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator SmashBlockRegerationCallback { set { Factory._smashBlockRegenerationCallback = value; } }
+        public static AdditiveLayerParticleEffectManager.FireballEffectInitiator BombBlockDetonationCallback { set { Factory._bombBlockDetonationCallback = value; } }
 
         public static BlockMap CreateLevelBlockMap(XElement blockDataGroup) 
         {
@@ -38,6 +39,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
         private TimerController.TickCallbackRegistrationHandler _registerTimerTick;
         private SmashBlock.SmashCallbackMethod _smashBlockCallback;
         private AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator _smashBlockRegenerationCallback;
+        private AdditiveLayerParticleEffectManager.FireballEffectInitiator _bombBlockDetonationCallback;
         private AnimationController _animationController;
 
         private List<BombBlock> _bombs;
@@ -124,6 +126,8 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
             newBlock.WorldPosition = new Vector2((float)node.Attribute("x"), (float)node.Attribute("y"));
             newBlock.Texture = TextureManager.Textures[node.Attribute("texture").Value];
             newBlock.ShouldRegenerate = Data.Profile.PlayingRaceMode;
+            newBlock.DetonationParticleEffect = _bombBlockDetonationCallback;
+            newBlock.RegenerationParticleEffect = _smashBlockRegenerationCallback;
             newBlock.TickCallback = _registerTimerTick;
 
             _bombs.Add(newBlock);

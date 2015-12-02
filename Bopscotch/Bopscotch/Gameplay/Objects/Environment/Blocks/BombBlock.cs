@@ -4,16 +4,20 @@ using Microsoft.Xna.Framework;
 
 using Leda.Core.Timing;
 
+using Bopscotch.Effects.Particles;
+
 namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 {
     public class BombBlock : Block
     {
         private Timer _actionTimer;
-        private bool _isActive;
         
         public BlockMap Map { private get; set; }
         public Point MapLocation { private get; set; }
         public bool ShouldRegenerate { private get; set; }
+
+        public AdditiveLayerParticleEffectManager.CloudBurstEffectInitiator RegenerationParticleEffect { private get; set; }
+        public AdditiveLayerParticleEffectManager.FireballEffectInitiator DetonationParticleEffect { private get; set; }
 
         public TimerController.TickCallbackRegistrationHandler TickCallback
         {
@@ -28,7 +32,6 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
             : base()
         {
             _actionTimer = null;
-            _isActive = true;
         }
 
         public void TriggerByImpact()
@@ -43,7 +46,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 
         private void UpdateState()
         {
-            if (_isActive)
+            if (Visible)
             {
                 Detonate();
             }
@@ -55,7 +58,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 
         private void Detonate()
         {
-            // TODO: BOOM!
+            DetonationParticleEffect(this);
 
             Visible = false;
             Collidable = false;
@@ -99,7 +102,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 
         public new const string Data_Node_Name = "bomb-block";
 
-        private const float Impact_Detonation_Delay = 250.0f;
-        private const float Chain_Detonation_Delay = 100.0f;
+        private const float Impact_Detonation_Delay = 150.0f;
+        private const float Chain_Detonation_Delay = 50.0f;
     }
 }
