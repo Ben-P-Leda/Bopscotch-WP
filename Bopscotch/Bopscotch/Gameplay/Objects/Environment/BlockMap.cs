@@ -16,6 +16,7 @@ namespace Bopscotch.Gameplay.Objects.Environment
     public class BlockMap : TileMap, ISerializable
     {
         private List<Vector2> _smashedBlockWorldPositions;
+        private List<BombBlock> _bombBlocks;
 
         public string ID { get { return "block-map"; } set { } }
 
@@ -23,10 +24,11 @@ namespace Bopscotch.Gameplay.Objects.Environment
             : base(mapWidth, mapHeight, tileWidth, tileHeight, renderLayer)
         {
             _smashedBlockWorldPositions = new List<Vector2>();
+            _bombBlocks = new List<BombBlock>();
         }
 
         public void WireUpBombBlockBlastColliders(Scene.ObjectRegistrationHandler registerObject)
-        {
+        {   
             for (int x = 0; x < MapDimensions.X; x++)
             {
                 for (int y =0; y <MapDimensions.Y; y++)
@@ -34,9 +36,18 @@ namespace Bopscotch.Gameplay.Objects.Environment
                     BombBlock block = GetTile(x, y) as BombBlock;
                     if (block != null)
                     {
+                        _bombBlocks.Add(block);
                         registerObject(block.BlastCollider);
                     }
                 }
+            }
+        }
+
+        public void ClearDownBombBlocks()
+        {
+            for (int i = 0; i < _bombBlocks.Count; i++)
+            {
+                _bombBlocks[i].Reset();
             }
         }
 

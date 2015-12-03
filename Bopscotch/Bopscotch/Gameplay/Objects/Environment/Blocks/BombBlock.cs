@@ -26,6 +26,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
             {
                 if (_actionTimer == null) { _actionTimer = new Timer("action-timer", UpdateState); }
                 value(_actionTimer.Tick);
+                BlastCollider.TickCallback = value;
             }
         }
 
@@ -37,14 +38,27 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
             BlastCollider = new BombBlockBlastCollider();
         }
 
+        public override void Reset()
+        {
+            _actionTimer.Reset();
+            BlastCollider.Reset();
+            base.Reset();
+        }
+
         public void TriggerByImpact()
         {
-            _actionTimer.NextActionDuration = Impact_Detonation_Delay;
+            if (Visible)
+            {
+                _actionTimer.NextActionDuration = Impact_Detonation_Delay;
+            }
         }
 
         public void TriggerByChain()
         {
-            _actionTimer.NextActionDuration = Chain_Detonation_Delay;
+            if (Visible)
+            {
+                _actionTimer.NextActionDuration = Chain_Detonation_Delay;
+            }
         }
 
         private void UpdateState()
@@ -61,16 +75,21 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 
         private void Detonate()
         {
-            DetonationParticleEffect(this);
-
             Visible = false;
             Collidable = false;
 
-            BlastCollider.WorldPosition = WorldPosition;
+            BlastCollider.WorldPosition = WorldPosition + (new Vector2(Definitions.Grid_Cell_Pixel_Size, Definitions.Grid_Cell_Pixel_Size) * 0.5f);
             BlastCollider.Collidable = true;
+
+            DetonationParticleEffect(BlastCollider);
 
             TriggerNext(-1);
             TriggerNext(1);
+
+            if (ShouldRegenerate)
+            {
+                _actionTimer.NextActionDuration = Regeneration_Delay;
+            }
         }
 
         private void TriggerNext(int direction)
@@ -103,12 +122,15 @@ namespace Bopscotch.Gameplay.Objects.Environment.Blocks
 
         private void Regenerate()
         {
-
+            RegenerationParticleEffect(BlastCollider);
+            Visible = true;
+            Collidable = true;
         }
 
         public new const string Data_Node_Name = "bomb-block";
 
-        private const float Impact_Detonation_Delay = 150.0f;
-        private const float Chain_Detonation_Delay = 30.0f;
+        private const float Impact_Detonation_Delay = 200.0f;
+        private const float Chain_Detonation_Delay = 65.0f;
+        private const float Regeneration_Delay = 5000.0f;
     }
 }

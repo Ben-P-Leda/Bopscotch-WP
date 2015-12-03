@@ -253,6 +253,12 @@ namespace Bopscotch.Scenes.Gameplay
         {
         }
 
+        protected override void CompleteDeactivation()
+        {
+            _levelFactory.Map.ClearDownBombBlocks();
+            base.CompleteDeactivation();
+        }
+
         private const int Camera_Clipping_Margin = 160;
     }
 }
