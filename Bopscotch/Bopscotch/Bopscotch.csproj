@@ -137,6 +137,8 @@
     <Compile Include="Gameplay\Objects\Environment\BlockMap.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\Block.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\BlockFactory.cs" />
+    <Compile Include="Gameplay\Objects\Environment\Blocks\BombBlock.cs" />
+    <Compile Include="Gameplay\Objects\Environment\Blocks\BombBlockBlastCollider.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\IceBlock.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\ObstructionBlock.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blocks\RaceModePowerUpSmashBlock.cs" />
@@ -369,6 +371,9 @@
     <None Include="Content\Textures\Backgrounds\background-tutorial.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Textures\Backgrounds\background-8.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Textures\Blocks\Obstruction\circle-top.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -388,6 +393,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Blocks\Obstruction\top-right.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Blocks\Special\bomb.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Blocks\Special\ice.xnb">
@@ -421,6 +429,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Collectables\golden-ticket.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Effects\Particles\fireball.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Effects\Particles\star.xnb">
@@ -808,6 +819,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Music\title.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\0.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Tile 358x173.png" />
