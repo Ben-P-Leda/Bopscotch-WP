@@ -240,13 +240,16 @@ namespace Leda.Core.Serialization
 
         private object DeserializeColor(string source)
         {
+            char colourElementSeparator = source.Contains(",") ? ',' : ' ';
+            char colourValueSeparator = source.Contains("=") ? '=' : ':';
+
             try
             {
-                string[] components = source.Split(ColorElementSeparator);
+                string[] components = source.Split(colourElementSeparator);
                 for (int i = 0; i < components.Length; i++)
                 {
                     components[i] = components[i].Trim();
-                    components[i] = components[i].Substring(components[i].IndexOf(ColorValueSeparator) + 1);
+                    components[i] = components[i].Substring(components[i].IndexOf(colourValueSeparator) + 1);
                 }
                 return new Color(
                     Convert.ToInt16(components[0]),
@@ -259,30 +262,6 @@ namespace Leda.Core.Serialization
                 return null;
             }
         }
-
-		private char ColorElementSeparator
-		{
-			get
-			{
-#if ANDROID
-				return ' ';
-#else
-				return ',';
-#endif
-			}
-		}
-
-		private string ColorValueSeparator
-		{
-			get
-			{
-#if ANDROID
-				return ":";
-#else
-				return "=";
-#endif
-			}
-		}
 
         private object DeserializePoint(string source)
         {
