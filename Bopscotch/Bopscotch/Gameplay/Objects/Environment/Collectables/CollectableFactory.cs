@@ -15,6 +15,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Collectables
         private static CollectableFactory Factory { get { if (_factory == null) { _factory = new CollectableFactory(); } return _factory; } }
 
         public static Scene.ObjectRegistrationHandler ObjectRegistrationHandler { set { Factory._registerComponent = value; } }
+        public static int CandyCount { get { return _factory._candyCount; } }
 
         public static void LoadCollectables(XElement collectableDataGroup)
         {
@@ -39,10 +40,12 @@ namespace Bopscotch.Gameplay.Objects.Environment.Collectables
 
         private int _nextCollectableID;
         private Scene.ObjectRegistrationHandler _registerComponent;
+        private int _candyCount = 0;
 
         private void Reset()
         {
             _nextCollectableID = 0;
+            _candyCount = 0;
         }
 
         private Collectable CreateCollectableFromXmlNode(XElement node, Vector2 worldPosition)
@@ -57,6 +60,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Collectables
                 case ScoringCandy.Data_Node_Name:
                     newCollectable = new ScoringCandy();
                     ((ScoringCandy)newCollectable).ScoreValue = (int)node.Attribute("score");
+                    _candyCount++;
                     break;
             }
 

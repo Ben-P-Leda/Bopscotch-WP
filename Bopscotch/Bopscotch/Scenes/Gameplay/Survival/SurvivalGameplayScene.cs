@@ -321,8 +321,6 @@ namespace Bopscotch.Scenes.Gameplay.Survival
 
         protected override void HandleSmashBlockSmash(SmashBlock smashedBlock)
         {
-            // TODO: add extra score etc
-
             LevelData.UpdateFromSmashBlockContents(smashedBlock);
             base.HandleSmashBlockSmash(smashedBlock);
         }
