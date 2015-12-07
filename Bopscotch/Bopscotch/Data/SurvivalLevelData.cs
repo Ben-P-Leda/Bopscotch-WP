@@ -17,6 +17,7 @@ namespace Bopscotch.Data
         public string ID { get { return Level_Data_ID; } set { } }
         public int PointsScoredThisLevel { get; set; }
         public int TotalCandiesOnLevel { private get; set; }
+        public int AttemptsAtLevel { get; set; }
 
         public float CandyCollectionFraction { get { return _candiesCollected / TotalCandiesOnLevel; } }
 
@@ -39,6 +40,7 @@ namespace Bopscotch.Data
             serializer.AddDataItem("accrued-score", PointsScoredThisLevel);
             serializer.AddDataItem("total-candies", TotalCandiesOnLevel);
             serializer.AddDataItem("candies-collected", _candiesCollected);
+            serializer.AddDataItem("attempts-count", AttemptsAtLevel);
 
             return serializer.SerializedData;
         }
@@ -52,6 +54,7 @@ namespace Bopscotch.Data
             PointsScoredThisLevel = serializer.GetDataItem<int>("accrued-score");
             TotalCandiesOnLevel = serializer.GetDataItem<int>("total-candies");
             _candiesCollected = serializer.GetDataItem<int>("candies-collected");
+            AttemptsAtLevel = serializer.GetDataItem<int>("attempts-count");
         }
 
         public void UpdateFromItemCollection(Collectable collectedItem)
@@ -110,7 +113,8 @@ namespace Bopscotch.Data
             }
         }
 
-        private const string Level_Data_ID = "survival-level-data";
+        public const string Level_Data_ID = "survival-level-data";
+
         private const float Score_Speed_Scaler = 0.625f;
     }
 }

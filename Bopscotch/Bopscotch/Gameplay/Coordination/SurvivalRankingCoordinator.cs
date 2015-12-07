@@ -1,4 +1,6 @@
-﻿namespace Bopscotch.Gameplay.Coordination
+﻿using Bopscotch.Data;
+
+namespace Bopscotch.Gameplay.Coordination
 {
     public class SurvivalRankingCoordinator
     {
@@ -11,7 +13,7 @@
             _handleSequenceComplete = completionCallback;
         }
 
-        public void Activate()
+        public void DisplayRanking(SurvivalLevelData levelData)
         {
             _handleSequenceComplete();
         }

@@ -29,6 +29,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         private TutorialRunner _tutorialRunner;
         private SurvivalRankingCoordinator _rankingCoordinator;
         private bool _levelComplete;
+        private int _attemptsAtCurrentLevel;
 
         private SurvivalLevelData LevelData { get { return (SurvivalLevelData)_levelData; } }
         private SurvivalDataDisplay StatusDisplay { get { return (SurvivalDataDisplay)_statusDisplay; } set { _statusDisplay = value; } }
@@ -91,7 +92,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             switch (_player.LastEvent)
             {
                 case Player.PlayerEvent.Died: HandlePlayerDeath(); break;
-                case Player.PlayerEvent.Goal_Passed: _rankingCoordinator.Activate(); break;
+                case Player.PlayerEvent.Goal_Passed: _rankingCoordinator.DisplayRanking(LevelData); break;
             }
         }
 
@@ -99,12 +100,20 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         {
             Data.Profile.Save();
 
-            if (Data.Profile.Lives < 1) { _noLivesDialog.Activate(); }
-            else { RefreshScene(); }
+            if (Data.Profile.Lives < 1) 
+            { 
+                _noLivesDialog.Activate(); 
+            }
+            else 
+            {
+                _attemptsAtCurrentLevel++;
+                RefreshScene(); 
+            }
         }
 
         private void RefreshScene()
         {
+            NextSceneParameters.Set("attempt-count", _attemptsAtCurrentLevel);
             NextSceneType = typeof(SurvivalGameplayScene); 
             Deactivate();
         }
@@ -116,8 +125,15 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             Profile.CurrentAreaData.StepToNextLevel();
             Profile.Save();
 
-            if (Profile.CurrentAreaData.Completed) { CompleteArea(); }
-            else { RefreshScene(); }
+            if (Profile.CurrentAreaData.Completed) 
+            { 
+                CompleteArea(); 
+            }
+            else 
+            {
+                _attemptsAtCurrentLevel = 0;
+                RefreshScene(); 
+            }
         }
 
         private void CompleteArea()
@@ -156,9 +172,17 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         public override void Activate()
         {
             Profile.SyncPlayerLives();
+            if (LevelData != null)
+            {
+                ObjectsToSerialize.Remove(LevelData);
+            }
+
+            _attemptsAtCurrentLevel = NextSceneParameters.Get<int>("attempt-count");
 
             _levelComplete = false;
             _levelData = new SurvivalLevelData();
+            ((SurvivalLevelData)_levelData).AttemptsAtLevel = _attemptsAtCurrentLevel;
+
             ObjectsToSerialize.Add(LevelData);
             StatusDisplay.CurrentLevelData = LevelData;
             StatusDisplay.FreezeDisplayedScore = false;
@@ -342,6 +366,13 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         {
             if (_nextSceneType != typeof(SurvivalGameplayScene)) { MusicManager.StopMusic(); }
             base.CompleteDeactivation();
+        }
+
+        protected override void HandlePostDeserializationResaturation()
+        {
+            base.HandlePostDeserializationResaturation();
+
+            _attemptsAtCurrentLevel = ((SurvivalLevelData)_levelData).AttemptsAtLevel;
         }
 
         private const string Ready_Popup_Texture = "popup-get-ready";
