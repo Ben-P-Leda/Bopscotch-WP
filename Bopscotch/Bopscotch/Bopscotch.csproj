@@ -110,6 +110,7 @@
     <Compile Include="Gameplay\Controllers\PlayerTrackingCameraController.cs" />
     <Compile Include="Gameplay\Coordination\RacePowerUpCoordinator.cs" />
     <Compile Include="Gameplay\Coordination\RaceProgressCoordinator.cs" />
+    <Compile Include="Gameplay\Coordination\SurvivalRankingCoordinator.cs" />
     <Compile Include="Gameplay\LevelFactory.cs" />
     <Compile Include="Gameplay\Objects\Behaviours\ICanHaveGlowEffect.cs" />
     <Compile Include="Gameplay\Objects\Behaviours\IRaceRestartPoint.cs" />

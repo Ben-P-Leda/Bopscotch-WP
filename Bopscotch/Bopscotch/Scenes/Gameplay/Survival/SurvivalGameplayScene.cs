@@ -10,6 +10,7 @@ using Leda.Core.Game_Objects.Behaviours;
 
 using Bopscotch.Scenes.NonGame;
 using Bopscotch.Data;
+using Bopscotch.Gameplay.Coordination;
 using Bopscotch.Gameplay.Objects.Display.Survival;
 using Bopscotch.Gameplay.Objects.Characters.Player;
 using Bopscotch.Gameplay.Objects.Environment.Blocks;
@@ -26,6 +27,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         private PauseDialog _pauseDialog;
         private NoLivesDialog _noLivesDialog;
         private TutorialRunner _tutorialRunner;
+        private SurvivalRankingCoordinator _rankingCoordinator;
         private bool _levelComplete;
 
         private SurvivalLevelData LevelData { get { return (SurvivalLevelData)_levelData; } }
@@ -41,6 +43,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _pauseDialog = new PauseDialog();
             _noLivesDialog = new NoLivesDialog();
             _tutorialRunner = new TutorialRunner();
+            _rankingCoordinator = new SurvivalRankingCoordinator(HandleLevelCleared);
 
             _pauseDialog.InputSources.Add(_inputProcessor);
             _pauseDialog.ExitCallback = HandleDialogClose;
@@ -88,7 +91,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             switch (_player.LastEvent)
             {
                 case Player.PlayerEvent.Died: HandlePlayerDeath(); break;
-                case Player.PlayerEvent.Goal_Passed: HandleLevelCleared(); break;
+                case Player.PlayerEvent.Goal_Passed: _rankingCoordinator.Activate(); break;
             }
         }
 
