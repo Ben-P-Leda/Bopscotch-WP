@@ -99,6 +99,7 @@
     <Compile Include="Effects\Particles\OpaqueLayerParticleEffectManager.cs" />
     <Compile Include="Effects\Particles\ParticleEffectManager.cs" />
     <Compile Include="Effects\Popups\MappingManager.cs" />
+    <Compile Include="Effects\Popups\RankingStar.cs" />
     <Compile Include="Effects\SmashBlockItems\SmashBlockGlowingItem.cs" />
     <Compile Include="Effects\SmashBlockItems\SmashBlockItem.cs" />
     <Compile Include="Effects\SmashBlockItems\SmashBlockItemFactory.cs" />
@@ -273,6 +274,9 @@
     <None Include="Content\Music\title.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\SoundEffects\bomb-trigger.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\SoundEffects\carousel-spin.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -283,6 +287,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\SoundEffects\crate-smash.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\SoundEffects\bomb-explode.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\SoundEffects\freeze-speedo.xnb">
@@ -430,6 +437,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Collectables\golden-ticket.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Effects\award-stars.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Effects\Particles\fireball.xnb">

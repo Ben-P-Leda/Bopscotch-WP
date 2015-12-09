@@ -67,6 +67,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
                     break;
                 case "Quit":
                     NextSceneParameters.Set(TitleScene.First_Dialog_Parameter_Name, "start");
+                    NextSceneParameters.Set("music-already-running", false);
                     NextSceneType = typeof(TitleScene); 
                     Profile.PauseOnSceneActivation = false; 
                     Deactivate(); 
@@ -167,6 +168,8 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _pauseButton.Initialize();
             _pauseButton.DisplayEdgePositions = new Vector2(GameBase.SafeDisplayArea.X + GameBase.SafeDisplayArea.Width, 0.0f);
             _inputProcessor.AddButtonArea(PauseButton.In_Game_Button_Name, _pauseButton.Center, _pauseButton.Radius, true);
+
+            _rankingCoordinator.InitializeAwardDisplay();
         }
 
         public override void Activate()
@@ -189,6 +192,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             RaceAreaName = "";
 
             base.Activate();
+            _rankingCoordinator.RegisterDisplayComponents(RegisterGameObject);
 
             if (Profile.PauseOnSceneActivation)
             {
