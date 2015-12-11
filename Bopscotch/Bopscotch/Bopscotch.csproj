@@ -186,6 +186,7 @@
     <Compile Include="Interface\Dialogs\TitleScene\RateBuyReminderDialog.cs" />
     <Compile Include="Interface\Dialogs\TitleScene\ResetAreasCompleteDialog.cs" />
     <Compile Include="Interface\Dialogs\TitleScene\ResetAreasConfirmDialog.cs" />
+    <Compile Include="Interface\Dialogs\TitleScene\InfoMenuDialog.cs" />
     <Compile Include="Interface\Objects\ComponentSetDisplayAvatar.cs" />
     <Compile Include="Interface\Content\ImageContentWithGlow.cs" />
     <Compile Include="Interface\Content\AvatarContent.cs" />
