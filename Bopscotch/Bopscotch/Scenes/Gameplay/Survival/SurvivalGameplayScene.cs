@@ -44,7 +44,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _pauseDialog = new PauseDialog();
             _noLivesDialog = new NoLivesDialog();
             _tutorialRunner = new TutorialRunner();
-            _rankingCoordinator = new SurvivalRankingCoordinator(HandleLevelCleared, RegisterGameObject);
+            _rankingCoordinator = new SurvivalRankingCoordinator(CloseCurrentLevel, RegisterGameObject);
 
             _pauseDialog.InputSources.Add(_inputProcessor);
             _pauseDialog.ExitCallback = HandleDialogClose;
@@ -93,7 +93,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             switch (_player.LastEvent)
             {
                 case Player.PlayerEvent.Died: HandlePlayerDeath(); break;
-                case Player.PlayerEvent.Goal_Passed: _rankingCoordinator.DisplayRanking(LevelData); break;
+                case Player.PlayerEvent.Goal_Passed: HandleLevelCleared(); break;
             }
         }
 
@@ -122,10 +122,18 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         private void HandleLevelCleared()
         {
             StatusDisplay.FreezeDisplayedScore = true;
-            Profile.CurrentAreaData.UpdateCurrentLevelScore(LevelData.PointsScoredThisLevel);
+
+            Definitions.SurvivalRank rank = _rankingCoordinator.GetRankForLevel(LevelData);
+
+            Profile.CurrentAreaData.UpdateCurrentLevelResults(LevelData.PointsScoredThisLevel, rank);
             Profile.CurrentAreaData.StepToNextLevel();
             Profile.Save();
 
+            _rankingCoordinator.DisplayRanking(rank);
+        }
+
+        private void CloseCurrentLevel()
+        {
             if (Profile.CurrentAreaData.Completed) 
             { 
                 CompleteArea(); 

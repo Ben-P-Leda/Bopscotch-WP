@@ -118,10 +118,13 @@ namespace Bopscotch.Data
             return ticketData;
         }
 
-        public void UpdateCurrentLevelScore(int score)
+        public void UpdateCurrentLevelResults(int score, Definitions.SurvivalRank rank)
         {
             while (LevelScores.Count <= LastSelectedLevel) { LevelScores.Add(0); }
             LevelScores[LastSelectedLevel] = score;
+
+            while (LevelRanks.Count <= LastSelectedLevel) { LevelRanks.Add(Definitions.SurvivalRank.NotSet); }
+            if ((int)LevelRanks[LastSelectedLevel] < (int)rank) { LevelRanks[LastSelectedLevel] = rank; }
         }
 
         public void UpdateLevelSelection(int stepDirection)

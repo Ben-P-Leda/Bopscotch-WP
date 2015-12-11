@@ -63,10 +63,13 @@ namespace Bopscotch.Gameplay.Coordination
             _registerObject(_rankingLetter);
         }
 
-        public void DisplayRanking(SurvivalLevelData levelData)
+        public Definitions.SurvivalRank GetRankForLevel(SurvivalLevelData levelData)
         {
-            Definitions.SurvivalRank rank = CalculateRank(levelData.CandyCollectionFraction, levelData.AttemptsAtLevel);
+            return CalculateRank(levelData.CandyCollectionFraction, levelData.AttemptsAtLevel);
+        }
 
+        public void DisplayRanking(Definitions.SurvivalRank rank)
+        {
             _rankingLetter.FrameOffset = (int)rank;
 
             switch (rank)
