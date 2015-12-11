@@ -59,5 +59,12 @@ namespace Bopscotch
             Shell,
             Horn
         }
+
+        public enum SurvivalRank
+        {
+            A = 0,
+            B = 1,
+            C = 2
+        }
     }
 }

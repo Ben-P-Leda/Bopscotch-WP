@@ -99,7 +99,9 @@
     <Compile Include="Effects\Particles\OpaqueLayerParticleEffectManager.cs" />
     <Compile Include="Effects\Particles\ParticleEffectManager.cs" />
     <Compile Include="Effects\Popups\MappingManager.cs" />
-    <Compile Include="Effects\Popups\RankingStar.cs" />
+    <Compile Include="Effects\Popups\Ranking\RankingLetter.cs" />
+    <Compile Include="Effects\Popups\Ranking\RankingPopupBase.cs" />
+    <Compile Include="Effects\Popups\Ranking\RankingStar.cs" />
     <Compile Include="Effects\SmashBlockItems\SmashBlockGlowingItem.cs" />
     <Compile Include="Effects\SmashBlockItems\SmashBlockItem.cs" />
     <Compile Include="Effects\SmashBlockItems\SmashBlockItemFactory.cs" />
@@ -455,6 +457,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Effects\popups.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Effects\ranking-letters.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Flags\flag-checkpoint.xnb">

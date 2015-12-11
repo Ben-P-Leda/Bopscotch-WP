@@ -44,7 +44,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _pauseDialog = new PauseDialog();
             _noLivesDialog = new NoLivesDialog();
             _tutorialRunner = new TutorialRunner();
-            _rankingCoordinator = new SurvivalRankingCoordinator(HandleLevelCleared);
+            _rankingCoordinator = new SurvivalRankingCoordinator(HandleLevelCleared, RegisterGameObject);
 
             _pauseDialog.InputSources.Add(_inputProcessor);
             _pauseDialog.ExitCallback = HandleDialogClose;
@@ -169,16 +169,13 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _pauseButton.DisplayEdgePositions = new Vector2(GameBase.SafeDisplayArea.X + GameBase.SafeDisplayArea.Width, 0.0f);
             _inputProcessor.AddButtonArea(PauseButton.In_Game_Button_Name, _pauseButton.Center, _pauseButton.Radius, true);
 
-            _rankingCoordinator.InitializeAwardDisplay();
+            _rankingCoordinator.Initialize();
         }
 
         public override void Activate()
         {
             Profile.SyncPlayerLives();
-            if (LevelData != null)
-            {
-                ObjectsToSerialize.Remove(LevelData);
-            }
+            if (LevelData != null) { ObjectsToSerialize.Remove(LevelData); }
 
             _attemptsAtCurrentLevel = NextSceneParameters.Get<int>("attempt-count");
 
@@ -192,7 +189,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             RaceAreaName = "";
 
             base.Activate();
-            _rankingCoordinator.RegisterDisplayComponents(RegisterGameObject);
+            _rankingCoordinator.Reset();
 
             if (Profile.PauseOnSceneActivation)
             {

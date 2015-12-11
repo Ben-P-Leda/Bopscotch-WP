@@ -322,9 +322,15 @@
 
   <sequence name="rock" type="transformation" loops="yes">
     <keyframes>
-      <keyframe duration="125" rotation="20.0" scale="1.0" />
-      <keyframe duration="250" rotation="-20.0" scale="1.0" />
-      <keyframe duration="125" rotation="0.0" scale="1.0" />
+      <keyframe duration="250" rotation="10.0" scale="1.0" />
+      <keyframe duration="500" rotation="-10.0" scale="1.0" />
+      <keyframe duration="250" rotation="0.0" scale="1.0" />
+    </keyframes>
+  </sequence>
+
+  <sequence name="hold" type="transformation" loops="no">
+    <keyframes>
+      <keyframe duration="1000" rotation="0.0" scale="1.0" />
     </keyframes>
   </sequence>
 

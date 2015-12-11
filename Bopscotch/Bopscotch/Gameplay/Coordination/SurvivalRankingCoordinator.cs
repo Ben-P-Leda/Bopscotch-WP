@@ -1,89 +1,90 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
+using Leda.Core;
 using Leda.Core.Gamestate_Management;
+using Leda.Core.Game_Objects.Behaviours;
 
+using Bopscotch.Interface;
 using Bopscotch.Data;
-using Bopscotch.Effects.Popups;
+using Bopscotch.Effects.Popups.Ranking;
 
 namespace Bopscotch.Gameplay.Coordination
 {
-    public class SurvivalRankingCoordinator
+    public class SurvivalRankingCoordinator : ISimpleRenderable
     {
         public delegate void RankSequenceCallback();
 
-        private RankSequenceCallback _handleSequenceComplete;
+        private Scene.ObjectRegistrationHandler _registerObject;
         private RankingStar[] _rankingStars;
+        private RankingLetter _rankingLetter;
 
-        public SurvivalRankingCoordinator(RankSequenceCallback completionCallback)
+        public bool Visible { get; set; }
+        public int RenderLayer { get { return Render_Layer; } set { } }
+
+        public SurvivalRankingCoordinator(RankSequenceCallback completionCallback, Scene.ObjectRegistrationHandler registrationHandler)
         {
-            _handleSequenceComplete = completionCallback;
+            _registerObject = registrationHandler;
 
             _rankingStars = new RankingStar[Ranking_Star_Count];
             for (int i = 0; i < Ranking_Star_Count; i++)
             {
                 _rankingStars[i] = new RankingStar();
             }
+
+            _rankingLetter = new RankingLetter();
+            _rankingLetter.NextAction = completionCallback;
         }
 
-        public void InitializeAwardDisplay()
+        public void Initialize()
         {
             for (int i = 0; i < Ranking_Star_Count; i++)
             {
                 _rankingStars[i].Initialize();
                 _rankingStars[i].FrameOffset = i;
             }
+
+            _rankingLetter.Initialize();
         }
 
-        public void RegisterDisplayComponents(Scene.ObjectRegistrationHandler registerObject)
+        public void Reset()
         {
+            Visible = false;
+
+            _registerObject(this);
+
             for (int i = 0; i < Ranking_Star_Count; i++)
             {
                 _rankingStars[i].Reset();
-                registerObject(_rankingStars[i]);
+                _registerObject(_rankingStars[i]);
             }
+
+            _rankingLetter.Reset();
+            _registerObject(_rankingLetter);
         }
 
         public void DisplayRanking(SurvivalLevelData levelData)
         {
-            int rank = CalculateRank(levelData.CandyCollectionFraction, levelData.AttemptsAtLevel);
+            Definitions.SurvivalRank rank = CalculateRank(levelData.CandyCollectionFraction, levelData.AttemptsAtLevel);
 
-            if (rank < 1)
+            _rankingLetter.FrameOffset = (int)rank;
+
+            switch (rank)
             {
-                _handleSequenceComplete();
+                case Definitions.SurvivalRank.A: DisplayForRankA(); break;
+                case Definitions.SurvivalRank.B: DisplayForRankB(); break;
+                default: DisplayForRankC(); break;
             }
-            else
-            {
 
-                switch (rank)
-                {
-                    case 1: DisplayForRankOne(); break;
-                    case 2: DisplayForRankTwo(); break;
-                    case 3: DisplayForRankThree(); break;
-                }
+            Visible = true;
 
-                _rankingStars[0].Activate();
-            }
+            _rankingStars[0].Activate();
         }
 
-        private void DisplayForRankOne()
-        {
-            _rankingStars[0].DisplayPosition = Definitions.Back_Buffer_Center;
-            _rankingStars[0].NextAction = _handleSequenceComplete;
-        }
-
-        private void DisplayForRankTwo()
-        {
-            _rankingStars[1].DisplayPosition = Definitions.Back_Buffer_Center + new Vector2(Definitions.Grid_Cell_Pixel_Size, Display_Line);
-            _rankingStars[1].NextAction = _handleSequenceComplete;
-
-            _rankingStars[0].DisplayPosition = Definitions.Back_Buffer_Center + new Vector2(-Definitions.Grid_Cell_Pixel_Size, Display_Line);
-            _rankingStars[0].NextAction = _rankingStars[1].Activate;
-        }
-
-        private void DisplayForRankThree()
+        private void DisplayForRankA()
         {
             _rankingStars[2].DisplayPosition = Definitions.Back_Buffer_Center + new Vector2(0.0f, Display_Line - (Definitions.Grid_Cell_Pixel_Size * 0.5f));
-            _rankingStars[2].NextAction = _handleSequenceComplete;
+            _rankingStars[2].NextAction = _rankingLetter.Activate;
 
             _rankingStars[1].DisplayPosition = Definitions.Back_Buffer_Center + new Vector2(Definitions.Grid_Cell_Pixel_Size * 2.0f, Display_Line);
             _rankingStars[1].NextAction = _rankingStars[2].Activate;
@@ -92,22 +93,41 @@ namespace Bopscotch.Gameplay.Coordination
             _rankingStars[0].NextAction = _rankingStars[1].Activate;
         }
 
-        private int CalculateRank(float candyCollectionFraction, int livesUsed)
+        private void DisplayForRankB()
         {
-            if ((candyCollectionFraction >= Rank_Three_Candy_Fraction) && (livesUsed < Rank_Three_Lives_Used)) { return 3; }
-            else if ((candyCollectionFraction >= Rank_Two_Candy_Fraction) || (livesUsed < Rank_Two_Lives_Used)) { return 2; }
-            else if ((candyCollectionFraction >= Rank_One_Candy_Fraction) || (livesUsed < Rank_One_Lives_Used)) { return 1; }
+            _rankingStars[1].DisplayPosition = Definitions.Back_Buffer_Center + new Vector2(Definitions.Grid_Cell_Pixel_Size, Display_Line);
+            _rankingStars[1].NextAction = _rankingLetter.Activate;
 
-            return 0;
+            _rankingStars[0].DisplayPosition = Definitions.Back_Buffer_Center + new Vector2(-Definitions.Grid_Cell_Pixel_Size, Display_Line);
+            _rankingStars[0].NextAction = _rankingStars[1].Activate;
         }
 
+        private void DisplayForRankC()
+        {
+            _rankingStars[0].DisplayPosition = Definitions.Back_Buffer_Center + new Vector2(0.0f, Display_Line);
+            _rankingStars[0].NextAction = _rankingLetter.Activate;
+        }
+
+        private Definitions.SurvivalRank CalculateRank(float candyCollectionFraction, int livesUsed)
+        {
+            if ((candyCollectionFraction >= Rank_A_Candy_Fraction) && (livesUsed < Rank_A_Lives_Used)) { return Definitions.SurvivalRank.A; }
+            else if ((candyCollectionFraction >= Rank_B_Candy_Fraction) || (livesUsed < Rank_B_Lives_Used)) { return Definitions.SurvivalRank.B; }
+            else  { return Definitions.SurvivalRank.C; }
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            TextWriter.Write(Translator.Translation("Your Ranking:"), spriteBatch, new Vector2(Definitions.Back_Buffer_Center.X, Prompt_Line),
+                Color.White, Color.Black, 3.0f, 0.7f, 0.1f, TextWriter.Alignment.Center);
+        }
+
+        private const int Render_Layer = 4;
         private const int Ranking_Star_Count = 3;
-        private const float Rank_One_Candy_Fraction = 0.7f;
-        private const float Rank_Two_Candy_Fraction = 0.775f;
-        private const float Rank_Three_Candy_Fraction = 0.85f;
-        private const float Rank_One_Lives_Used = 10;
-        private const float Rank_Two_Lives_Used = 4;
-        private const float Rank_Three_Lives_Used = 1;
+        private const float Rank_B_Candy_Fraction = 0.75f;
+        private const float Rank_A_Candy_Fraction = 0.875f;
+        private const float Rank_B_Lives_Used = 4;
+        private const float Rank_A_Lives_Used = 1;
         private const float Display_Line = -100.0f;
+        private const float Prompt_Line = 150.0f;
     }
 }
