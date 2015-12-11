@@ -145,7 +145,7 @@ namespace Bopscotch.Scenes.NonGame
         {
             switch (selectedOption)
             {
-                // TODO: case: "Rankings": NextSceneType = typeof(RankingScene); Deactivate(); break;
+                case "Rankings": NextSceneType = typeof(RankingScene); Deactivate(); break;
                 case "About": NextSceneType = typeof(CreditsScene); Deactivate(); break;
                 case "More Games": OpenLedaPageOnStore(); ActivateDialog("main"); break;
                 case "Rate Game": RateGame(); break;

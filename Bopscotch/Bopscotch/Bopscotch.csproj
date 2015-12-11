@@ -173,6 +173,7 @@
     <Compile Include="Input\TouchControls.cs" />
     <Compile Include="Interface\Dialogs\HelpScenes\BackDialog.cs" />
     <Compile Include="Interface\Dialogs\Carousel\AvatarSelectionCarouselDialog.cs" />
+    <Compile Include="Interface\Dialogs\RankingScene\NavigationDialog.cs" />
     <Compile Include="Interface\Dialogs\StoreScene\ConsumablesDialog.cs" />
     <Compile Include="Interface\Dialogs\StoreScene\StorePurchaseDialog.cs" />
     <Compile Include="Interface\Dialogs\StoreScene\PurchaseCompleteDialog.cs" />
@@ -242,6 +243,7 @@
     <Compile Include="Scenes\Gameplay\Race\RaceGameplayScene.cs" />
     <Compile Include="Scenes\Gameplay\Race\RaceStartScene.cs" />
     <Compile Include="Scenes\Gameplay\Survival\SurvivalGameplayScene.cs" />
+    <Compile Include="Scenes\NonGame\RankingScene.cs" />
     <Compile Include="Scenes\NonGame\CreditsScene.cs" />
     <Compile Include="Scenes\NonGame\LoadingScene.cs" />
     <Compile Include="Scenes\BaseClasses\StaticSceneBase.cs" />
@@ -1215,6 +1217,7 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <Target Name="MonoGame_RemoveXnaAssemblies" AfterTargets="ImplicitlyExpandTargetFramework">
