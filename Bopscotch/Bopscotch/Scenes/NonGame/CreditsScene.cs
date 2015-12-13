@@ -19,6 +19,9 @@ namespace Bopscotch.Scenes.NonGame
             : base()
         {
             BackgroundTextureName = Background_Texture_Name;
+
+            Overlay.Tint = Color.Black;
+            Overlay.TintFraction = 0.5f;
         }
 
         public override void Initialize()
@@ -39,59 +42,18 @@ namespace Bopscotch.Scenes.NonGame
 
             foreach (XElement element in content.Element("elements").Elements("element"))
             {
-                switch (element.Attribute("type").Value)
-                {
-                    case "text": CreateTextElementFromXml(element); break;
-                    case "image": CreateImageElementFromXml(element); break;
-                }
+                CreateTextElementFromXml(element);
             }
         }
 
         private TextContent CreateTextElementFromXml(XElement source)
         {
-            TextContent element = new TextContent(
-                Translator.Translation(source.Value.Trim()),
-                new Vector2((float)source.Attribute("x-position"), (float)source.Attribute("y-position")));
 
-            element.RenderDepth = Element_Render_Depth;
-
-            if (source.Attribute("scale") != null) { element.Scale = (float)source.Attribute("scale"); }
-            if (source.Attribute("alignment") != null)
-            {
-                switch (source.Attribute("alignment").Value)
-                {
-                    case "left": element.Alignment = TextWriter.Alignment.Left; break;
-                    case "right": element.Alignment = TextWriter.Alignment.Right; break;
-                }
-            }
-
-            RegisterGameObject(element);
-
-            return element;
-        }
-
-        private ImageContent CreateImageElementFromXml(XElement source)
-        {
-            ImageContent element = new ImageContent(source.Value.Trim(), new Vector2((float)source.Attribute("x-position"), (float)source.Attribute("y-position")));
-
-            if (source.Attribute("scale") != null) { element.Scale = (float)source.Attribute("scale"); }
-
-            if (source.Element("frame") != null)
-            {
-                element.Frame = new Rectangle((int)source.Element("frame").Attribute("x"), (int)source.Element("frame").Attribute("y"),
-                    (int)source.Element("frame").Attribute("width"), (int)source.Element("frame").Attribute("height"));
-            }
-
-            if (source.Element("origin") != null)
-            {
-                element.Origin = new Vector2((float)source.Element("origin").Attribute("x"), (float)source.Element("origin").Attribute("y"));
-            }
-
-            element.RenderDepth = Element_Render_Depth;
-
-            RegisterGameObject(element);
-
-            return element;
+            return CreateTextElement(
+                source.Value.Trim(),
+                new Vector2((float)source.Attribute("x-position"), (float)source.Attribute("y-position")),
+                TextWriter.Alignment.Center,
+                (float)source.Attribute("scale"));
         }
 
         private void HandleBackDialogDismiss(string buttonCaption)

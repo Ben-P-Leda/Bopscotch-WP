@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 
 using Leda.Core.Game_Objects.Controllers;
 
+using Bopscotch.Effects;
 using Bopscotch.Scenes.BaseClasses;
 using Bopscotch.Interface;
 using Bopscotch.Interface.Content;
@@ -15,18 +16,15 @@ namespace Bopscotch.Scenes.NonGame
     {
         private MotionController _motionController;
 
-        protected bool _maintainsTitleSceneMusic;
-        protected string _contentFileName;
         protected ButtonDialog Dialog { private get; set; }
+        protected FullScreenColourOverlay Overlay { get; private set; }
 
         public ContentSceneWithControlDialog()
             : base()
         {
             _motionController = new MotionController();
 
-            RegisterGameObject(new Effects.FullScreenColourOverlay() { Tint = Color.Black, TintFraction = 0.5f });
-
-            _maintainsTitleSceneMusic = true;            
+            Overlay = new FullScreenColourOverlay();
         }
 
         public override void Initialize()
@@ -39,6 +37,8 @@ namespace Bopscotch.Scenes.NonGame
                 _motionController.AddMobileObject(Dialog);
                 RegisterGameObject(Dialog);
             }
+
+            RegisterGameObject(Overlay);
         }
 
         protected override void Reset()
@@ -71,7 +71,5 @@ namespace Bopscotch.Scenes.NonGame
 
             if (CurrentState == Status.Active) { Dialog.Cancel(); }
         }
-
-        protected const float Element_Render_Depth = 0.5f;
     }
 }
