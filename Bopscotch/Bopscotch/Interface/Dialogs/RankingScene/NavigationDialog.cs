@@ -3,8 +3,6 @@ using System.Xml;
 using System.Xml.Linq;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Phone.Tasks;
 
 namespace Bopscotch.Interface.Dialogs.RankingScene
 {

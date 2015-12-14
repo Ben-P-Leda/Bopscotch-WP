@@ -169,9 +169,17 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
 
         private void DrawCurrentLevelSelection(SpriteBatch spriteBatch)
         {
-            Definitions.SurvivalRank rank = Data.Profile.CurrentAreaData.LevelRanks[Data.Profile.CurrentAreaData.LastSelectedLevel];
-            int rankValue = rank < 0 ? 0 : 3 - (int)rank;
-            float rankingSpace = rank < 0 ? Star_Dest_Frame_Side_Length : ((rankValue + 0.5f) * Star_Dest_Frame_Side_Length * 2.0f);
+            int rankValue = 0;
+            float rankingSpace = Star_Dest_Frame_Side_Length;
+
+            if ((Data.Profile.CurrentAreaData.Name != "Tutorial")
+                && (Data.Profile.CurrentAreaData.LevelRanks != null)
+                && (Data.Profile.CurrentAreaData.LevelRanks.Count >= Data.Profile.CurrentAreaData.LastSelectedLevel))
+            {
+                Definitions.SurvivalRank rank = Data.Profile.CurrentAreaData.LevelRanks[Data.Profile.CurrentAreaData.LastSelectedLevel];
+                rankValue = rank < 0 ? 0 : 3 - (int)rank;
+                rankingSpace = rank < 0 ? Star_Dest_Frame_Side_Length : ((rankValue + 0.5f) * Star_Dest_Frame_Side_Length * 2.0f);
+            }
 
             string currentLevelText = Translator.Translation("Level [N]").Replace("[N]", (Data.Profile.CurrentAreaData.LastSelectedLevel + 1).ToString());
             float currentLevelTextWidth = TextWriter.CalculateTextDimensions(currentLevelText, 0.75f).X;

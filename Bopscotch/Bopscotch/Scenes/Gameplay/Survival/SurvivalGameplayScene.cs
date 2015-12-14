@@ -123,13 +123,20 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         {
             StatusDisplay.FreezeDisplayedScore = true;
 
-            Definitions.SurvivalRank rank = _rankingCoordinator.GetRankForLevel(LevelData);
+            if (Profile.CurrentAreaData.Name == "Tutorial")
+            {
+                CloseCurrentLevel();
+            }
+            else
+            {
+                Definitions.SurvivalRank rank = _rankingCoordinator.GetRankForLevel(LevelData);
 
-            Profile.CurrentAreaData.UpdateCurrentLevelResults(LevelData.PointsScoredThisLevel, rank);
-            Profile.CurrentAreaData.StepToNextLevel();
-            Profile.Save();
+                Profile.CurrentAreaData.UpdateCurrentLevelResults(LevelData.PointsScoredThisLevel, rank);
+                Profile.CurrentAreaData.StepToNextLevel();
+                Profile.Save();
 
-            _rankingCoordinator.DisplayRanking(rank);
+                _rankingCoordinator.DisplayRanking(rank);
+            }
         }
 
         private void CloseCurrentLevel()

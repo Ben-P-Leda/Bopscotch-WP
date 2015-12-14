@@ -6,10 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Leda.Core;
 using Leda.Core.Asset_Management;
 
-#if WINDOWS_PHONE
-using Microsoft.Xna.Framework.GamerServices;
-#endif
-
 namespace Bopscotch
 {
     public class Game1 : GameBase
