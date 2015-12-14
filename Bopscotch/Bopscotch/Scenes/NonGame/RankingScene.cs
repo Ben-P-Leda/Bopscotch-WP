@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 
 using Leda.Core;
 using Leda.Core.Asset_Management;
+using Leda.Core.Timing;
 
 using Bopscotch.Data;
 using Bopscotch.Scenes.BaseClasses;
@@ -17,11 +18,15 @@ namespace Bopscotch.Scenes.NonGame
     {
         private string _selectedArea;
         private NavigationDialog _navigationDialog;
+        private Timer _faderTimer;
+        private bool _fadingOut;
+        private bool _fadeInProgress;
 
         public RankingScene()
             : base()
         {
             _selectedArea = "Hilltops";
+            _faderTimer = new Timer("", CompleteFadeTransition);
 
             BackgroundTextureName = Background_Texture_Name;
 
@@ -29,6 +34,24 @@ namespace Bopscotch.Scenes.NonGame
             Overlay.TintFraction = 0.0f;
             Overlay.RenderLayer = 4;
             Overlay.RenderDepth = 0.99999f;
+
+            GlobalTimerController.GlobalTimer.RegisterUpdateCallback(_faderTimer.Tick);
+        }
+
+        private void CompleteFadeTransition()
+        {
+            if (_fadingOut)
+            {
+                CreateContentForSelectedArea();
+                _fadingOut = false;
+                _faderTimer.NextActionDuration = Page_Fade_Duration;
+            }
+            else
+            {
+                Overlay.TintFraction = 0.0f;
+                _fadeInProgress = false;
+                _navigationDialog.PagingComplete = true;
+            }
         }
 
         public override void Initialize()
@@ -53,13 +76,21 @@ namespace Bopscotch.Scenes.NonGame
         private void HandlePageChange(string areaName)
         {
             _selectedArea = areaName;
-            CreateContentForSelectedArea();
-            _navigationDialog.PagingComplete = true;
+
+            _fadeInProgress = true;
+            _fadingOut = true;
+            _faderTimer.NextActionDuration = Page_Fade_Duration;
         }
 
         public override void Activate()
         {
             base.Activate();
+
+            _faderTimer.Reset();
+            _fadingOut = false;
+            _fadeInProgress = false;
+
+            Overlay.TintFraction = 0.0f;
 
             CreateContentForSelectedArea();
         }
@@ -130,6 +161,16 @@ namespace Bopscotch.Scenes.NonGame
             }
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            if (_fadeInProgress)
+            {
+                Overlay.TintFraction = _fadingOut ? _faderTimer.CurrentActionProgress : 1.0f - _faderTimer.CurrentActionProgress;
+            }
+
+            base.Update(gameTime);
+        }
+
         private const string Background_Texture_Name = "background-4";
         private const float Title_Y_Position = 10.0f;
         private const float Table_Top_Y = 90.0f;
@@ -137,5 +178,6 @@ namespace Bopscotch.Scenes.NonGame
         private const float Rank_Offset = 300.0f;
         private const float Stars_Offset = 400.0f;
         private const float Vertical_Offset = 12.5f;
+        private const float Page_Fade_Duration = 200.0f;
     }
 }
