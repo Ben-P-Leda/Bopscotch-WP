@@ -105,28 +105,35 @@ namespace Bopscotch.Data
             List<XElement> areaData = new List<XElement>();
             string[] difficultyTagSequence = Difficulty_Sequence_CSV.Split(',');
 
-            foreach (KeyValuePair<string, AreaDataContainer> kvp in _areaLevelData)
+            try
             {
-                XElement el = new XElement("area-base");
-                el.Add(new XAttribute("name", kvp.Value.Name));
-                el.Add(new XAttribute("difficulty", kvp.Value.DifficultyTag));
-                el.Add(new XAttribute("speed", kvp.Value.SpeedStep));
-                el.Add(new XAttribute("texture", kvp.Value.SelectionTexture));
-                el.Add(new XAttribute("last", kvp.Value.LevelScores.Count));
-                el.Add(new XAttribute("locked", kvp.Value.Locked));
-                el.Add(new XAttribute("no-race", kvp.Value.DoesNotHaveRaceCourse));
-
-                for (int i = 0; i < difficultyTagSequence.Length; i++)
+                foreach (KeyValuePair<string, AreaDataContainer> kvp in _areaLevelData)
                 {
-                    if (difficultyTagSequence[i] == kvp.Value.DifficultyTag.ToLower())
-                    {
-                        el.Add(new XAttribute("index", i));
-                        break;
-                    }
-                }
+                    XElement el = new XElement("area-base");
+                    el.Add(new XAttribute("name", kvp.Value.Name));
+                    el.Add(new XAttribute("difficulty", kvp.Value.DifficultyTag));
+                    el.Add(new XAttribute("speed", kvp.Value.SpeedStep));
+                    el.Add(new XAttribute("texture", kvp.Value.SelectionTexture));
+                    el.Add(new XAttribute("last", kvp.Value.LevelScores.Count));
+                    el.Add(new XAttribute("locked", kvp.Value.Locked));
+                    el.Add(new XAttribute("no-race", kvp.Value.DoesNotHaveRaceCourse));
 
-                areaData.Add(el);
+                    for (int i = 0; i < difficultyTagSequence.Length; i++)
+                    {
+                        if (difficultyTagSequence[i] == kvp.Value.DifficultyTag.ToLower())
+                        {
+                            el.Add(new XAttribute("index", i));
+                            break;
+                        }
+                    }
+
+                    areaData.Add(el);
+                }
             }
+            catch (Exception ex)
+            {
+            }
+        
 
             return areaData.OrderBy(el => (int)el.Attribute("index")).ToList();
         }
@@ -483,7 +490,7 @@ namespace Bopscotch.Data
         private const string Profile_FileName = "profile.xml";
         private const string Default_Areas_FileName = "Content/Files/Levels/DefaultAreas.xml";
         private const string Additional_Areas_FileName = "Content/Files/Levels/AdditionalAreas.xml";
-        private const string Difficulty_Sequence_CSV = "n/a,easy,simple,medium,hard,insane";
+        private const string Difficulty_Sequence_CSV = "n/a,easy,simple,moderate,medium,hard,insane";
         private const int Days_Before_Reminders_Start = 3;
         private const int Days_Between_Reminders = 2;
         private const int Maximum_Life_Count = 10;
