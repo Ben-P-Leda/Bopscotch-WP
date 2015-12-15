@@ -3,10 +3,6 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Collections.Generic;
 
-#if WINDOWS_PHONE
-using Microsoft.Xna.Framework.GamerServices;
-#endif
-
 using Leda.Core;
 using Leda.Core.Game_Objects.Behaviours;
 using Leda.Core.Serialization;
