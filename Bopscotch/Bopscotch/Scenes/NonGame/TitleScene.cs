@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Phone.Tasks;
 
 using Leda.Core.Gamestate_Management;
@@ -358,13 +357,6 @@ namespace Bopscotch.Scenes.NonGame
             if ((!_titlePopup.AwaitingDismissal) && (CurrentState != Status.Deactivating) && (!_doNotExitOnTitleDismiss)) { ExitGame(); }
 
             base.HandleBackButtonPress();
-        }
-
-        public override void HandleFastResume()
-        {
-            base.HandleFastResume();
-
-             ActivateDialog("main");
         }
 
         private const string Background_Texture_Name = "background-1";
