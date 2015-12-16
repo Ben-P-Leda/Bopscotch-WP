@@ -195,6 +195,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _attemptsAtCurrentLevel = NextSceneParameters.Get<int>("attempt-count");
 
             _levelComplete = false;
+            _rankingCoordinator.Reset();
             _levelData = new SurvivalLevelData();
             ((SurvivalLevelData)_levelData).AttemptsAtLevel = _attemptsAtCurrentLevel;
 
@@ -204,7 +205,6 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             RaceAreaName = "";
 
             base.Activate();
-            _rankingCoordinator.Reset();
 
             if (Profile.PauseOnSceneActivation)
             {
@@ -226,6 +226,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             RegisterGameObject(_pauseButton);
             RegisterGameObject(_readyPopup);
             RegisterGameObject(_pauseDialog);
+            RegisterGameObject(_rankingCoordinator);
 
             if (Profile.CurrentAreaData.Name == "Tutorial") { RegisterGameObject(_tutorialRunner); }
             else { RegisterGameObject(_noLivesDialog); }
@@ -237,6 +238,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             {
                 case Player.PlayerEvent.Goal_Passed:
                     _levelComplete = true;
+                    _rankingCoordinator.LevelCompleted = true;
                     _playerEventPopup.StartPopupForEvent(Player.PlayerEvent.Goal_Passed);
                     SoundEffectManager.PlayEffect("level-clear");
                     break;
