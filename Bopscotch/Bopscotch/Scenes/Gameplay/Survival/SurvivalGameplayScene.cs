@@ -122,11 +122,10 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         private void HandleLevelCleared()
         {
             StatusDisplay.FreezeDisplayedScore = true;
+            _rankingCoordinator.LevelCompleted = true;
 
             Definitions.SurvivalRank rank = _rankingCoordinator.GetRankForLevel(LevelData);
-
             Profile.CurrentAreaData.UpdateCurrentLevelResults(LevelData.PointsScoredThisLevel, rank);
-            Profile.CurrentAreaData.StepToNextLevel();
             Profile.Save();
 
             if (Profile.CurrentAreaData.Name == "Tutorial")
@@ -141,6 +140,9 @@ namespace Bopscotch.Scenes.Gameplay.Survival
 
         private void CloseCurrentLevel()
         {
+            Profile.CurrentAreaData.StepToNextLevel();
+            Profile.Save();
+
             if (Profile.CurrentAreaData.Completed) 
             { 
                 CompleteArea(); 
@@ -208,7 +210,10 @@ namespace Bopscotch.Scenes.Gameplay.Survival
 
             if (Profile.PauseOnSceneActivation)
             {
-                EnablePause();
+                if (!_rankingCoordinator.LevelCompleted)
+                {
+                    EnablePause();
+                }
                 Profile.PauseOnSceneActivation = false;
             }
 
@@ -216,6 +221,10 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             {
                 ((PlayerMotionEngine)_player.MotionEngine).DifficultySpeedBoosterUnit = Profile.CurrentAreaData.SpeedStep;
                 _readyPopup.Activate(); 
+            }
+            else if (_rankingCoordinator.LevelCompleted)
+            {
+                HandleLevelCleared();
             }
         }
 
@@ -238,7 +247,6 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             {
                 case Player.PlayerEvent.Goal_Passed:
                     _levelComplete = true;
-                    _rankingCoordinator.LevelCompleted = true;
                     _playerEventPopup.StartPopupForEvent(Player.PlayerEvent.Goal_Passed);
                     SoundEffectManager.PlayEffect("level-clear");
                     break;

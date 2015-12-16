@@ -25,7 +25,7 @@ namespace Bopscotch.Gameplay.Coordination
         public string ID { get { return "ranking-coordinator"; } set { } }
         public bool Visible { get; set; }
         public int RenderLayer { get { return Render_Layer; } set { } }
-        public bool LevelCompleted { private get; set; }
+        public bool LevelCompleted { get; set; }
 
         public SurvivalRankingCoordinator(RankSequenceCallback completionCallback, Scene.ObjectRegistrationHandler registrationHandler)
         {
