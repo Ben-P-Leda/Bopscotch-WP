@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Phone.Tasks;
 
 namespace Bopscotch.Interface.Dialogs
@@ -45,7 +44,6 @@ namespace Bopscotch.Interface.Dialogs
                 case "Twitter": webUrl = "http://www.twitter.com/ledaentertain"; break;
                 case "Leda": webUrl = "http://www.ledaentertainment.com/games"; break;
                 case "Rate": return RateGame();
-                case "Full Game": Guide.ShowMarketplace(PlayerIndex.One); return true; break;
                 case "Back": return true;
             }
 
@@ -65,8 +63,8 @@ namespace Bopscotch.Interface.Dialogs
             marketplaceReviewTask.Show();
             Data.Profile.FlagAsRated();
 
-            if (!Data.Profile.AvatarCostumeUnlocked("Angel")) 
-            { 
+            if (!Data.Profile.AvatarCostumeUnlocked("Angel"))
+            {
                 Data.Profile.UnlockCostume("Angel");
                 _activeButtonCaption = "Rate";
                 return true;

@@ -6,10 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Leda.Core;
 using Leda.Core.Asset_Management;
 
-#if WINDOWS_PHONE
-using Microsoft.Xna.Framework.GamerServices;
-#endif
-
 namespace Bopscotch
 {
     public class Game1 : GameBase
@@ -38,6 +34,7 @@ namespace Bopscotch
             AddScene(new Scenes.NonGame.StartupLoadingScene());
             AddScene(new Scenes.NonGame.TitleScene());
             AddScene(new Scenes.NonGame.CreditsScene());
+            AddScene(new Scenes.NonGame.RankingScene());
             AddScene(new Scenes.NonGame.StoreScene());
             AddScene(new Scenes.NonGame.AvatarCustomisationScene());
             AddScene(new Scenes.Gameplay.Survival.SurvivalGameplayScene());
