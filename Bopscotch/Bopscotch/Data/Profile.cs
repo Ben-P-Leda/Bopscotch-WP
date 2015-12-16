@@ -105,35 +105,28 @@ namespace Bopscotch.Data
             List<XElement> areaData = new List<XElement>();
             string[] difficultyTagSequence = Difficulty_Sequence_CSV.Split(',');
 
-            try
+            foreach (KeyValuePair<string, AreaDataContainer> kvp in _areaLevelData)
             {
-                foreach (KeyValuePair<string, AreaDataContainer> kvp in _areaLevelData)
+                XElement el = new XElement("area-base");
+                el.Add(new XAttribute("name", kvp.Value.Name));
+                el.Add(new XAttribute("difficulty", kvp.Value.DifficultyTag));
+                el.Add(new XAttribute("speed", kvp.Value.SpeedStep));
+                el.Add(new XAttribute("texture", kvp.Value.SelectionTexture));
+                el.Add(new XAttribute("last", kvp.Value.LevelScores.Count));
+                el.Add(new XAttribute("locked", kvp.Value.Locked));
+                el.Add(new XAttribute("no-race", kvp.Value.DoesNotHaveRaceCourse));
+
+                for (int i = 0; i < difficultyTagSequence.Length; i++)
                 {
-                    XElement el = new XElement("area-base");
-                    el.Add(new XAttribute("name", kvp.Value.Name));
-                    el.Add(new XAttribute("difficulty", kvp.Value.DifficultyTag));
-                    el.Add(new XAttribute("speed", kvp.Value.SpeedStep));
-                    el.Add(new XAttribute("texture", kvp.Value.SelectionTexture));
-                    el.Add(new XAttribute("last", kvp.Value.LevelScores.Count));
-                    el.Add(new XAttribute("locked", kvp.Value.Locked));
-                    el.Add(new XAttribute("no-race", kvp.Value.DoesNotHaveRaceCourse));
-
-                    for (int i = 0; i < difficultyTagSequence.Length; i++)
+                    if (difficultyTagSequence[i] == kvp.Value.DifficultyTag.ToLower())
                     {
-                        if (difficultyTagSequence[i] == kvp.Value.DifficultyTag.ToLower())
-                        {
-                            el.Add(new XAttribute("index", i));
-                            break;
-                        }
+                        el.Add(new XAttribute("index", i));
+                        break;
                     }
-
-                    areaData.Add(el);
                 }
+
+                areaData.Add(el);
             }
-            catch (Exception ex)
-            {
-            }
-        
 
             return areaData.OrderBy(el => (int)el.Attribute("index")).ToList();
         }

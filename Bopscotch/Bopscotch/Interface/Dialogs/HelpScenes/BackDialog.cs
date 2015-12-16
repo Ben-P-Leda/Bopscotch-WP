@@ -63,8 +63,8 @@ namespace Bopscotch.Interface.Dialogs
             marketplaceReviewTask.Show();
             Data.Profile.FlagAsRated();
 
-            if (!Data.Profile.AvatarCostumeUnlocked("Angel")) 
-            { 
+            if (!Data.Profile.AvatarCostumeUnlocked("Angel"))
+            {
                 Data.Profile.UnlockCostume("Angel");
                 _activeButtonCaption = "Rate";
                 return true;
