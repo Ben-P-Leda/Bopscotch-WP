@@ -41,6 +41,8 @@ namespace Bopscotch.Data
             serializer.AddDataItem("play-state", CurrentPlayState);
             serializer.AddDataItem("accrued-score", PointsScoredThisLevel);
             serializer.AddDataItem("total-candies", TotalCandiesOnLevel);
+            serializer.AddDataItem("rank-a-fraction", RankACandyFraction);
+            serializer.AddDataItem("rank-b-fraction", RankBCandyFraction);
             serializer.AddDataItem("candies-collected", _candiesCollected);
             serializer.AddDataItem("attempts-count", AttemptsAtLevel);
 
@@ -55,6 +57,8 @@ namespace Bopscotch.Data
             CurrentPlayState = serializer.GetDataItem<PlayState>("play-state");
             PointsScoredThisLevel = serializer.GetDataItem<int>("accrued-score");
             TotalCandiesOnLevel = serializer.GetDataItem<int>("total-candies");
+            RankACandyFraction = serializer.GetDataItem<int>("rank-a-fraction");
+            RankBCandyFraction = serializer.GetDataItem<int>("rank-b-fraction");
             _candiesCollected = serializer.GetDataItem<int>("candies-collected");
             AttemptsAtLevel = serializer.GetDataItem<int>("attempts-count");
         }

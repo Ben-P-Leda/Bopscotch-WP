@@ -73,8 +73,9 @@ namespace Bopscotch.Gameplay
             }
             else
             {
-                RankACandyFraction = GetCandyFractionForRanking(levelData, Rank_A_Candy_Data_Element, Rank_A_Candy_Fraction);
-                RankBCandyFraction = GetCandyFractionForRanking(levelData, Rank_B_Candy_Data_Element, Rank_B_Candy_Fraction);
+                XElement rankFractionElement = levelData.Element(Rank_Fraction_Data_Element);
+                RankACandyFraction = GetCandyFractionForRanking(rankFractionElement, "a", Rank_A_Candy_Fraction);
+                RankBCandyFraction = GetCandyFractionForRanking(rankFractionElement, "b", Rank_B_Candy_Fraction);
             }
             
             WireUpCallElementFactoryCallbacks();
@@ -132,9 +133,16 @@ namespace Bopscotch.Gameplay
             return (int)levelData.Element(Race_Data_Element);
         }
 
-        private float GetCandyFractionForRanking(XElement levelData, string elementName, float defaultValue)
+        private float GetCandyFractionForRanking(XElement rankData, string attributeName, float defaultValue)
         {
-            return levelData.Element(elementName) != null ? (float)levelData.Element(elementName) : defaultValue;
+            float value = defaultValue;
+
+            if ((rankData != null) && (rankData.Attribute(attributeName) != null))
+            {
+                value = (float)rankData.Attribute(attributeName);
+            }
+
+            return value;
         }
 
         private void FinalizeLevelSetup(XElement levelData)
@@ -183,8 +191,7 @@ namespace Bopscotch.Gameplay
         private const string Content_Path = "Content";
         private const string Data_Root_Element = "leveldata";
         private const string Background_Data_Element = "background";
-        private const string Rank_A_Candy_Data_Element = "rank-a-candy-split";
-        private const string Rank_B_Candy_Data_Element = "rank-b-candy-split";
+        private const string Rank_Fraction_Data_Element = "rank-fractions";
         private const string Terrain_Data_Element = "terrain";
         private const string Player_Data_Element = "player";
         private const string Race_Data_Element = "race-laps";
