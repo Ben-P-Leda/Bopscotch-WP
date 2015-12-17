@@ -17,6 +17,8 @@ namespace Bopscotch.Data
         public string ID { get { return Level_Data_ID; } set { } }
         public int PointsScoredThisLevel { get; set; }
         public int TotalCandiesOnLevel { private get; set; }
+        public float RankACandyFraction { get; set; }
+        public float RankBCandyFraction { get; set; }
         public int AttemptsAtLevel { get; set; }
 
         public float CandyCollectionFraction { get { return _candiesCollected / TotalCandiesOnLevel; } }

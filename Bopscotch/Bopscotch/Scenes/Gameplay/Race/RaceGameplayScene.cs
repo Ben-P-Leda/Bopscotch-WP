@@ -54,7 +54,6 @@ namespace Bopscotch.Scenes.Gameplay.Race
 
         public bool AllLapsCompleted { get { return (_progressCoordinator.LapsCompleted >= _levelData.LapsToComplete); } }
 
-        //private Data.RaceLevelData LevelData { get { return (Data.RaceLevelData)_levelData; } }
         private RaceDataDisplay StatusDisplay { get { return (RaceDataDisplay)_statusDisplay; } set { _statusDisplay = value; } }
 
         public RaceGameplayScene()

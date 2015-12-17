@@ -34,7 +34,6 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         private bool _levelComplete;
         private int _attemptsAtCurrentLevel;
 
-        //private SurvivalLevelData LevelData { get { return (SurvivalLevelData)_levelData; } }
         private SurvivalDataDisplay StatusDisplay { get { return (SurvivalDataDisplay)_statusDisplay; } set { _statusDisplay = value; } }
 
         public SurvivalGameplayScene()
@@ -234,6 +233,8 @@ namespace Bopscotch.Scenes.Gameplay.Survival
         protected override void SetLevelMetrics(LevelFactory levelFactory)
         {
             _levelData.TotalCandiesOnLevel = levelFactory.TotalCandiesOnLevel;
+            _levelData.RankACandyFraction = levelFactory.RankACandyFraction;
+            _levelData.RankBCandyFraction = levelFactory.RankBCandyFraction;
         }
 
         protected override void RegisterStaticGameObjects()
