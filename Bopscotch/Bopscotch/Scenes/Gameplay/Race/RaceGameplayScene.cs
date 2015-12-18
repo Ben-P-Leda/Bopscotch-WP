@@ -47,9 +47,18 @@ namespace Bopscotch.Scenes.Gameplay.Race
         private int _startCoundown;
         private Timer _startSequenceTimer;
 
+        private Bopscotch.Gameplay.Objects.Characters.RaceOpponent _opponentMarker;
+
         public Communication.ICommunicator Communicator 
         { 
-            set { if (value is Communication.InterDeviceCommunicator) { _communicator = (Communication.InterDeviceCommunicator)value; } } 
+            set 
+            { 
+                if (value is Communication.InterDeviceCommunicator)
+                { 
+                    _communicator = (Communication.InterDeviceCommunicator)value;
+                    _opponentMarker.Communicator = _communicator;
+                } 
+            } 
         }
 
         public bool AllLapsCompleted { get { return (_progressCoordinator.LapsCompleted >= _levelData.LapsToComplete); } }
@@ -92,6 +101,8 @@ namespace Bopscotch.Scenes.Gameplay.Race
             _disconnectedDialog = new DisconnectedDialog();
             _disconnectedDialog.SelectionCallback = HandleDisconnectAcknowledge;
             _disconnectedDialog.InputSources.Add(_inputProcessor);
+
+            _opponentMarker = new Bopscotch.Gameplay.Objects.Characters.RaceOpponent();
         }
 
         private void HandlePlayerEventAnimationComplete()
@@ -251,6 +262,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
             base.RegisterStaticGameObjects();
 
             RegisterGameObject(_quitRaceButton);
+            RegisterGameObject(_opponentMarker);
         }
 
         protected override void SetInterfaceDisplayObjectsForGame()
@@ -517,13 +529,6 @@ namespace Bopscotch.Scenes.Gameplay.Race
         {
             ExitFollowingFocusLoss();
         }
-
-#if IOS
-		public override void HandleGameResigned()
-		{
-			ExitFollowingFocusLoss();
-		}
-#endif
 
         private void ExitFollowingFocusLoss()
         {

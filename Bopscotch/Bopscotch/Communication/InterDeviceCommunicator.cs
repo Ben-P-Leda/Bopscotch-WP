@@ -13,7 +13,6 @@ namespace Bopscotch.Communication
         private int _millisecondsToNextSend;
         private string _message;
         private string[] _expectedKeys;
-        private long _millisecondsSinceLastReceive;
         private int _lastReceivedTimestamp;
         private int _millisecondsSinceLastTimestampChange;
 
@@ -33,10 +32,12 @@ namespace Bopscotch.Communication
             set 
             {
                 Enabled = value;
-                if (value) { _millisecondsToNextSend = 0; _millisecondsSinceLastReceive = 0; }
+                if (value) { _millisecondsToNextSend = 0; MillisecondsSinceLastReceive = 0; }
                 else { if (_communicationHandler != null) { _communicationHandler.Close(); } _communicationHandler = null; }
             }
         }
+
+        public long MillisecondsSinceLastReceive { get; private set; }
 
         public string OwnPlayerRaceID { get; private set; }
         public string OtherPlayerRaceID { get; set; }
@@ -55,7 +56,7 @@ namespace Bopscotch.Communication
         {
             get
             {
-                if (_millisecondsSinceLastReceive > Connection_Loss_Timeout_In_Milliseconds) { return true; }
+                if (MillisecondsSinceLastReceive > Connection_Loss_Timeout_In_Milliseconds) { return true; }
                 if ((RaceInProgress) && (_millisecondsSinceLastTimestampChange > Connection_Loss_Timeout_In_Milliseconds))
                 {
                     return true;
@@ -118,7 +119,7 @@ namespace Bopscotch.Communication
 
             base.Update(gameTime);
 
-            _millisecondsSinceLastReceive += lastUpdateDuration;
+            MillisecondsSinceLastReceive += lastUpdateDuration;
 			if (RaceInProgress) { _millisecondsSinceLastTimestampChange += lastUpdateDuration; }
             _lastUpdateTime = gameTime.TotalGameTime;
         }
@@ -165,7 +166,7 @@ namespace Bopscotch.Communication
             CommsEventCallback = HandleCommsEvent;
             RaceInProgress = true;
 
-            _millisecondsSinceLastReceive = 0;
+            MillisecondsSinceLastReceive = 0;
             _lastReceivedTimestamp = 0;
             _millisecondsSinceLastTimestampChange = 0;
             _otherPlayerData = new OpponentRaceProgressCoordinator();
@@ -197,7 +198,7 @@ namespace Bopscotch.Communication
 
                     if (dataIsValid)
                     {
-                        _millisecondsSinceLastReceive = 0;
+                        MillisecondsSinceLastReceive = 0;
                         _otherPlayerData.Populate(elapsed, laps, lastCheckIndex, lastCheckTime, xpos, ypos);
 
                         if ((data.ContainsKey("pwr")) && (_powerUpTranslator.ContainsKey(data["pwr"].ToLower())))
@@ -224,7 +225,7 @@ namespace Bopscotch.Communication
                 }
                 else if ((!OtherPlayerData.ReadyToRace) && (data.ContainsKey("course")))
                 {
-                    _millisecondsSinceLastReceive = 0;
+                    MillisecondsSinceLastReceive = 0;
                 }
             }
         }
@@ -250,7 +251,7 @@ namespace Bopscotch.Communication
 
         public void ResetLastReceiveTime()
         {
-            _millisecondsSinceLastReceive = 0;
+            MillisecondsSinceLastReceive = 0;
         }
 
         private const int Default_Send_Interval = 100;
