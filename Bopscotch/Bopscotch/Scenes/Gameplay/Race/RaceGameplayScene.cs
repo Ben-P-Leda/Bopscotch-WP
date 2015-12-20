@@ -378,7 +378,6 @@ namespace Bopscotch.Scenes.Gameplay.Race
             }
         }
 
-
         private void HandleRaceGoalAchieved()
         {
             if (_exitTimer.CurrentActionProgress == 1.0f) { _exitTimer.NextActionDuration = Exit_Sequence_Duration_In_Milliseconds; }
