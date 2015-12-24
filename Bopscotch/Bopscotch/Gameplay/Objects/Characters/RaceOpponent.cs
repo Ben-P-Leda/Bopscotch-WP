@@ -16,8 +16,6 @@ namespace Bopscotch.Gameplay.Objects.Characters
     {
         private long _millisecondsSinceLastComms;
         private Vector2 _velocity;
-        private Vector2 _physicalPosition;
-        private Vector2 _difference;
 
         public Vector2 WorldPosition { get; set; }
         public bool WorldPositionIsFixed { get { return false; } }
@@ -35,41 +33,20 @@ namespace Bopscotch.Gameplay.Objects.Characters
         {
             _millisecondsSinceLastComms = 0;
             _velocity = Vector2.Zero;
-            _physicalPosition = Vector2.Zero;
-            _difference = Vector2.Zero;
 
             WorldPosition = Vector2.Zero;
         }
 
         public void Update(int millisecondsSinceLastUpdate)
         {
-            Vector2 currentPosition = ((OpponentRaceProgressCoordinator)Communicator.OtherPlayerData).PlayerWorldPosition + (_velocity * millisecondsSinceLastUpdate);
-
-            if (_physicalPosition == Vector2.Zero)
-            {
-                _physicalPosition = currentPosition;
-                WorldPosition = currentPosition;
-            }
-
             if (_millisecondsSinceLastComms > Communicator.MillisecondsSinceLastReceive)
             {
-                _difference = currentPosition - WorldPosition;
-
-                Vector2 step = (_difference / _millisecondsSinceLastComms) * 0.95f;
-                if (_velocity.X == 0)
-                {
-                    _velocity = step / 0.95f;
-                }
-                else
-                {
-                    _velocity = (_velocity * 0.5f) + (step * 0.5f);
-                }
+                Vector2 step = ((Communicator.OtherPlayerData.PlayerWorldPosition - WorldPosition) / _millisecondsSinceLastComms) * 0.95f;
+                _velocity = (_velocity * 0.5f) + (step * 0.5f);
             }
 
-            _physicalPosition += _velocity * millisecondsSinceLastUpdate;
+            WorldPosition += _velocity * millisecondsSinceLastUpdate;
             _millisecondsSinceLastComms = Communicator.MillisecondsSinceLastReceive;
-
-            WorldPosition = _physicalPosition + _difference;
         }
 
         public void Draw(SpriteBatch spriteBatch)

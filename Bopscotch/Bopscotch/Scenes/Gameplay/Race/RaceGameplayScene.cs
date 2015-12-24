@@ -246,6 +246,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
                 _player.PlayerEventCallback = HandlePlayerEvent;
                 ((PlayerMotionEngine)_player.MotionEngine).DifficultySpeedBoosterUnit = NextSceneParameters.Get<int>(Course_Speed_Parameter);
 
+                _opponentMarker.WorldPosition = _player.WorldPosition;
                 SetCoordinatorsForRace(NextSceneParameters.Get<string>(Course_Area_Parameter));
                 SetUpOpponentAttackEffects();
                 _waitingMessage.Activate();
