@@ -16,6 +16,10 @@ namespace Bopscotch.Gameplay.Objects.Characters
     {
         private long _millisecondsSinceLastComms;
         private Vector2 _velocity;
+        private Vector2 _expectedPosition;
+        private Vector2 _lastCommsPosition;
+        private int _packetsAtCurrentPosition;
+        private bool _isAlive;
 
         public Vector2 WorldPosition { get; set; }
         public bool WorldPositionIsFixed { get { return false; } }
@@ -37,16 +41,61 @@ namespace Bopscotch.Gameplay.Objects.Characters
             WorldPosition = Vector2.Zero;
         }
 
+        public void SetForRaceStart(Vector2 startPosition)
+        {
+            _expectedPosition = startPosition;
+            WorldPosition = startPosition;
+
+            _lastCommsPosition = startPosition;
+            _packetsAtCurrentPosition = 0;
+        }
+
         public void Update(int millisecondsSinceLastUpdate)
         {
             if (_millisecondsSinceLastComms > Communicator.MillisecondsSinceLastReceive)
             {
-                Vector2 step = ((Communicator.OtherPlayerData.PlayerWorldPosition - WorldPosition) / _millisecondsSinceLastComms) * 0.95f;
-                _velocity = (_velocity * 0.5f) + (step * 0.5f);
+                LogPositionUpdates();
+                UpdateLifeState();
+
+                if (_isAlive)
+                {
+                    Vector2 step = ((Communicator.OtherPlayerData.PlayerWorldPosition - _expectedPosition) / _millisecondsSinceLastComms) * 0.95f;
+                    _velocity = (_velocity * 0.5f) + (step * 0.5f);
+                }
             }
 
-            WorldPosition += _velocity * millisecondsSinceLastUpdate;
+            _expectedPosition += _velocity * millisecondsSinceLastUpdate;
             _millisecondsSinceLastComms = Communicator.MillisecondsSinceLastReceive;
+
+            WorldPosition = _expectedPosition;
+        }
+
+        private void LogPositionUpdates()
+        {
+            if (Communicator.OtherPlayerData.PlayerWorldPosition != _lastCommsPosition)
+            {
+                _lastCommsPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+                _packetsAtCurrentPosition = 0;
+            }
+            else
+            {
+                _packetsAtCurrentPosition++;
+            }
+        }
+
+        private void UpdateLifeState()
+        {
+            if ((_isAlive) && (_packetsAtCurrentPosition > 1))
+            {
+                _isAlive = false;
+                _velocity = Vector2.Zero;
+            }
+            else if ((!_isAlive) && (_packetsAtCurrentPosition < 1))
+            {
+                _isAlive = true;
+                _expectedPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+                WorldPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
