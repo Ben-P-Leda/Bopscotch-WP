@@ -64,11 +64,13 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
         public void StartMovement()
         {
-            _clientVelocity = new Vector2(Player.PlayerMotionEngine.Minimum_Movement_Speed * _restartDirection, 0.0f);
+            _clientVelocity = new Vector2(Player.PlayerMotionEngine.Minimum_Movement_Speed * _restartDirection, 0.0f) * 0.95f;
         }
 
         public void Update(int millisecondsSinceLastUpdate)
         {
+            CheckForRestart(millisecondsSinceLastUpdate);
+
             if (_millisecondsSinceLastComms > Communicator.MillisecondsSinceLastReceive)
             {
                 LogPositionUpdates();
@@ -81,8 +83,6 @@ namespace Bopscotch.Gameplay.Objects.Characters
                     _peerVelocity = (_peerVelocity * 0.5f) + (step * 0.5f);
                 }
             }
-
-            CheckForRestart(millisecondsSinceLastUpdate);
 
             _expectedPosition += _peerVelocity * millisecondsSinceLastUpdate;
             _millisecondsSinceLastComms = Communicator.MillisecondsSinceLastReceive;
@@ -122,7 +122,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
             if ((Visible) && (_packetsAtCurrentPosition > 1))
             {
                 _peerVelocity = Vector2.Zero;
-                _millisecondsToRestart = RaceProgressCoordinator.Race_Resurrect_Sequence_Duration_In_Milliseconds - (int)_millisecondsSinceLastComms;
+                _millisecondsToRestart = RaceProgressCoordinator.Race_Resurrect_Sequence_Duration_In_Milliseconds;
 
                 Visible = false;
             }
@@ -130,6 +130,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
             {
                 _expectedPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
                 _clientVelocity = Vector2.Zero;
+                _peerVelocity = Vector2.Zero;
 
                 WorldPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
                 Visible = true;
