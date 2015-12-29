@@ -169,7 +169,7 @@ namespace Bopscotch.Interface.Dialogs.RaceJoinScene
             {
                 // otherwise, start sending invites to the selected opponent
                 _selectedOpponent = selected;
-                _communicator.Message = string.Concat("cmd=invite&target=", _selectedOpponent.ID);
+                _communicator.Message = string.Concat("cmd=invite&target=", _selectedOpponent.ID, "&name=", Data.Profile.Settings.RaceName);
 
                 // Some stuff to allow testing...
                 if ((Data.Profile.Settings.TestingRaceMode) && (selected.Name == "test-opp")) { DismissWithReturnValue(selected.ID); }
@@ -223,7 +223,7 @@ namespace Bopscotch.Interface.Dialogs.RaceJoinScene
         private bool RequestIsValid(Dictionary<string, string> data)
         {
             return ((data.ContainsKey("id")) && (data.ContainsKey("cmd")) && 
-                ((_opponents.ContainsKey(data["id"])) || (data["cmd"] == "join") || (data["cmd"] == "accept")));
+                ((_opponents.ContainsKey(data["id"])) || (data["cmd"] == "join") || (data["cmd"] == "invite")));
         }
 
         private bool RequestIsFromSelectedOpponent(Dictionary<string, string> data)
@@ -257,6 +257,8 @@ namespace Bopscotch.Interface.Dialogs.RaceJoinScene
         {
             if (RequestIsValid(data))
             {
+                System.Diagnostics.Debug.WriteLine(data);
+
                 switch (data["cmd"])
                 {
                     case "join": HandleJoinRequest(data); break;
@@ -300,7 +302,10 @@ namespace Bopscotch.Interface.Dialogs.RaceJoinScene
 
         private void HandleInvitationRequest(Dictionary<string, string> data)
         {
-            if (RequestIsForUs(data) && (!_opponents.ContainsKey(data["id"]))) { AddOpponentToList(data["id"], data["name"]); }
+            if (RequestIsForUs(data) && (!_opponents.ContainsKey(data["id"]))) 
+            { 
+                AddOpponentToList(data["id"], data["name"]); 
+            }
 
             // Request is valid and targeting us, switch inviting opponent to "is inviting" state
             if ((RequestIsForUs(data)) && (!RequestIsFromSelectedOpponent(data)))
