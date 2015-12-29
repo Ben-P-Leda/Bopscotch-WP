@@ -451,6 +451,10 @@ namespace Bopscotch.Scenes.Gameplay.Race
             if ((CurrentState == Status.Active) && (!_paused) && (!Data.Profile.Settings.TestingRaceMode))
             {
                 _paused = true;
+                if (_quitRaceDialog.Active)
+                {
+                    _quitRaceDialog.DismissWithReturnValue("cancel");
+                }
                 _disconnectedDialog.Activate();
             }
         }
@@ -509,8 +513,21 @@ namespace Bopscotch.Scenes.Gameplay.Race
 
         protected override void HandleBackButtonPress()
         {
-            if ((CurrentState == Status.Active) && (_quitRaceDialog.Active)) { _quitRaceDialog.DismissWithReturnValue("cancel"); }
-            else { StartQuitRaceSequence(); }
+            if (!_disconnectedDialog.Active)
+            {
+                if ((CurrentState == Status.Active) && (_quitRaceDialog.Active))
+                {
+                    _quitRaceDialog.DismissWithReturnValue("cancel");
+                }
+                else
+                {
+                    StartQuitRaceSequence();
+                }
+            }
+            else
+            {
+                _disconnectedDialog.DismissWithReturnValue("OK");
+            }
         }
 
         protected override void CompleteDeactivation()
