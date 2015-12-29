@@ -13,6 +13,7 @@ using Leda.Core.Animation.Skeletons;
 using Bopscotch.Communication;
 using Bopscotch.Gameplay.Coordination;
 using Bopscotch.Data.Avatar;
+using Bopscotch.Effects.Particles;
 
 namespace Bopscotch.Gameplay.Objects.Characters
 {
@@ -33,7 +34,8 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private Vector2 _displayPosition;
 
         public InterDeviceCommunicator Communicator { private get; set; }
-        public IMotionEngine MotionEngine { get { return null; } } 
+        public IMotionEngine MotionEngine { get { return null; } }
+        public AdditiveLayerParticleEffectManager ParticleManager { private get; set; }
 
 
         public RaceOpponent()
@@ -157,6 +159,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 _millisecondsToRestart = RaceProgressCoordinator.Race_Resurrect_Sequence_Duration_In_Milliseconds - (int)_millisecondsSinceLastComms;
 
                 Visible = false;
+                ParticleManager.LaunchCloudBurst(this);
             }
             else if ((!Visible) && (_packetsAtCurrentPosition < 1))
             {

@@ -103,6 +103,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
             _disconnectedDialog.InputSources.Add(_inputProcessor);
 
             _opponentMarker = new Bopscotch.Gameplay.Objects.Characters.RaceOpponent();
+            _opponentMarker.ParticleManager = _additiveParticleEffectManager;
         }
 
         private void HandlePlayerEventAnimationComplete()
