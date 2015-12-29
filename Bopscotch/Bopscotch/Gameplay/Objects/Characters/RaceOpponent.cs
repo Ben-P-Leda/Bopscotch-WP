@@ -26,6 +26,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private int _millisecondsToRestart;
         private int _currentLap;
         private int _currentCheckpoint;
+        private float _fadeFraction;
 
         public Vector2 WorldPosition { get; set; }
         public bool WorldPositionIsFixed { get { return false; } }
@@ -41,6 +42,8 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
         public void Reset()
         {
+            _fadeFraction = 0.0f;
+
             _currentLap = 0;
             _currentCheckpoint = 0;
             _millisecondsSinceLastComms = 0;
@@ -64,13 +67,11 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
         public void StartMovement()
         {
-            _clientVelocity = new Vector2(Player.PlayerMotionEngine.Minimum_Movement_Speed * _restartDirection, 0.0f) * 0.95f;
+            _clientVelocity = new Vector2(Player.PlayerMotionEngine.Minimum_Movement_Speed * _restartDirection, 0.0f) * 0.925f;
         }
 
         public void Update(int millisecondsSinceLastUpdate)
         {
-            CheckForRestart(millisecondsSinceLastUpdate);
-
             if (_millisecondsSinceLastComms > Communicator.MillisecondsSinceLastReceive)
             {
                 LogPositionUpdates();
@@ -79,15 +80,20 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
                 if (Visible)
                 {
-                    Vector2 step = ((Communicator.OtherPlayerData.PlayerWorldPosition - _expectedPosition) / _millisecondsSinceLastComms) * 0.95f;
+                    Vector2 step = ((Communicator.OtherPlayerData.PlayerWorldPosition - _expectedPosition) / _millisecondsSinceLastComms);
                     _peerVelocity = (_peerVelocity * 0.5f) + (step * 0.5f);
                 }
+            }
+            else
+            {
+                CheckForRestart(millisecondsSinceLastUpdate);
             }
 
             _expectedPosition += _peerVelocity * millisecondsSinceLastUpdate;
             _millisecondsSinceLastComms = Communicator.MillisecondsSinceLastReceive;
 
             UpdateClientVelocity();
+            SetTintFromPacketLatency();
 
             WorldPosition += _clientVelocity * millisecondsSinceLastUpdate;
         }
@@ -122,7 +128,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
             if ((Visible) && (_packetsAtCurrentPosition > 1))
             {
                 _peerVelocity = Vector2.Zero;
-                _millisecondsToRestart = RaceProgressCoordinator.Race_Resurrect_Sequence_Duration_In_Milliseconds;
+                _millisecondsToRestart = RaceProgressCoordinator.Race_Resurrect_Sequence_Duration_In_Milliseconds - (int)_millisecondsSinceLastComms;
 
                 Visible = false;
             }
@@ -145,7 +151,6 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
                 if (_millisecondsToRestart < 1)
                 {
-                    Visible = true;
                     StartMovement();
                 }
             }
@@ -164,9 +169,32 @@ namespace Bopscotch.Gameplay.Objects.Characters
             }
         }
 
+        private void SetTintFromPacketLatency()
+        {
+            if (_millisecondsSinceLastComms > Latency_Threshold)
+            {
+                _fadeFraction = Math.Min(_fadeFraction + Fade_Step, 0.75f);
+            }
+            else
+            {
+                _fadeFraction = Math.Max(0.2f, _fadeFraction - Fade_Step);
+            }
+        }
+
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(TextureManager.Textures["opponent-marker"], GameBase.ScreenPosition((WorldPosition - CameraPosition) - new Vector2(0.0f, 40.0f)), null, Color.White, 0.0f, new Vector2(40, 40), 0.5f, SpriteEffects.None, 0.4999f);
+            spriteBatch.Draw(
+                TextureManager.Textures["opponent-marker"], 
+                GameBase.ScreenPosition((WorldPosition - CameraPosition) - new Vector2(0.0f, 40.0f)), 
+                null, 
+                Color.Lerp(Color.White, Color.Transparent, _fadeFraction), 
+                0.0f, 
+                new Vector2(40, 40), 
+                0.5f, 
+                SpriteEffects.None, 0.4999f);
         }
+
+        private const int Latency_Threshold = 500;
+        private const float Fade_Step = 0.025f;
     }
 }
