@@ -27,6 +27,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private int _currentLap;
         private int _currentCheckpoint;
         private float _fadeFraction;
+        private float _tilt;
 
         public Vector2 WorldPosition { get; set; }
         public bool WorldPositionIsFixed { get { return false; } }
@@ -96,6 +97,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
             SetTintFromPacketLatency();
 
             WorldPosition += _clientVelocity * millisecondsSinceLastUpdate;
+            _tilt = MathHelper.Clamp(_clientVelocity.X, -Maximum_Tilt, Maximum_Tilt);
         }
 
         private void LogPositionUpdates()
@@ -188,7 +190,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 GameBase.ScreenPosition((WorldPosition - CameraPosition) - new Vector2(0.0f, 40.0f)), 
                 null, 
                 Color.Lerp(Color.White, Color.Transparent, _fadeFraction), 
-                0.0f, 
+                _tilt, 
                 new Vector2(40, 40), 
                 0.5f, 
                 SpriteEffects.None, 0.4999f);
@@ -196,5 +198,6 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
         private const int Latency_Threshold = 500;
         private const float Fade_Step = 0.025f;
+        private const float Maximum_Tilt = 0.35f;
     }
 }

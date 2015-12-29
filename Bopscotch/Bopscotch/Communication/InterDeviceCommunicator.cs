@@ -41,6 +41,8 @@ namespace Bopscotch.Communication
 
         public string OwnPlayerRaceID { get; private set; }
         public string OtherPlayerRaceID { get; set; }
+        public string OtherPlayerName { get; set; }
+        public int OtherPlayerAvatarSlot { get; set; }
 
         public int SendInterval { private get; set; }
         public bool SendOnMessageChange { private get; set; }
