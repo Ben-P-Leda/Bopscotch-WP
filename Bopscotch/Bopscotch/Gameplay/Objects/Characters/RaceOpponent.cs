@@ -7,13 +7,16 @@ using Leda.Core;
 using Leda.Core.Game_Objects.Behaviours;
 using Leda.Core.Asset_Management;
 using Leda.Core.Motion;
+using Leda.Core.Game_Objects.Base_Classes;
+using Leda.Core.Animation.Skeletons;
 
 using Bopscotch.Communication;
 using Bopscotch.Gameplay.Coordination;
+using Bopscotch.Data.Avatar;
 
 namespace Bopscotch.Gameplay.Objects.Characters
 {
-    public class RaceOpponent : ICameraRelative, ISimpleRenderable, IMobile
+    public class RaceOpponent : DisposableSkeleton, ICameraRelative, IMobile
     {
         private long _millisecondsSinceLastComms;
         private Vector2 _peerVelocity;
@@ -27,21 +30,22 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private int _currentLap;
         private int _currentCheckpoint;
         private float _fadeFraction;
-        private float _tilt;
+        private Vector2 _displayPosition;
 
-        public Vector2 WorldPosition { get; set; }
-        public bool WorldPositionIsFixed { get { return false; } }
-        public bool Visible { get; set; }
-        public int RenderLayer { get { return 2; } set { } }
-        public Vector2 CameraPosition { get; set; }
         public InterDeviceCommunicator Communicator { private get; set; }
         public IMotionEngine MotionEngine { get { return null; } } 
 
-        public void Initialize()
-        { 
+
+        public RaceOpponent()
+            : base()
+        {
+            RenderLayer = 2;
+            WorldPositionIsFixed = false;
+            Scale = 0.9f;
+            RenderDepth = 0.495f;
         }
 
-        public void Reset()
+        public override void Reset()
         {
             _fadeFraction = 0.0f;
 
@@ -50,7 +54,27 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _millisecondsSinceLastComms = 0;
             _peerVelocity = Vector2.Zero;
 
-            WorldPosition = Vector2.Zero;
+            if (Bones.Count < 1)
+            {
+                CreateBonesFromDataManager(Definitions.Avatar_Skeleton_Side);
+                AddBone(CreateCloudBone(), "body");
+            }
+
+            SkinBones(AvatarComponentManager.SideFacingAvatarSkin(Communicator.OtherPlayerAvatarSlot));
+            Rectangle bounds = TextureManager.Textures["race-p2-cloud"].Bounds;
+            Bones["cloud"].ApplySkin("race-p2-cloud", new Vector2(bounds.Width, bounds.Height) * 0.5f, bounds);
+
+            _displayPosition = Vector2.Zero;
+        }
+
+        private StorableBone CreateCloudBone()
+        {
+            StorableBone cloud = new StorableBone();
+            cloud.ID = "cloud";
+            cloud.RelativePosition = new Vector2(0.0f, 30.0f);
+            cloud.RelativeDepth = -0.1f;
+
+            return cloud;
         }
 
         public void SetForRaceStart(Vector2 startPosition, bool facingLeft)
@@ -62,7 +86,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _lastCommsPosition = startPosition;
             _packetsAtCurrentPosition = 0;
 
-            WorldPosition = startPosition;
+            _displayPosition = startPosition;
             Visible = true;
         }
 
@@ -94,10 +118,10 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _millisecondsSinceLastComms = Communicator.MillisecondsSinceLastReceive;
 
             UpdateClientVelocity();
-            SetTintFromPacketLatency();
+            UpdateDisplaySettings();
 
-            WorldPosition += _clientVelocity * millisecondsSinceLastUpdate;
-            _tilt = MathHelper.Clamp(_clientVelocity.X, -Maximum_Tilt, Maximum_Tilt);
+            _displayPosition += _clientVelocity * millisecondsSinceLastUpdate;
+            WorldPosition = _displayPosition - new Vector2(0.0f, 40.0f);
         }
 
         private void LogPositionUpdates()
@@ -140,7 +164,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 _clientVelocity = Vector2.Zero;
                 _peerVelocity = Vector2.Zero;
 
-                WorldPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+                _displayPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
                 Visible = true;
             }
         }
@@ -171,29 +195,25 @@ namespace Bopscotch.Gameplay.Objects.Characters
             }
         }
 
-        private void SetTintFromPacketLatency()
+        private void UpdateDisplaySettings()
         {
             if (_millisecondsSinceLastComms > Latency_Threshold)
             {
-                _fadeFraction = Math.Min(_fadeFraction + Fade_Step, 0.75f);
+                _fadeFraction = Math.Min(_fadeFraction + Fade_Step, 0.65f);
             }
             else
             {
                 _fadeFraction = Math.Max(0.2f, _fadeFraction - Fade_Step);
             }
+
+            Tint = Color.Lerp(Color.White, Color.Transparent, _fadeFraction);
+
+            Mirror = _clientVelocity.X < 0.0f;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(
-                TextureManager.Textures["opponent-marker"], 
-                GameBase.ScreenPosition((WorldPosition - CameraPosition) - new Vector2(0.0f, 40.0f)), 
-                null, 
-                Color.Lerp(Color.White, Color.Transparent, _fadeFraction), 
-                _tilt, 
-                new Vector2(40, 40), 
-                0.5f, 
-                SpriteEffects.None, 0.4999f);
+            base.Draw(spriteBatch);
         }
 
         private const int Latency_Threshold = 500;
