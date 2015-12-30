@@ -121,6 +121,7 @@
     <Compile Include="Gameplay\Objects\Characters\CharacterFactory.cs" />
     <Compile Include="Gameplay\Objects\Characters\Player\Player.cs" />
     <Compile Include="Gameplay\Objects\Characters\Player\PlayerMotionEngine.cs" />
+    <Compile Include="Gameplay\Objects\Characters\RaceOpponent.cs" />
     <Compile Include="Gameplay\Objects\Display\InGameButtonBase.cs" />
     <Compile Include="Gameplay\Objects\Display\PlayerEventPopup.cs" />
     <Compile Include="Gameplay\Objects\Display\Race\CountdownPopup.cs" />
@@ -540,6 +541,9 @@
     <None Include="Content\Textures\load-spinner.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Textures\opponent-marker.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Textures\Players\bodies.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -637,6 +641,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Players\Mouths\robot.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Players\race-cloud.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Players\Shirts\angel.xnb">

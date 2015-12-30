@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <assets>
   <textures>
+    <texture name="opponent-marker" file="Textures/opponent-marker" />
+    
     <texture name="button-text-container" file="Textures/Interface/button-text-container" />
     <texture name="button-icon-container" file="Textures/Interface/button-icon-container" />
     <texture name="button-highlight" file="Textures/Interface/button-highlight" />
@@ -125,6 +127,7 @@
     <texture name="player-hat-robot" file="Textures/Players/Hats/robot" />
     <texture name="player-hat-jackolantern" file="Textures/Players/Hats/jackolantern" />
     <texture name="player-hat-xmas" file="Textures/Players/Hats/xmas" />
+    <texture name="race-p2-cloud" file="Textures/Players/race-cloud" />
   </textures>
   <sound-effects>
     <sound-effect name="menu-select" file="SoundEffects/menu-select" />
