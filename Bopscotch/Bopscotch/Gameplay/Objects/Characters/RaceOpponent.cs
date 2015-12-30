@@ -168,6 +168,8 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 _peerVelocity = Vector2.Zero;
 
                 _displayPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+                _fadeFraction = 0.0f;
+                Mirror = (_restartDirection < 0);
                 Visible = true;
             }
         }
@@ -211,12 +213,10 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
             Tint = Color.Lerp(Color.White, Color.Transparent, _fadeFraction);
 
-            Mirror = _clientVelocity.X < 0.0f;
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
+            if (_clientVelocity.X != 0.0f)
+            {
+                Mirror = _clientVelocity.X < 0.0f;
+            }
         }
 
         private const int Latency_Threshold = 500;
