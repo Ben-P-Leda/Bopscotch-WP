@@ -137,8 +137,11 @@ namespace Bopscotch.Communication
             }
             catch
             {
-                _communicationHandler.Close();
-                _communicationHandler = null;
+                if (_communicationHandler != null)
+                {
+                    _communicationHandler.Close();
+                    _communicationHandler = null;
+                }
             }
         }
 
