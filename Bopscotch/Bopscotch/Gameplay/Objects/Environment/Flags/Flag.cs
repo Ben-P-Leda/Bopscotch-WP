@@ -19,6 +19,8 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
         private SpriteSheetAnimationEngine _animationEngine;
         private Vector2 _poleWorldPosition;
 
+        public ApproachZone ApproachZone;
+
         public IAnimationEngine AnimationEngine { get { return _animationEngine; } }
 
         public bool Collidable { get; set; }
@@ -66,11 +68,28 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
                 (Definitions.Grid_Cell_Pixel_Size * 3) - (int)verticalOverflow);
         }
 
+        public void SetApproachZone(bool approachFromRight)
+        {
+            int leftEdge = (int)_poleWorldPosition.X + 60;
+            if (!approachFromRight)
+            {
+                leftEdge -= Definitions.Grid_Cell_Pixel_Size * 8;
+            }
+
+            ApproachZone = new ApproachZone();
+            ApproachZone.WorldPosition = new Vector2(leftEdge, _poleWorldPosition.Y - (Definitions.Grid_Cell_Pixel_Size * 2));
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
             spriteBatch.Draw(TextureManager.Textures[Pole_Texture], GameBase.ScreenPosition(_poleWorldPosition - CameraPosition), null, Color.White, 0.0f, 
                 Vector2.Zero, GameBase.ScreenScale(), SpriteEffects.None, Pole_Render_Depth);
+
+
+            Vector2 topLeft = GameBase.ScreenPosition(ApproachZone.PositionedCollisionBoundingBox.X - CameraPosition.X, ApproachZone.PositionedCollisionBoundingBox.Y - CameraPosition.Y);
+            Rectangle paz = new Rectangle((int)topLeft.X, (int)topLeft.Y, (int)(GameBase.ScreenScale() * ApproachZone.PositionedCollisionBoundingBox.Width), (int)(GameBase.ScreenScale() * ApproachZone.PositionedCollisionBoundingBox.Height));
+            spriteBatch.Draw(TextureManager.Textures["pixel"], paz, null, Color.Lerp(Color.Red, Color.Transparent, 0.5f), 0.0f, Vector2.Zero, SpriteEffects.None, 0.999f);
         }
 
         public void HandleCollision(ICollidable collider)

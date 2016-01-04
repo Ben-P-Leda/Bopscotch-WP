@@ -156,6 +156,7 @@
     <Compile Include="Gameplay\Objects\Environment\Collectables\CollectableFactory.cs" />
     <Compile Include="Gameplay\Objects\Environment\Collectables\GoldenTicket.cs" />
     <Compile Include="Gameplay\Objects\Environment\Collectables\ScoringCandy.cs" />
+    <Compile Include="Gameplay\Objects\Environment\Flags\ApproachZone.cs" />
     <Compile Include="Gameplay\Objects\Environment\Flags\Flag.cs" />
     <Compile Include="Gameplay\Objects\Environment\Flags\FlagFactory.cs" />
     <Compile Include="Gameplay\Objects\Environment\Flags\GoalFlag.cs" />

@@ -32,8 +32,10 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
                     if (node.Attribute("left-activation") != null) { toAdd.ActivatedWhenMovingLeft = (bool)node.Attribute("left-activation"); }
                     toAdd.SetUpPole();
                     toAdd.SetCollisionBoundingBox((float)node.Attribute("zone-top"));
+                    toAdd.SetApproachZone(toAdd.ActivatedWhenMovingLeft);
 
                     Factory._registerComponent(toAdd);
+                    Factory._registerComponent(toAdd.ApproachZone);
                 }
             }
         }
