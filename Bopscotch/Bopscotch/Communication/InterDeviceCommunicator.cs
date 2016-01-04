@@ -210,16 +210,14 @@ namespace Bopscotch.Communication
 
                         if ((data.ContainsKey("pwr")) && (_powerUpTranslator.ContainsKey(data["pwr"].ToLower())))
                         {
-                            int attackTime = 0;
-                            if (data.ContainsKey("pwr-time")) { int.TryParse(data["pwr-time"], out attackTime); }
-
-                            if ((attackTime > _otherPlayerData.LastAttackPowerUpTimeInMilliseconds) ||
-                                (_powerUpTranslator[data["pwr"].ToLower()] == Definitions.PowerUp.None))
-                            {
-                                _otherPlayerData.LastAttackPowerUp = _powerUpTranslator[data["pwr"].ToLower()];
-                                _otherPlayerData.LastAttackPowerUpTimeInMilliseconds = attackTime;
-                            }
+                            SetOpponentAttackData(data);
                         }
+
+                        if ((data.ContainsKey("az-no")) && (data.ContainsKey("az-time")))
+                        {
+                            SetOpponentApproachZoneData(data);
+                        }
+
 
                         _selectedCourse = "";
 
@@ -244,6 +242,34 @@ namespace Bopscotch.Communication
                 if (!data.ContainsKey(_expectedKeys[i])) { return false; break; }
             }
             return true;
+        }
+
+        private void SetOpponentAttackData(Dictionary<string, string> data)
+        {
+            int attackTime = 0;
+            if (data.ContainsKey("pwr-time")) { int.TryParse(data["pwr-time"], out attackTime); }
+
+            if ((attackTime > _otherPlayerData.LastAttackPowerUpTimeInMilliseconds) ||
+                (_powerUpTranslator[data["pwr"].ToLower()] == Definitions.PowerUp.None))
+            {
+                _otherPlayerData.LastAttackPowerUp = _powerUpTranslator[data["pwr"].ToLower()];
+                _otherPlayerData.LastAttackPowerUpTimeInMilliseconds = attackTime;
+            }
+        }
+
+        private void SetOpponentApproachZoneData(Dictionary<string, string> data)
+        {
+            int zoneIndex = -10;
+            int zoneTime = 0;
+
+            int.TryParse(data["az-no"], out zoneIndex);
+            int.TryParse(data["az-time"], out zoneTime);
+
+            if (((zoneIndex == -1) || (zoneIndex >_otherPlayerData.LastApproachZoneIndex)) && (zoneTime > _otherPlayerData.LastApproachZoneTime))
+            {
+                _otherPlayerData.LastApproachZoneIndex = zoneIndex;
+                _otherPlayerData.LastApproachZoneTime = zoneTime;
+            }
         }
 
         private bool RaceIDIsValid(string raceID, string fieldName, Dictionary<string, string> data)

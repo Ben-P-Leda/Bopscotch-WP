@@ -33,6 +33,9 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private float _fadeFraction;
         private Vector2 _displayPosition;
 
+        private int _lastPeerApproachZoneIndex;
+        private int _lastPeerApproachZoneTime;
+
         public InterDeviceCommunicator Communicator { private get; set; }
         public IMotionEngine MotionEngine { get { return null; } }
         public AdditiveLayerParticleEffectManager ParticleManager { private get; set; }
@@ -85,6 +88,9 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _expectedPosition = startPosition;
             _clientVelocity = Vector2.Zero;
 
+            _lastPeerApproachZoneIndex = -1;
+            _lastPeerApproachZoneTime = 0;
+
             _lastCommsPosition = startPosition;
             _packetsAtCurrentPosition = 0;
 
@@ -108,6 +114,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
                 if (Visible)
                 {
+                    UpdatePeerApproachZone();
                     Vector2 step = ((Communicator.OtherPlayerData.PlayerWorldPosition - _expectedPosition) / _millisecondsSinceLastComms);
                     _peerVelocity = (_peerVelocity * 0.5f) + (step * 0.5f);
                 }
@@ -172,6 +179,20 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 _fadeFraction = 0.0f;
                 Mirror = (_restartDirection < 0);
                 Visible = true;
+            }
+        }
+
+        private void UpdatePeerApproachZone()
+        {
+            if (Communicator.OtherPlayerData.LastApproachZoneTime > 0)
+            {
+                if ((Communicator.OtherPlayerData.LastApproachZoneIndex < 0) || (Communicator.OtherPlayerData.LastApproachZoneIndex > _lastPeerApproachZoneIndex))
+                {
+                    _lastPeerApproachZoneIndex = Communicator.OtherPlayerData.LastApproachZoneIndex;
+                    _lastPeerApproachZoneTime = Communicator.OtherPlayerData.LastApproachZoneTime;
+
+                    System.Diagnostics.Debug.WriteLine("PEER COMMS hit approach zone for checkpoint {0} at {1}sec", _lastPeerApproachZoneIndex, _lastPeerApproachZoneTime / 1000.0f);
+                }
             }
         }
 

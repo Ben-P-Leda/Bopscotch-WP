@@ -119,7 +119,7 @@ namespace Bopscotch.Gameplay.Coordination
                 LastApproachZoneIndex = Player.LastApproachZoneIndex;
                 LastApproachZoneTime = TotalRaceTimeElapsedInMilliseconds;
 
-                System.Diagnostics.Debug.WriteLine("Hit approach zone for checkpoint {0} at {1}sec", LastApproachZoneIndex, LastApproachZoneTime / 1000.0f);
+                System.Diagnostics.Debug.WriteLine("CLIENT hit approach zone for checkpoint {0} at {1}sec", LastApproachZoneIndex, LastApproachZoneTime / 1000.0f);
             }
         }
 

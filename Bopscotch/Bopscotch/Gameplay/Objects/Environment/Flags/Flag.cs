@@ -78,6 +78,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
 
             ApproachZone = new ApproachZone();
             ApproachZone.WorldPosition = new Vector2(leftEdge, _poleWorldPosition.Y - (Definitions.Grid_Cell_Pixel_Size * 2));
+            ApproachZone.ApproachFromRight = approachFromRight;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

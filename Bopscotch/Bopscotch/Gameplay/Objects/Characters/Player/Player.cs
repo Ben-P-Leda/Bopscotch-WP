@@ -62,7 +62,8 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
         public OneToManyCollisionController CollisionController { set { value.ObjectToTest = this; _collisionController = value; } }
 
         private ApproachZone _lastApproachZone;
-        public int LastApproachZoneIndex { get { return _lastApproachZone == null ? -1 : _lastApproachZone.CheckpointIndex; } }
+        private ApproachZone _lastValidApproachZone;
+        public int LastApproachZoneIndex { get { return _lastValidApproachZone == null ? -1 : _lastValidApproachZone.CheckpointIndex; } }
         
         private BlockMap _map;
         public BlockMap Map { set { _map = value; SetCurrentMapBounds(); } }
@@ -134,6 +135,7 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
             IsExitingLevel = false;
 
             _lastApproachZone = null;
+            _lastValidApproachZone = null;
             LastRaceRestartPointTouched = null;
 
             TutorialStepTrigger = null;
@@ -327,11 +329,24 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
         {
             if (collider != _lastApproachZone)
             {
-                if (collider is ApproachZone) { _lastApproachZone = (ApproachZone)collider; }
+                if (collider is ApproachZone) { HandleApproachZoneCollision((ApproachZone)collider); }
                 else if (collider is Block) { HandleBlockCollision((Block)collider); }
                 else if (collider is SignpostBase) { HandleSignpostCollision((SignpostBase)collider); }
                 else if (collider is Flag) { HandleFlagCollision((Flag)collider); }
                 else if (collider is BombBlockBlastCollider) { StartDeathSequence(); }
+            }
+            else
+            {
+                HandleApproachZoneCollision(_lastValidApproachZone);
+            }
+        }
+
+        private void HandleApproachZoneCollision(ApproachZone zone)
+        {
+            _lastApproachZone = zone;
+            if ((_lastValidApproachZone != _lastApproachZone) && (IsMovingLeft == zone.ApproachFromRight))
+            {
+                _lastValidApproachZone = zone;
             }
         }
 
