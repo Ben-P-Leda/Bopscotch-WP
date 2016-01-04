@@ -63,8 +63,6 @@ namespace Bopscotch.Gameplay.Coordination
             _ownCheckpointTimes = new Dictionary<string, int>();
             _opponentCheckpointTimes = new Dictionary<string, int>();
 
-            LastApproachZoneIndex = -1;
-            LastApproachZoneTime = 0;
             LapsToComplete = 0;
         }
 

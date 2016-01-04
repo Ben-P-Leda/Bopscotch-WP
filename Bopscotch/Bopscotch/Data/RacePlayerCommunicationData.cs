@@ -26,6 +26,8 @@ namespace Bopscotch.Data
             ReadyToRace = false;
             TotalRaceTimeElapsedInMilliseconds = 0;
             LastCheckpointIndex = -1;
+            LastApproachZoneIndex = -1;
+            LastApproachZoneTime = 0;
         }
     }
 }

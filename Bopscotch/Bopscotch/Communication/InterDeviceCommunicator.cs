@@ -90,7 +90,7 @@ namespace Bopscotch.Communication
 
         public void Update()
         {
-            Message = string.Format("target={0}&elapsed={1}&laps={2}&pos-x={3}&pos-y={4}&cp-time={5}&cp-no={6}&pwr={7}&pwr-time={8}",
+            Message = string.Format("target={0}&elapsed={1}&laps={2}&pos-x={3}&pos-y={4}&cp-time={5}&cp-no={6}&pwr={7}&pwr-time={8}&az-no={9}&az-time={10}",
                 OtherPlayerRaceID,
                 OwnPlayerData.TotalRaceTimeElapsedInMilliseconds,
                 OwnPlayerData.LapsCompleted,
@@ -99,7 +99,9 @@ namespace Bopscotch.Communication
                 OwnPlayerData.LastCheckpointTimeInMilliseconds,
                 OwnPlayerData.LastCheckpointIndex,
                 OwnPlayerData.LastAttackPowerUp,
-                OwnPlayerData.LastAttackPowerUpTimeInMilliseconds);
+                OwnPlayerData.LastAttackPowerUpTimeInMilliseconds,
+                OwnPlayerData.LastApproachZoneIndex,
+                OwnPlayerData.LastApproachZoneTime);
 
             if (!string.IsNullOrEmpty(_selectedCourse)) { Message = string.Concat(_message, "&course=", _selectedCourse); }
         }
