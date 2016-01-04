@@ -14,6 +14,7 @@ using Bopscotch.Gameplay.Coordination;
 using Bopscotch.Gameplay.Objects.Characters.Player;
 using Bopscotch.Gameplay.Objects.Environment;
 using Bopscotch.Gameplay.Objects.Environment.Blocks;
+using Bopscotch.Gameplay.Objects.Environment.Flags;
 using Bopscotch.Gameplay.Objects.Display.Race;
 using Bopscotch.Interface.Dialogs;
 using Bopscotch.Interface.Dialogs.RaceGameplayScene;
@@ -234,6 +235,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
         {
             _raceStarted = false;
             _levelData = new RaceLevelData();
+            _opponentMarker.ApproachZones.Clear();
 
             RaceAreaName = NextSceneParameters.Get<string>(Course_Area_Parameter);
 
@@ -258,6 +260,16 @@ namespace Bopscotch.Scenes.Gameplay.Race
         protected override void SetLevelMetrics(LevelFactory levelFactory)
         {
             _levelData.LapsToComplete = levelFactory.RaceLapCount; 
+        }
+
+        protected override void RegisterGameObject(IGameObject toRegister)
+        {
+            if (toRegister is ApproachZone) 
+            { 
+                _opponentMarker.ApproachZones.Add((ApproachZone)toRegister); 
+            }
+
+            base.RegisterGameObject(toRegister);
         }
 
         protected override void RegisterStaticGameObjects()

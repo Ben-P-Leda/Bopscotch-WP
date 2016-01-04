@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,6 +13,7 @@ using Leda.Core.Animation.Skeletons;
 
 using Bopscotch.Communication;
 using Bopscotch.Gameplay.Coordination;
+using Bopscotch.Gameplay.Objects.Environment.Flags;
 using Bopscotch.Data.Avatar;
 using Bopscotch.Effects.Particles;
 
@@ -35,11 +37,13 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
         private int _lastPeerApproachZoneIndex;
         private int _lastPeerApproachZoneTime;
+        private int _lastClientApproachZoneIndex;
+        private int _lastClientApproachZoneTime;
 
         public InterDeviceCommunicator Communicator { private get; set; }
         public IMotionEngine MotionEngine { get { return null; } }
         public AdditiveLayerParticleEffectManager ParticleManager { private get; set; }
-
+        public List<ApproachZone> ApproachZones { get; private set; }
 
         public RaceOpponent()
             : base()
@@ -48,6 +52,8 @@ namespace Bopscotch.Gameplay.Objects.Characters
             WorldPositionIsFixed = false;
             Scale = 0.9f;
             RenderDepth = 0.495f;
+
+            ApproachZones = new List<ApproachZone>();
         }
 
         public override void Reset()
@@ -55,7 +61,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _fadeFraction = 0.0f;
 
             _currentLap = 0;
-            _currentCheckpoint = 0;
+            _currentCheckpoint = -1;
             _millisecondsSinceLastComms = 0;
             _peerVelocity = Vector2.Zero;
 
@@ -90,6 +96,9 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
             _lastPeerApproachZoneIndex = -1;
             _lastPeerApproachZoneTime = 0;
+
+            _lastClientApproachZoneIndex = -1;
+            _lastClientApproachZoneTime = 0;
 
             _lastCommsPosition = startPosition;
             _packetsAtCurrentPosition = 0;
@@ -126,6 +135,8 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
             _expectedPosition += _peerVelocity * millisecondsSinceLastUpdate;
             _millisecondsSinceLastComms = Communicator.MillisecondsSinceLastReceive;
+
+            UpdateClientApproachZone();
 
             UpdateClientVelocity();
             UpdateDisplaySettings();
@@ -191,7 +202,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
                     _lastPeerApproachZoneIndex = Communicator.OtherPlayerData.LastApproachZoneIndex;
                     _lastPeerApproachZoneTime = Communicator.OtherPlayerData.LastApproachZoneTime;
 
-                    System.Diagnostics.Debug.WriteLine("PEER COMMS hit approach zone for checkpoint {0} at {1}sec", _lastPeerApproachZoneIndex, _lastPeerApproachZoneTime / 1000.0f);
+                    CheckAccelerationRequirement();
                 }
             }
         }
@@ -205,6 +216,70 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 if (_millisecondsToRestart < 1)
                 {
                     StartMovement();
+                }
+            }
+        }
+
+        private void UpdateClientApproachZone()
+        {
+            if (Visible)
+            {
+                int zoneIndex = 0;
+                bool inZone = false;
+                for (int i=0; i< ApproachZones.Count; i++)
+                {
+                    if (ApproachZones[i].PositionedCollisionBoundingBox.Contains(_displayPosition))
+                    {
+                        zoneIndex = i;
+                        inZone = true;
+                        break;
+                    }
+                }
+
+                if ((inZone) && (_clientVelocity.X != 0.0f))
+                {
+                    bool movingLeft = Math.Sign(_clientVelocity.X) < 0.0f;
+
+                    if (ApproachZones[zoneIndex].ApproachFromRight == movingLeft)
+                    {
+                        if ((ApproachZones[zoneIndex].CheckpointIndex < 0) || (ApproachZones[zoneIndex].CheckpointIndex > _lastClientApproachZoneIndex))
+                        {
+                            _lastClientApproachZoneIndex = ApproachZones[zoneIndex].CheckpointIndex;
+                            _lastClientApproachZoneTime = Communicator.OwnPlayerData.TotalRaceTimeElapsedInMilliseconds;
+
+                            CheckAccelerationRequirement();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CheckAccelerationRequirement()
+        {
+            int clientOwn = Communicator.OwnPlayerData.LastApproachZoneIndex;
+            int clientOther = _lastClientApproachZoneIndex;
+            int peer = _lastPeerApproachZoneIndex;
+
+            System.Diagnostics.Debug.WriteLine("Update - Own: {0}, Other: {1}, Peer {2}", clientOwn, clientOther, peer);
+
+            if ((clientOwn == clientOther) && (clientOwn == peer))
+            {
+                System.Diagnostics.Debug.WriteLine("TIME CHECK - Own: {0}, Other: {1}, Peer {2}", 
+                    Communicator.OwnPlayerData.LastApproachZoneTime / 1000.0f,
+                    _lastClientApproachZoneTime / 1000.0f,
+                    _lastPeerApproachZoneTime / 1000.0f);
+
+                if ((_lastPeerApproachZoneTime < Communicator.OwnPlayerData.LastApproachZoneTime) && (_lastClientApproachZoneTime < Communicator.OwnPlayerData.LastApproachZoneTime))
+                {
+                    System.Diagnostics.Debug.WriteLine("Status: Opponent is definitely ahead");
+                }
+                else if ((_lastPeerApproachZoneTime > Communicator.OwnPlayerData.LastApproachZoneTime) && (_lastClientApproachZoneTime > Communicator.OwnPlayerData.LastApproachZoneTime))
+                {
+                    System.Diagnostics.Debug.WriteLine("Status: Opponent is behind");
+                }
+                else if ((_lastPeerApproachZoneTime < Communicator.OwnPlayerData.LastApproachZoneTime) && (_lastClientApproachZoneTime > Communicator.OwnPlayerData.LastApproachZoneTime))
+                {
+                    System.Diagnostics.Debug.WriteLine("STATUS: Opponent should be ahead, ACCELERATION REQUIRED!");
                 }
             }
         }
