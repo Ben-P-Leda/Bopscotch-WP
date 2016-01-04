@@ -60,6 +60,9 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
         public Circle PositionedCollisionBoundingCircle { get; set; }
         private OneToManyCollisionController _collisionController;
         public OneToManyCollisionController CollisionController { set { value.ObjectToTest = this; _collisionController = value; } }
+
+        private ApproachZone _lastApproachZone;
+        public int LastApproachZoneIndex { get { return _lastApproachZone == null ? -1 : _lastApproachZone.CheckpointIndex; } }
         
         private BlockMap _map;
         public BlockMap Map { set { _map = value; SetCurrentMapBounds(); } }
@@ -130,6 +133,7 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
             _hasTouchedGoalFlag = false;
             IsExitingLevel = false;
 
+            _lastApproachZone = null;
             LastRaceRestartPointTouched = null;
 
             TutorialStepTrigger = null;
@@ -321,10 +325,14 @@ namespace Bopscotch.Gameplay.Objects.Characters.Player
 
         public override void HandleCollision(ICollidable collider)
         {
-            if (collider is Block) { HandleBlockCollision((Block)collider); }
-            else if (collider is SignpostBase) { HandleSignpostCollision((SignpostBase)collider); }
-            else if (collider is Flag) { HandleFlagCollision((Flag)collider); }
-            else if (collider is BombBlockBlastCollider) { StartDeathSequence(); }
+            if (collider != _lastApproachZone)
+            {
+                if (collider is ApproachZone) { _lastApproachZone = (ApproachZone)collider; }
+                else if (collider is Block) { HandleBlockCollision((Block)collider); }
+                else if (collider is SignpostBase) { HandleSignpostCollision((SignpostBase)collider); }
+                else if (collider is Flag) { HandleFlagCollision((Flag)collider); }
+                else if (collider is BombBlockBlastCollider) { StartDeathSequence(); }
+            }
         }
 
         private void HandleBlockCollision(Block collidingBlock)

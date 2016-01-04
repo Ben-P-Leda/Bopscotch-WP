@@ -25,6 +25,12 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
             SetFrameAndAnimation();
         }
 
+        public override void SetApproachZone(bool approachFromRight)
+        {
+            base.SetApproachZone(approachFromRight);
+            ApproachZone.CheckpointIndex = CheckpointIndex;
+        }
+
         protected override XElement Serialize(Serializer serializer)
         {
             base.Serialize(serializer);

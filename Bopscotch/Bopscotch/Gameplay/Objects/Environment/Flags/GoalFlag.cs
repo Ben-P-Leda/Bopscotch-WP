@@ -13,6 +13,12 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
             SetFrameAndAnimation();
         }
 
+        public override void SetApproachZone(bool approachFromRight)
+        {
+            base.SetApproachZone(approachFromRight);
+            ApproachZone.CheckpointIndex = -1;
+        }
+
         private const string Texture_Name = "flag-goal";
 
         public const string Data_Node_Name = "goal-flag";

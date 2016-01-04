@@ -15,6 +15,9 @@ namespace Bopscotch.Data
         public Definitions.PowerUp LastAttackPowerUp { get; set; }
         public int LastAttackPowerUpTimeInMilliseconds { get; set; }
 
+        public int LastApproachZoneIndex { get; set; }
+        public int LastApproachZoneTime { get; set; }
+
         public abstract Vector2 PlayerWorldPosition { get; }
 
         public RacePlayerCommunicationData()

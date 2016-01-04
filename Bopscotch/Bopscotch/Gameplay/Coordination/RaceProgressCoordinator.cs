@@ -63,6 +63,8 @@ namespace Bopscotch.Gameplay.Coordination
             _ownCheckpointTimes = new Dictionary<string, int>();
             _opponentCheckpointTimes = new Dictionary<string, int>();
 
+            LastApproachZoneIndex = -1;
+            LastApproachZoneTime = 0;
             LapsToComplete = 0;
         }
 
@@ -93,6 +95,11 @@ namespace Bopscotch.Gameplay.Coordination
                 
                 UpdateProgressData(_ownCheckpointTimes, this);
                 UpdateProgressData(_opponentCheckpointTimes, Communicator.OtherPlayerData);
+
+                if (Player.LastApproachZoneIndex != LastApproachZoneIndex)
+                {
+                    UpdateApproachZone();
+                }
             }
 
             StatusDisplay.SetLapCountText(LapsCompleted, LapsToComplete);
@@ -105,6 +112,17 @@ namespace Bopscotch.Gameplay.Coordination
 
             if (!progressData.ContainsKey(lapSectionKey)) { progressData.Add(lapSectionKey, 0); }
             progressData[lapSectionKey] = dataSource.TotalRaceTimeElapsedInMilliseconds - dataSource.LastCheckpointTimeInMilliseconds;
+        }
+
+        private void UpdateApproachZone()
+        {
+            if ((Player.LastApproachZoneIndex < 0) || (Player.LastApproachZoneIndex > LastApproachZoneIndex))
+            {
+                LastApproachZoneIndex = Player.LastApproachZoneIndex;
+                LastApproachZoneTime = TotalRaceTimeElapsedInMilliseconds;
+
+                System.Diagnostics.Debug.WriteLine("Hit approach zone for checkpoint {0} at {1}sec", LastApproachZoneIndex, LastApproachZoneTime / 1000.0f);
+            }
         }
 
         public bool LapCompleted()

@@ -68,7 +68,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
                 (Definitions.Grid_Cell_Pixel_Size * 3) - (int)verticalOverflow);
         }
 
-        public void SetApproachZone(bool approachFromRight)
+        public virtual void SetApproachZone(bool approachFromRight)
         {
             int leftEdge = (int)_poleWorldPosition.X + 60;
             if (!approachFromRight)

@@ -13,6 +13,7 @@ namespace Bopscotch.Gameplay.Objects.Environment.Flags
         public Rectangle CollisionBoundingBox { get { return _collisionBoundingBox; } }
         public Rectangle PositionedCollisionBoundingBox { get; set; }
         public bool Collidable { get { return true; } }
+        public int CheckpointIndex { get; set; }
 
         public ApproachZone()
         {
