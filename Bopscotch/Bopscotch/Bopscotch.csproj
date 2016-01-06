@@ -124,6 +124,7 @@
     <Compile Include="Gameplay\Objects\Characters\RaceOpponent.cs" />
     <Compile Include="Gameplay\Objects\Display\InGameButtonBase.cs" />
     <Compile Include="Gameplay\Objects\Display\PlayerEventPopup.cs" />
+    <Compile Include="Gameplay\Objects\Display\Race\CommunicationStatusDisplay.cs" />
     <Compile Include="Gameplay\Objects\Display\Race\CountdownPopup.cs" />
     <Compile Include="Gameplay\Objects\Display\Race\QuitRaceButton.cs" />
     <Compile Include="Gameplay\Objects\Display\Race\RaceInfoPopup.cs" />
@@ -488,6 +489,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Interface\edge-fader.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Interface\Icons\comms-icon.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Interface\Icons\lives.xnb">

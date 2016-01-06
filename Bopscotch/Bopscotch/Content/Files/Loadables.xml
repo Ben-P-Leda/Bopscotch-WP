@@ -10,6 +10,7 @@
     <texture name="in-dialog-podium" file="Textures/Interface/InDialog/podium" />
     <texture name="iap-items" file="Textures/Interface/InDialog/iap-items" />
     <texture name="icon-locked" file="Textures/Interface/Icons/padlock" />
+    <texture name="icon-comms-status" file="Textures/Interface/Icons/comms-icon" />
     <texture name="icon-tick" file="Textures/Interface/Icons/tick" />
     <texture name="icon-lives" file="Textures/Interface/Icons/lives" />
     <texture name="speedo-base" file="Textures/Interface/InGame/speedo-base" />
