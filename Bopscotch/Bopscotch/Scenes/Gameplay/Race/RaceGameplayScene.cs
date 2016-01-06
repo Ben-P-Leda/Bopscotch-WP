@@ -463,6 +463,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
                     _quitRaceDialog.DismissWithReturnValue("cancel");
                 }
                 _disconnectedDialog.Activate();
+                _commStatusDisplay.DisplayCommunicationLost();
             }
         }
 

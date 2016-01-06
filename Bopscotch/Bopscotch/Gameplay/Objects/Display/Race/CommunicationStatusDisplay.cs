@@ -13,7 +13,8 @@ namespace Bopscotch.Gameplay.Objects.Display.Race
     {
         private Vector2 _position;
         private Rectangle _frame;
-        private int _millisecondsSinceLastComms;
+        private long _millisecondsSinceLastComms;
+        private long _previousUpdateLag;
         private bool _communicationsLost;
 
         public Vector2 Position { set { _position = new Vector2(value.X, value.Y - Frame_Side_Length); } }
@@ -38,6 +39,7 @@ namespace Bopscotch.Gameplay.Objects.Display.Race
             _frame.X = 0;
             _communicationsLost = false;
             _millisecondsSinceLastComms = 0;
+            _previousUpdateLag = 0;
 
             UpdateCommunicationStatus(CommsStatus.Good);
         }
@@ -48,12 +50,20 @@ namespace Bopscotch.Gameplay.Objects.Display.Race
             {
                 if (Communicator.MillisecondsSinceLastReceive < _millisecondsSinceLastComms)
                 {
-                    UpdateCommunicationStatus(CommsStatus.Good);
+                    if (_previousUpdateLag < Signal_Deterioration_Threshold)
+                    {
+                        UpdateCommunicationStatus(CommsStatus.Good);
+                    }
+                    _previousUpdateLag = _millisecondsSinceLastComms;
+
+                    System.Diagnostics.Debug.WriteLine(_millisecondsSinceLastComms);
                 }
                 else if (Communicator.MillisecondsSinceLastReceive > Signal_Deterioration_Threshold)
                 {
                     UpdateCommunicationStatus(CommsStatus.Poor);
                 }
+
+                _millisecondsSinceLastComms = Communicator.MillisecondsSinceLastReceive;
             }
         }
 
@@ -85,6 +95,6 @@ namespace Bopscotch.Gameplay.Objects.Display.Race
         private const string Texture_Name = "icon-comms-status";
         private const float Render_Depth = 0.1f;
         private const int Render_Layer = 4;
-        private const int Signal_Deterioration_Threshold = 150;
+        private const int Signal_Deterioration_Threshold = 112;
     }
 }
