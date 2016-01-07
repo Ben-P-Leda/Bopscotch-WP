@@ -50,15 +50,13 @@ namespace Bopscotch.Gameplay.Objects.Display.Race
             {
                 if (Communicator.MillisecondsSinceLastReceive < _millisecondsSinceLastComms)
                 {
-                    if (_previousUpdateLag < Signal_Deterioration_Threshold)
+                    if (_previousUpdateLag < InterDeviceCommunicator.Signal_Deterioration_Threshold)
                     {
                         UpdateCommunicationStatus(CommsStatus.Good);
                     }
                     _previousUpdateLag = _millisecondsSinceLastComms;
-
-                    System.Diagnostics.Debug.WriteLine(_millisecondsSinceLastComms);
                 }
-                else if (Communicator.MillisecondsSinceLastReceive > Signal_Deterioration_Threshold)
+                else if (Communicator.MillisecondsSinceLastReceive > InterDeviceCommunicator.Signal_Deterioration_Threshold)
                 {
                     UpdateCommunicationStatus(CommsStatus.Poor);
                 }
@@ -95,6 +93,5 @@ namespace Bopscotch.Gameplay.Objects.Display.Race
         private const string Texture_Name = "icon-comms-status";
         private const float Render_Depth = 0.1f;
         private const int Render_Layer = 4;
-        private const int Signal_Deterioration_Threshold = 112;
     }
 }

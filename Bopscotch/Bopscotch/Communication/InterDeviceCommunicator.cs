@@ -262,5 +262,7 @@ namespace Bopscotch.Communication
         private const int Default_Send_Interval = 64;
         private const string Expected_Race_Keys = "id,target,elapsed,laps,pos-x,pos-y,cp-time,cp-no";
         private const int Connection_Loss_Timeout_In_Milliseconds = 5000;
+
+        public const int Signal_Deterioration_Threshold = 112;
     }
 }

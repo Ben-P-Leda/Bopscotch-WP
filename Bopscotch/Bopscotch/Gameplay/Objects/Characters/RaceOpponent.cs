@@ -18,6 +18,8 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private Vector2 _velocity;
         private Vector2 _physicalPosition;
         private Vector2 _difference;
+        private int _fadeDirection;
+        private float _fadeFraction;
 
         public InterDeviceCommunicator Communicator { private get; set; }
         public IMotionEngine MotionEngine { get { return null; } }
@@ -39,6 +41,8 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _velocity = Vector2.Zero;
             _physicalPosition = Vector2.Zero;
             _difference = Vector2.Zero;
+            _fadeDirection = 1;
+            _fadeFraction = 0.0f;
 
             WorldPosition = Vector2.Zero;
             Visible = true;
@@ -67,6 +71,54 @@ namespace Bopscotch.Gameplay.Objects.Characters
         public void Update(int millisecondsSinceLastUpdate)
         {
             WorldPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+
+            if (Communicator.MillisecondsSinceLastReceive > InterDeviceCommunicator.Signal_Deterioration_Threshold)
+            {
+                SetForDegradedSignal();
+            }
+            else
+            {
+                SetForGoodSignal();
+            }
+
+            UpdateTint();
         }
+
+        private void SetForDegradedSignal()
+        {
+            _fadeDirection = -1;
+        }
+
+        private void SetForGoodSignal()
+        {
+            _fadeDirection = 1;
+
+            if (Vector2.DistanceSquared(Communicator.OwnPlayerData.PlayerWorldPosition, Communicator.OtherPlayerData.PlayerWorldPosition) < 
+                Position_Lock_Distance * Position_Lock_Distance)
+            {
+                SetPositionRelativeToClient();
+            }
+            else
+            {
+                SetPositionFromCommsData();
+            }
+        }
+
+        private void SetPositionRelativeToClient()
+        {
+        }
+
+        private void SetPositionFromCommsData()
+        {
+        }
+
+        private void UpdateTint()
+        {
+            _fadeFraction = MathHelper.Clamp(_fadeFraction + (Fade_Step * _fadeDirection), 0.2f, 0.8f);
+            Tint = Color.Lerp(Color.Transparent, Color.White, _fadeFraction); 
+        }
+
+        private const float Fade_Step = 0.01f;
+        private const float Position_Lock_Distance = 250.0f;
     }
 }
