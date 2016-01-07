@@ -163,6 +163,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
             }
             else 
             {
+                _opponentMarker.RaceInProgress = true;
                 _raceStarted = true;
 
                 SoundEffectManager.PlayEffect("race-start"); 
@@ -254,6 +255,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
 
                 SetCoordinatorsForRace(NextSceneParameters.Get<string>(Course_Area_Parameter));
                 SetUpOpponentAttackEffects();
+                _opponentMarker.SetForRaceStart(_player.WorldPosition, _player.Mirror);
                 _waitingMessage.Activate();
             }
         }

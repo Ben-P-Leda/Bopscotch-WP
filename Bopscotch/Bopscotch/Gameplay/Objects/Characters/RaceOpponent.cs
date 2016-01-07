@@ -21,11 +21,13 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private int _fadeDirection;
         private float _fadeFraction;
 
+        private Vector2 _velocity;
+
         private float[] _previousCommsLagTimes;
         private int _earliestCommsLagSlot;
         private float _averageCommsLagTime;
+        private float _relativePositionOffset;
 
-        private Vector2 _targetPosition;
         private bool _shouldBeAhead;
         private Vector2 _playerPositionLastUpdate;
         private int _playerMovementDirection;
@@ -33,9 +35,13 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private int _playerTimeAtBoundary;
         private int _peerTimeAtBoundary;
 
+        private Vector2 _lastPeerPosition;
+        private int _packetsAtLastPosition;
+
         public InterDeviceCommunicator Communicator { private get; set; }
         public IMotionEngine MotionEngine { get { return null; } }
         public AdditiveLayerParticleEffectManager ParticleManager { private get; set; }
+        public bool RaceInProgress { private get; set; }
 
         public RaceOpponent()
             : base()
@@ -60,9 +66,14 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _boundaryLine = -1.0f;
             _playerTimeAtBoundary = 0;
             _peerTimeAtBoundary = 0;
+            _relativePositionOffset = 0;
+
+            _lastPeerPosition = Vector2.Zero;
+            _packetsAtLastPosition = 0;
 
             WorldPosition = Vector2.Zero;
             Visible = true;
+            RaceInProgress = false;
 
             if (Bones.Count < 1)
             {
@@ -100,6 +111,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
         public void SetForRaceStart(Vector2 startPosition, bool startFacingLeft)
         {
+            Mirror = startFacingLeft;
             WorldPosition = startPosition;
             _playerMovementDirection = startFacingLeft ? 1 : -1;
         }
@@ -114,7 +126,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
             _millisecondsSinceLastPacket = Communicator.MillisecondsSinceLastReceive;
             _playerMovementDirection = Math.Sign(Communicator.OwnPlayerData.PlayerWorldPosition.X - _playerPositionLastUpdate.X);
 
-            UpdateDisplaySettings();
+            UpdateDisplaySettings(millisecondsSinceLastUpdate);
 
             _playerPositionLastUpdate = Communicator.OwnPlayerData.PlayerWorldPosition;
         }
@@ -130,9 +142,32 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 _averageCommsLagTime += _previousCommsLagTimes[i];
             }
             _averageCommsLagTime /= Comms_Sample_Count;
+
+            if (Communicator.OtherPlayerData.PlayerWorldPosition == _lastPeerPosition)
+            {
+                _packetsAtLastPosition++;
+                if ((RaceInProgress) && (_packetsAtLastPosition > 0) && (Visible))
+                {
+                    ParticleManager.LaunchCloudBurst(this);
+                    Visible = false;
+                    _velocity = Vector2.Zero;
+                }
+            }
+            else
+            {
+                _lastPeerPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+                _packetsAtLastPosition = 0;
+
+                if (!Visible)
+                {
+                    WorldPosition = _lastPeerPosition;
+                    Visible = true;
+                    _fadeFraction = 0.0f;
+                }
+            }
         }
 
-        private void UpdateDisplaySettings()
+        private void UpdateDisplaySettings(int millisecondsSinceLastUpdate)
         {
             if (Communicator.MillisecondsSinceLastReceive > InterDeviceCommunicator.Signal_Deterioration_Threshold)
             {
@@ -140,38 +175,47 @@ namespace Bopscotch.Gameplay.Objects.Characters
             }
             else
             {
-                SetForGoodSignal();
+                SetForGoodSignal(millisecondsSinceLastUpdate);
             }
 
-            UpdateTint();
+            if (_velocity.X != 0.0f)
+            {
+                Mirror = _velocity.X < 0.0f;
+            }
+
+            _fadeFraction = MathHelper.Clamp(_fadeFraction + (Fade_Step * _fadeDirection), 0.2f, 0.8f);
+            Tint = Color.Lerp(Color.Transparent, Color.White, _fadeFraction); 
         }
 
         private void SetForDegradedSignal()
         {
             _fadeDirection = -1;
+            _velocity = Vector2.Zero;
             WorldPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
         }
 
-        private void SetForGoodSignal()
+        private void SetForGoodSignal(int millisecondsSinceLastUpdate)
         {
             _fadeDirection = 1;
 
+            Vector2 newVelocity = Vector2.Zero;
             if (Vector2.DistanceSquared(Communicator.OwnPlayerData.PlayerWorldPosition, Communicator.OtherPlayerData.PlayerWorldPosition) < 
                 Position_Lock_Distance * Position_Lock_Distance)
             {
-                SetPositionRelativeToClient();
+                newVelocity = GetVelocityFromPlayer();
             }
             else
             {
-                SetPositionFromCommsData();
+                newVelocity = GetVelocityFromCommsData();
             }
 
-            WorldPosition = _targetPosition;
+            UpdateVelocity(newVelocity);
+            WorldPosition += _velocity * millisecondsSinceLastUpdate;
         }
 
-        private void SetPositionRelativeToClient()
+        private Vector2 GetVelocityFromPlayer()
         {
-            _targetPosition = new Vector2(Communicator.OwnPlayerData.PlayerWorldPosition.X, _playerPositionLastUpdate.Y);
+            Vector2 targetPosition = new Vector2(Communicator.OwnPlayerData.PlayerWorldPosition.X, _playerPositionLastUpdate.Y);
 
             CheckAndHandleBoundaryPass();
             if (Math.Abs(Communicator.OwnPlayerData.PlayerWorldPosition.X - _boundaryLine) > Position_Lock_Distance)
@@ -181,12 +225,17 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
             if (_shouldBeAhead)
             {
-                _targetPosition.X += Position_Offset_Distance * _playerMovementDirection;
+                _relativePositionOffset = Math.Min(Maximum_Position_Offset_Distance, _relativePositionOffset + Position_Offset_Step);
             }
             else
             {
-                _targetPosition.X -= Position_Offset_Distance * _playerMovementDirection;
+                _relativePositionOffset = Math.Max(-Maximum_Position_Offset_Distance, _relativePositionOffset - Position_Offset_Step);
             }
+
+            targetPosition.X += _relativePositionOffset * _playerMovementDirection;
+
+
+            return (targetPosition - WorldPosition) / Milliseconds_Per_Frame;
         }
 
         private void SetNewBoundary()
@@ -232,20 +281,34 @@ namespace Bopscotch.Gameplay.Objects.Characters
             }
         }
 
-        private void SetPositionFromCommsData()
+        private Vector2 GetVelocityFromCommsData()
         {
-            _targetPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+            Vector2 targetPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+            return (targetPosition - WorldPosition) / _averageCommsLagTime;
+        }
+
+        private void UpdateVelocity(Vector2 newVelocity)
+        {
+            if (_velocity == Vector2.Zero)
+            {
+                _velocity = newVelocity;
+            }
+            else
+            {
+                _velocity = (_velocity * 0.5f) + (newVelocity * 0.5f);
+            }
         }
 
         private void UpdateTint()
         {
-            _fadeFraction = MathHelper.Clamp(_fadeFraction + (Fade_Step * _fadeDirection), 0.2f, 0.8f);
-            Tint = Color.Lerp(Color.Transparent, Color.White, _fadeFraction); 
+
         }
 
         private const float Fade_Step = 0.01f;
         private const float Position_Lock_Distance = 250.0f;
-        private const float Position_Offset_Distance = 60.0f;
+        private const float Position_Offset_Step = 0.1f;
+        private const float Maximum_Position_Offset_Distance = 60.0f;
         private const int Comms_Sample_Count = 20;
+        private const int Milliseconds_Per_Frame = 16;
     }
 }
