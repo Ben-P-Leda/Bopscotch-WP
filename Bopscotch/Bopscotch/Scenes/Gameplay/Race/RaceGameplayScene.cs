@@ -163,7 +163,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
             }
             else 
             {
-                _opponentMarker.RaceInProgress = true;
+                _opponentMarker.StartRace();
                 _raceStarted = true;
 
                 SoundEffectManager.PlayEffect("race-start"); 

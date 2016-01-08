@@ -37,11 +37,12 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
         private Vector2 _lastPeerPosition;
         private int _packetsAtLastPosition;
+        private bool _awaitingMovementStart;
+        private bool _raceInProgress;
 
         public InterDeviceCommunicator Communicator { private get; set; }
         public IMotionEngine MotionEngine { get { return null; } }
         public AdditiveLayerParticleEffectManager ParticleManager { private get; set; }
-        public bool RaceInProgress { private get; set; }
 
         public RaceOpponent()
             : base()
@@ -70,10 +71,11 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
             _lastPeerPosition = Vector2.Zero;
             _packetsAtLastPosition = 0;
+            _raceInProgress = false;
+            _awaitingMovementStart = true;
 
             WorldPosition = Vector2.Zero;
             Visible = true;
-            RaceInProgress = false;
 
             if (Bones.Count < 1)
             {
@@ -114,6 +116,13 @@ namespace Bopscotch.Gameplay.Objects.Characters
             Mirror = startFacingLeft;
             WorldPosition = startPosition;
             _playerMovementDirection = startFacingLeft ? 1 : -1;
+            _awaitingMovementStart = true;
+        }
+
+        public void StartRace()
+        {
+            _raceInProgress = true;
+            _awaitingMovementStart = false;
         }
 
         public void Update(int millisecondsSinceLastUpdate)
@@ -146,11 +155,12 @@ namespace Bopscotch.Gameplay.Objects.Characters
             if (Communicator.OtherPlayerData.PlayerWorldPosition == _lastPeerPosition)
             {
                 _packetsAtLastPosition++;
-                if ((RaceInProgress) && (_packetsAtLastPosition > 0) && (Visible))
+                if ((_raceInProgress) && (_packetsAtLastPosition > 0) && (Visible))
                 {
                     ParticleManager.LaunchCloudBurst(this);
                     Visible = false;
                     _velocity = Vector2.Zero;
+                    _awaitingMovementStart = true;
                 }
             }
             else
@@ -163,6 +173,10 @@ namespace Bopscotch.Gameplay.Objects.Characters
                     WorldPosition = _lastPeerPosition;
                     Visible = true;
                     _fadeFraction = 0.0f;
+                }
+                else if (_lastPeerPosition.X != Communicator.OtherPlayerData.PlayerWorldPosition.X)
+                {
+                    _awaitingMovementStart = false;
                 }
             }
         }
@@ -198,22 +212,44 @@ namespace Bopscotch.Gameplay.Objects.Characters
         {
             _fadeDirection = 1;
 
-            Vector2 newVelocity = Vector2.Zero;
-            if (Vector2.DistanceSquared(Communicator.OwnPlayerData.PlayerWorldPosition, Communicator.OtherPlayerData.PlayerWorldPosition) < 
-                Position_Lock_Distance * Position_Lock_Distance)
+            if (PeerShouldSyncToPlayer())
             {
-                newVelocity = GetVelocityFromPlayer();
+                SetVelocityFromPlayer();
             }
             else
             {
-                newVelocity = GetVelocityFromCommsData();
+                SetVelocityFromCommsData();
             }
 
-            UpdateVelocity(newVelocity);
             WorldPosition += _velocity * millisecondsSinceLastUpdate;
         }
 
-        private Vector2 GetVelocityFromPlayer()
+        private bool PeerShouldSyncToPlayer()
+        {
+            bool shouldSync = true;
+
+            if (_awaitingMovementStart)
+            {
+                shouldSync = false;
+            }
+            else if (Vector2.DistanceSquared(Communicator.OwnPlayerData.PlayerWorldPosition, Communicator.OtherPlayerData.PlayerWorldPosition) >=
+                Position_Lock_Distance * Position_Lock_Distance)
+            {
+                shouldSync = false;
+            }
+            else if ((_playerMovementDirection != 0) && (Math.Sign(_velocity.X) != 0) && (_playerMovementDirection != Math.Sign(_velocity.X)))
+            {
+                if (Math.Abs(Communicator.OwnPlayerData.PlayerWorldPosition.Y - Communicator.OtherPlayerData.PlayerWorldPosition.Y) >
+                    Definitions.Grid_Cell_Pixel_Size)
+                {
+                    shouldSync = false;
+                }
+            }
+
+            return shouldSync;
+        }
+
+        private void SetVelocityFromPlayer()
         {
             Vector2 targetPosition = new Vector2(Communicator.OwnPlayerData.PlayerWorldPosition.X, _playerPositionLastUpdate.Y);
 
@@ -234,8 +270,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
 
             targetPosition.X += _relativePositionOffset * _playerMovementDirection;
 
-
-            return (targetPosition - WorldPosition) / Milliseconds_Per_Frame;
+            UpdateVelocity((targetPosition - WorldPosition) / Milliseconds_Per_Frame);
         }
 
         private void SetNewBoundary()
@@ -281,10 +316,10 @@ namespace Bopscotch.Gameplay.Objects.Characters
             }
         }
 
-        private Vector2 GetVelocityFromCommsData()
+        private void SetVelocityFromCommsData()
         {
             Vector2 targetPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
-            return (targetPosition - WorldPosition) / _averageCommsLagTime;
+            UpdateVelocity((targetPosition - WorldPosition) / _averageCommsLagTime);
         }
 
         private void UpdateVelocity(Vector2 newVelocity)
@@ -299,13 +334,15 @@ namespace Bopscotch.Gameplay.Objects.Characters
             }
         }
 
-        private void UpdateTint()
+        public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
         {
+            base.Draw(spriteBatch);
 
+            Leda.Core.TextWriter.Write(_averageCommsLagTime.ToString(), spriteBatch, new Vector2(50, 300), Color.White, 0.99f, Leda.Core.TextWriter.Alignment.Left);
         }
 
         private const float Fade_Step = 0.01f;
-        private const float Position_Lock_Distance = 250.0f;
+        private const float Position_Lock_Distance = 330.0f;
         private const float Position_Offset_Step = 0.1f;
         private const float Maximum_Position_Offset_Distance = 60.0f;
         private const int Comms_Sample_Count = 20;
