@@ -115,8 +115,11 @@ namespace Bopscotch.Gameplay.Objects.Characters
         {
             Mirror = startFacingLeft;
             WorldPosition = startPosition;
+
             _playerMovementDirection = startFacingLeft ? 1 : -1;
             _awaitingMovementStart = true;
+            _velocity = Vector2.Zero;
+            _lastPeerPosition = WorldPosition;
         }
 
         public void StartRace()
@@ -165,12 +168,9 @@ namespace Bopscotch.Gameplay.Objects.Characters
             }
             else
             {
-                _lastPeerPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
-                _packetsAtLastPosition = 0;
-
                 if (!Visible)
                 {
-                    WorldPosition = _lastPeerPosition;
+                    WorldPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
                     Visible = true;
                     _fadeFraction = 0.0f;
                 }
@@ -178,6 +178,9 @@ namespace Bopscotch.Gameplay.Objects.Characters
                 {
                     _awaitingMovementStart = false;
                 }
+
+                _lastPeerPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+                _packetsAtLastPosition = 0;
             }
         }
 
@@ -224,25 +227,45 @@ namespace Bopscotch.Gameplay.Objects.Characters
             WorldPosition += _velocity * millisecondsSinceLastUpdate;
         }
 
+        private string _desyncMessage = "";
+
         private bool PeerShouldSyncToPlayer()
         {
             bool shouldSync = true;
+            _desyncMessage = "";
 
-            if (_awaitingMovementStart)
+            double plRow = Math.Floor(Communicator.OwnPlayerData.PlayerWorldPosition.Y / Definitions.Grid_Cell_Pixel_Size);
+            double peRow = Math.Floor(Communicator.OtherPlayerData.PlayerWorldPosition.Y / Definitions.Grid_Cell_Pixel_Size);
+
+            _desyncMessage = string.Format("{0}/{1}", plRow, peRow);
+
+            if ((_awaitingMovementStart) || (_playerMovementDirection == 0))
             {
                 shouldSync = false;
             }
-            else if (Vector2.DistanceSquared(Communicator.OwnPlayerData.PlayerWorldPosition, Communicator.OtherPlayerData.PlayerWorldPosition) >=
-                Position_Lock_Distance * Position_Lock_Distance)
+            else
             {
-                shouldSync = false;
-            }
-            else if ((_playerMovementDirection != 0) && (Math.Sign(_velocity.X) != 0) && (_playerMovementDirection != Math.Sign(_velocity.X)))
-            {
-                if (Math.Abs(Communicator.OwnPlayerData.PlayerWorldPosition.Y - Communicator.OtherPlayerData.PlayerWorldPosition.Y) >
-                    Definitions.Grid_Cell_Pixel_Size)
+                float distanceToCurrent = Vector2.DistanceSquared(Communicator.OwnPlayerData.PlayerWorldPosition, 
+                    Communicator.OtherPlayerData.PlayerWorldPosition);
+                float distanceToUpdated = Vector2.DistanceSquared(Communicator.OwnPlayerData.PlayerWorldPosition,
+                    Communicator.OtherPlayerData.PlayerWorldPosition + _velocity);
+
+                if ((distanceToCurrent >= Position_Lock_Distance * Position_Lock_Distance) && 
+                    (distanceToUpdated >= Position_Lock_Distance * Position_Lock_Distance))
                 {
                     shouldSync = false;
+                    //_desyncMessage = "Out of zone";
+                }
+                else if (_playerMovementDirection != Math.Sign(_velocity.X))
+                {
+                    double playerRow = Math.Floor(Communicator.OwnPlayerData.PlayerWorldPosition.Y / Definitions.Grid_Cell_Pixel_Size);
+                    double peerRow = Math.Floor(Communicator.OtherPlayerData.PlayerWorldPosition.Y / Definitions.Grid_Cell_Pixel_Size);
+
+                    if (playerRow != peerRow)
+                    {
+                        shouldSync = false;
+                        //_desyncMessage = string.Format("row: {0}/{1}", playerRow, peerRow);
+                    }
                 }
             }
 
@@ -319,6 +342,7 @@ namespace Bopscotch.Gameplay.Objects.Characters
         private void SetVelocityFromCommsData()
         {
             Vector2 targetPosition = Communicator.OtherPlayerData.PlayerWorldPosition;
+
             UpdateVelocity((targetPosition - WorldPosition) / _averageCommsLagTime);
         }
 
@@ -337,13 +361,12 @@ namespace Bopscotch.Gameplay.Objects.Characters
         public override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-
-            Leda.Core.TextWriter.Write(_averageCommsLagTime.ToString(), spriteBatch, new Vector2(50, 300), Color.White, 0.99f, Leda.Core.TextWriter.Alignment.Left);
+            Leda.Core.TextWriter.Write(_desyncMessage, spriteBatch, new Vector2(50, 300), Color.White, 0.99f, Leda.Core.TextWriter.Alignment.Left);
         }
 
         private const float Fade_Step = 0.01f;
         private const float Position_Lock_Distance = 330.0f;
-        private const float Position_Offset_Step = 0.1f;
+        private const float Position_Offset_Step = 1.0f;
         private const float Maximum_Position_Offset_Distance = 60.0f;
         private const int Comms_Sample_Count = 20;
         private const int Milliseconds_Per_Frame = 16;
