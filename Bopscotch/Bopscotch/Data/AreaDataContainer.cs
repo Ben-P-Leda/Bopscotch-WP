@@ -229,6 +229,12 @@ namespace Bopscotch.Data
             }
 
             LevelScores.Clear();
+
+            for (int i = 0; i < LevelRanks.Count; i++)
+            {
+                LevelRanks[i] = Definitions.SurvivalRank.NotSet;
+            }
+
             _worldPositionsOfGoldenTicketsCollectedFromOpenLevel.Clear();
             _worldPositionsOfSmashedCratesContainingGoldenTickets.Clear();
 
