@@ -35,7 +35,7 @@ namespace Bopscotch.Data
         {
             Name = name;
             SelectionTexture = selectionTexture;
-            DifficultyTag = difficultyTag;
+            DifficultyTag = GetDifficultyTag(name, difficultyTag);
             SpeedStep = speedStep;
             SelectedForSurvival = false;
             LastSelectedLevel = 0;
@@ -48,6 +48,13 @@ namespace Bopscotch.Data
             _levelCount = levelCount;
             _worldPositionsOfGoldenTicketsCollectedFromOpenLevel = new List<Vector2>();
             _worldPositionsOfSmashedCratesContainingGoldenTickets = new List<Vector2>();
+        }
+
+        public string GetDifficultyTag(string areaName, string difficultyTag)
+        {
+            if (areaName == "Snowville") { difficultyTag = "Tricky"; }
+
+            return difficultyTag;
         }
 
         public long ScoreAtCurrentLevelStart

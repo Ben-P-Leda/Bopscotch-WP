@@ -149,15 +149,6 @@ namespace Bopscotch.Scenes.NonGame
         {
             switch (productCode)
             {
-                // OLD SET
-                //case "Bopscotch_Test_Product": Data.Profile.Lives += 1; Data.Profile.GoldenTickets += 1; break;
-                //case "Bopscotch_10_Lives": Data.Profile.Lives += 10; break;
-                //case "Bopscotch_20_Lives": Data.Profile.Lives += 20; break;
-                //case "Bopscotch_50_Lives": Data.Profile.Lives += 50; break;
-                //case "Bopscotch_2_Tickets": Data.Profile.GoldenTickets += 2; break;
-                //case "Bopscotch_5_tickets": Data.Profile.GoldenTickets += 5; break;
-                //case "Bopscotch_10_Tickets": Data.Profile.GoldenTickets += 10; break;
-
                 case "Bopscotch_15_Lives": Data.Profile.Lives += 15; break;                 // £0.79 - $0.99
                 case "Bopscotch_30_Lives": Data.Profile.Lives += 30; break;                 // £1.49 - $1.99
                 case "Bopscotch_50_Lives": Data.Profile.Lives += 50; break;                 // £2.29 - $2.99

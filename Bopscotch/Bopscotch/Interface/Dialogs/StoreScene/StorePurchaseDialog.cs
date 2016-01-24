@@ -86,13 +86,6 @@ namespace Bopscotch.Interface.Dialogs.StoreScene
 
             Dictionary<string, Point> iapImageMappings = new Dictionary<string, Point>()
             {
-                //{ "Bopscotch_10_Lives", new Point(1,0) },
-                //{ "Bopscotch_20_Lives", new Point(1,1) },
-                //{ "Bopscotch_50_Lives", new Point(1,2) },
-                //{ "Bopscotch_2_Tickets", new Point(0,0) },
-                //{ "Bopscotch_5_tickets", new Point(0,1) },
-                //{ "Bopscotch_10_Tickets", new Point(0,2) }
-
                 { "Bopscotch_15_Lives", new Point(1,0) },
                 { "Bopscotch_30_Lives", new Point(1,1) },
                 { "Bopscotch_50_Lives", new Point(1,2) },
