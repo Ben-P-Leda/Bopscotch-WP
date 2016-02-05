@@ -37,6 +37,8 @@
     <texture name="background-6" file="Textures/Backgrounds/background-6" />
     <texture name="background-7" file="Textures/Backgrounds/background-7" />
     <texture name="background-8" file="Textures/Backgrounds/background-8" />
+    <texture name="anim-background-1" file="Textures/Backgrounds/Animated/Hilltops/back" />
+    <texture name="anim-background-1-segments" file="Textures/Backgrounds/Animated/Hilltops/segments" />
     <texture name="block-1" file="Textures/Blocks/Terrain/block-1" />
     <texture name="block-spring" file="Textures/Blocks/Special/spring" />
     <texture name="block-smash" file="Textures/Blocks/Special/smash-crate" />

@@ -137,6 +137,7 @@
     <Compile Include="Gameplay\Objects\Display\Survival\PauseButton.cs" />
     <Compile Include="Gameplay\Objects\Display\Survival\SurvivalDataDisplay.cs" />
     <Compile Include="Gameplay\Objects\Display\Survival\TutorialRunner.cs" />
+    <Compile Include="Scenes\Objects\AnimatedBackground.cs" />
     <Compile Include="Gameplay\Objects\Environment\Background.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blackout.cs" />
     <Compile Include="Gameplay\Objects\Environment\BlockMap.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Scenes\BaseClasses\StaticSceneBase.cs" />
     <Compile Include="Scenes\NonGame\StoreScene.cs" />
     <Compile Include="Scenes\NonGame\TitleScene.cs" />
+    <Compile Include="Scenes\Objects\AnimatedBackgroundSegment.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -362,6 +364,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\SoundEffects\turn-round.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Hilltops\back.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Hilltops\segments.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\background-1.xnb">
@@ -847,10 +855,40 @@
     <None Include="Content\Music\title.wma">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Music\survival-gameplay.wma">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\RaceStage.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Files\Levels\Lava Cave\Survival\0.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Content\Music\survival-gameplay.wma">
+    <None Include="Content\Files\Levels\Lava Cave\Survival\1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\2.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\3.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\4.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\5.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\6.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\7.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\8.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Files\Levels\Lava Cave\Survival\9.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Content Include="Tile 358x173.png" />
