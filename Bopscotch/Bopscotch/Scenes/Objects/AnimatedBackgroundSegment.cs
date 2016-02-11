@@ -18,13 +18,17 @@ namespace Bopscotch.Scenes.Objects
         public bool Visible { get { return true; } set { } }
         public int RenderLayer { get { return Render_Layer; } set { } }
 
-        public AnimatedBackgroundSegment(string texture, int segmentIndex)
+        public AnimatedBackgroundSegment(string texture, int segmentIndex, int frameSeed, int heightSeed)
         {
             _texture = TextureManager.Textures[texture];
-            _sourceArea = new Rectangle(0, 0, TextureManager.Textures[texture].Width, Unscaled_Height);
+
+            int frameCount = _texture.Height / Unscaled_Height;
+            _sourceArea = new Rectangle(0, (((segmentIndex + frameSeed) % frameCount) * Unscaled_Height) + 1, _texture.Width, Unscaled_Height - 2);
 
             _heightRatio = (float)GameBase.Instance.GraphicsDevice.Viewport.Height / (float)Definitions.Back_Buffer_Height;
-            _initialPosition = new Vector2(segmentIndex * TextureManager.Textures[texture].Width, Definitions.Back_Buffer_Height - Unscaled_Height);
+            _initialPosition = new Vector2(
+                segmentIndex * TextureManager.Textures[texture].Width * Scale, 
+                ((Definitions.Back_Buffer_Height - (Unscaled_Height * Scale)) - 2) + (Height_Step * heightSeed));
         }
 
         public void Initialize()
@@ -44,12 +48,15 @@ namespace Bopscotch.Scenes.Objects
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(_texture, _position * _heightRatio, _sourceArea, Color.White, 0.0f, Vector2.Zero, _heightRatio, 
+            spriteBatch.Draw(_texture, _position * _heightRatio, _sourceArea, Color.White, 0.0f, Vector2.Zero, _heightRatio * Scale, 
                 SpriteEffects.None, Render_Depth);
         }
 
         private const int Render_Layer = 0;
         private const float Render_Depth = 0.9f;
-        private const int Unscaled_Height = 450;
+        private const int Unscaled_Height = 225;
+        private const float Height_Step = 15.0f;
+
+        public const float Scale = 2.0f;
     }
 }

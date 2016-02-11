@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 using Leda.Core;
@@ -18,15 +20,18 @@ namespace Bopscotch.Scenes.Objects
         private AnimatedBackgroundSegment[] _segments;
         private float _maximumY;
         private float _verticalModifier;
+        private int _segmentSeed;
 
         public bool Visible { get; set; }
         public int RenderLayer { get; set; }
         public Vector2 CameraPosition { set { UpdateSegmentPositions(value); } }
 
-        public AnimatedBackground(string texture, Point worldDimensions)
+        public AnimatedBackground(string texture, Point worldDimensions, int segmentSeed)
         {
             _texture = "anim-" + texture;
             _worldDimensions = worldDimensions.ToVector2();
+
+            _segmentSeed = GetNextSeed(segmentSeed);
 
             CalculateBackgroundTargetArea();
             RenderLayer = Render_Layer;
@@ -59,13 +64,26 @@ namespace Bopscotch.Scenes.Objects
             _verticalModifier = allowedVerticalRange / maximumCameraY;
 
             string segmentTexture = _texture + "-segments";
-            int segmentCount = (int)(_worldDimensions.X / TextureManager.Textures[segmentTexture].Width) + 1;
+            int segmentCount = (int)((_worldDimensions.X / TextureManager.Textures[segmentTexture].Width) * AnimatedBackgroundSegment.Scale) + 1;
+            int heightSeed = _segmentSeed;
 
             _segments = new AnimatedBackgroundSegment[segmentCount];
             for (int i=0; i<segmentCount; i++)
             {
-                _segments[i] = new AnimatedBackgroundSegment(segmentTexture, i);
+                heightSeed = GetNextSeed(heightSeed);
+                _segments[i] = new AnimatedBackgroundSegment(segmentTexture, i, _segmentSeed, heightSeed);
             }
+        }
+
+        private int GetNextSeed(int seedBase)
+        {
+            seedBase += Segment_Seed_Modifier;
+            seedBase *= seedBase;
+
+            char[] digits = seedBase.ToString().ToCharArray();
+            Array.Reverse(digits);
+
+            return Convert.ToInt32(digits[1].ToString());
         }
 
         public void RegisterBackgroundObjects(Scene.ObjectRegistrationHandler register)
@@ -96,5 +114,6 @@ namespace Bopscotch.Scenes.Objects
         private const float Render_Depth = 0.9f;
         private const float Maximum_Vertical_Range = 225.0f;
         private const float Vertical_Range_Modifier = 0.25f;
+        private const int Segment_Seed_Modifier = 11;
     }
 }
