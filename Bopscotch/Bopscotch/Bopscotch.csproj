@@ -251,6 +251,7 @@
     <Compile Include="Scenes\BaseClasses\StaticSceneBase.cs" />
     <Compile Include="Scenes\NonGame\StoreScene.cs" />
     <Compile Include="Scenes\NonGame\TitleScene.cs" />
+    <Compile Include="Scenes\Objects\AnimatedBackgroundCloud.cs" />
     <Compile Include="Scenes\Objects\AnimatedBackgroundSegment.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -366,6 +367,9 @@
     <None Include="Content\SoundEffects\turn-round.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Textures\Backgrounds\Animated\clouds.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Textures\Backgrounds\Animated\Ghostberg\back.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -382,6 +386,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\Animated\Lava Cave\segments.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Metropolis\back.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Metropolis\segments.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Snowville\back.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Snowville\segments.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\Animated\Waterfall\back.xnb">

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,24 +19,35 @@ namespace Bopscotch.Scenes.Objects
         private Vector2 _worldDimensions;
         private Rectangle _targetArea;
         private AnimatedBackgroundSegment[] _segments;
+        private AnimatedBackgroundCloud[] _clouds;
         private float _maximumY;
         private float _verticalModifier;
-        private int _segmentSeed;
+        private int _generatorSeed;
+        private int _generatorLastValue;
+        private int _generatorIteration;
+
+        private Vector2 _cloudScaling;
+        private Color _cloudTint;
+        private float _cloudFloor;
 
         public bool Visible { get; set; }
         public int RenderLayer { get; set; }
-        public Vector2 CameraPosition { set { UpdateSegmentPositions(value); } }
+        public Vector2 CameraPosition { set { UpdateComponentPositions(value); } }
 
         public AnimatedBackground(string texture, Point worldDimensions, int segmentSeed)
         {
             _texture = "anim-" + texture;
             _worldDimensions = worldDimensions.ToVector2();
 
-            _segmentSeed = GetNextSeed(segmentSeed);
+            _generatorSeed = segmentSeed;
+            _generatorLastValue = 0;
+            _generatorIteration = 0;
 
             CalculateBackgroundTargetArea();
             RenderLayer = Render_Layer;
             Visible = true;
+
+            SetCloudMetrics(texture);
         }
 
         private void CalculateBackgroundTargetArea()
@@ -46,44 +58,113 @@ namespace Bopscotch.Scenes.Objects
 
             _targetArea = new Rectangle((int)xOffset, 0, (int)targetWidth, GameBase.Instance.GraphicsDevice.Viewport.Height);
         }
-
-        public void Initialize()
+		
+        private void SetCloudMetrics(string textureName)
         {
+            // This is horrible, but I really can't be bothered any more...
+            switch (textureName)
+            {
+                case "background-1":                // Hilltops
+                    _cloudScaling = Vector2.One;
+                    _cloudTint = Color.White;
+                    _cloudFloor = 400.0f;
+                    break;
+                case "background-3":                // Waterfall
+                    _cloudScaling = new Vector2(2.0f, 0.333f);
+                    _cloudTint = Color.Lerp(Color.White, Color.Transparent, 0.5f);
+                    _cloudFloor = 550.0f;
+                    break;
+                case "background-4":                // Metropolis
+                    _cloudScaling = new Vector2(2.0f, 0.333f);
+                    _cloudTint = Color.Lerp(Color.DarkGray, Color.Transparent, 0.5f);
+                    _cloudFloor = 550.0f;
+                    break;
+                case "background-6":                // Ghostberg
+                    _cloudScaling = new Vector2(1.0f, 0.5f);
+                    _cloudTint = Color.Black;
+                    _cloudFloor = 250.0f;
+                    break;
+                case "background-7":                // Snowville
+                    _cloudScaling = Vector2.One;
+                    _cloudTint = Color.White;
+                    _cloudFloor = 400.0f;
+                    break;
+                case "background-8":                // Lava Cave
+                    _cloudScaling = new Vector2(2.0f, 0.333f);
+                    _cloudTint = Color.Lerp(Color.Gray, Color.Transparent, 0.5f);
+                    _cloudFloor = 550.0f;
+                    break;
+            }
         }
 
-        public virtual void Reset()
+        public void Initialize() { }
+
+        public virtual void Reset() { }
+
+        public void CreateComponents()
         {
+            _segments = CreateSegments();
+            _clouds = CreateClouds();
         }
 
-        public void CreateSegments()
+        private int NextGeneratorValue()
+        {
+            int valueBase = _generatorSeed + _generatorLastValue + (_generatorIteration % Generator_Seed_Modifier) + Generator_Seed_Modifier;
+            valueBase *= valueBase;
+
+            char[] digits = valueBase.ToString().ToCharArray();
+            Array.Reverse(digits);
+
+            _generatorLastValue = Convert.ToInt32(digits[1].ToString());
+            _generatorIteration++;
+
+            return _generatorLastValue;
+        }
+
+        private AnimatedBackgroundSegment[] CreateSegments()
         {
             float maximumCameraY = _worldDimensions.Y - Definitions.Back_Buffer_Height;
             float allowedVerticalRange = MathHelper.Min(maximumCameraY * Vertical_Range_Modifier, Maximum_Vertical_Range);
 
             _maximumY = allowedVerticalRange;
-            _verticalModifier = allowedVerticalRange / maximumCameraY;
+            _verticalModifier = maximumCameraY == 0.0f ? 0.0f : allowedVerticalRange / maximumCameraY;
 
             string segmentTexture = _texture + "-segments";
-            int segmentCount = (int)((_worldDimensions.X / TextureManager.Textures[segmentTexture].Width) * AnimatedBackgroundSegment.Scale) + 1;
-            int heightSeed = _segmentSeed;
+            float nextSegmentX = 0.0f;
+            List<AnimatedBackgroundSegment> segments = new List<AnimatedBackgroundSegment>();
 
-            _segments = new AnimatedBackgroundSegment[segmentCount];
-            for (int i=0; i<segmentCount; i++)
+            while (nextSegmentX < _worldDimensions.X * 0.8f)
             {
-                heightSeed = GetNextSeed(heightSeed);
-                _segments[i] = new AnimatedBackgroundSegment(segmentTexture, i, _segmentSeed, heightSeed);
+                AnimatedBackgroundSegment segment = new AnimatedBackgroundSegment(segmentTexture, segments.Count, NextGeneratorValue(), NextGeneratorValue());
+                segments.Add(segment);
+                nextSegmentX += AnimatedBackgroundSegment.SegmentWidth(segmentTexture) + (NextGeneratorValue() * Segment_Spacing_Modifier);
             }
+
+            return segments.ToArray();
         }
 
-        private int GetNextSeed(int seedBase)
+        private AnimatedBackgroundCloud[] CreateClouds()
         {
-            seedBase += Segment_Seed_Modifier;
-            seedBase *= seedBase;
+            float rowHeight = _cloudFloor / Cloud_Row_Count;
+            int lastRow = 0;
 
-            char[] digits = seedBase.ToString().ToCharArray();
-            Array.Reverse(digits);
+            Point nextCloudPosition = new Point(0, 0);
 
-            return Convert.ToInt32(digits[1].ToString());
+            List<AnimatedBackgroundCloud> clouds = new List<AnimatedBackgroundCloud>();
+
+            while (nextCloudPosition.X < _worldDimensions.X * 0.5)
+            {
+                int row = Leda.Core.Random.Generator.NextInt(Cloud_Row_Count - 1);
+                row = row >= lastRow ? row + 1 : row;
+                lastRow = row;
+                nextCloudPosition.Y = (int)((row * rowHeight) + Leda.Core.Random.Generator.Next(rowHeight * 0.2f, rowHeight * 0.8f));
+
+                AnimatedBackgroundCloud cloud = new AnimatedBackgroundCloud(nextCloudPosition, _cloudScaling, _cloudTint);
+                clouds.Add(cloud);
+                nextCloudPosition.X += (int)(cloud.Width + (Leda.Core.Random.Generator.Next(-Cloud_Spacing_Modifier, Cloud_Spacing_Modifier) * _cloudScaling.X));
+            }
+
+            return clouds.ToArray();
         }
 
         public void RegisterBackgroundObjects(Scene.ObjectRegistrationHandler register)
@@ -93,15 +174,24 @@ namespace Bopscotch.Scenes.Objects
             {
                 register(_segments[i]);
             }
+
+            for (int i = 0; i < _clouds.Length; i++)
+            {
+                register(_clouds[i]);
+            }
         }
 
-        public void UpdateSegmentPositions(Vector2 cameraPosition)
+        public void UpdateComponentPositions(Vector2 cameraPosition)
         {
             Vector2 offset = new Vector2(-(cameraPosition.X / 2.0f), MathHelper.Max(_maximumY - (cameraPosition.Y * _verticalModifier), 0.0f));
-
             for (int i=0; i<_segments.Length; i++)
             {
                 _segments[i].SetOffset(offset);
+            }
+
+            for (int i = 0; i < _clouds.Length; i++)
+            {
+                _clouds[i].SetOffset(-cameraPosition.X);
             }
         }
 
@@ -114,6 +204,9 @@ namespace Bopscotch.Scenes.Objects
         private const float Render_Depth = 0.9f;
         private const float Maximum_Vertical_Range = 225.0f;
         private const float Vertical_Range_Modifier = 0.25f;
-        private const int Segment_Seed_Modifier = 11;
+        private const int Generator_Seed_Modifier = 11;
+        private const float Segment_Spacing_Modifier = 15.0f;
+        private const int Cloud_Row_Count = 4;
+        private const float Cloud_Spacing_Modifier = 100.0f;
     }
 }
