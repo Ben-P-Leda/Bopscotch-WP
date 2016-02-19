@@ -89,7 +89,7 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             _congratulationsPopup.Reset();
 
             FlushGameObjects();
-            RegisterGameObject(new Background() { TextureReference = Profile.CurrentAreaData.SelectionTexture });
+            CreateAnimatedBackground(Profile.CurrentAreaData.SelectionTexture, new int[] { 0, 1, 2 });
             RegisterGameObject(new Effects.FullScreenColourOverlay() { TintFraction = 0.75f });
             RegisterGameObject(_congratulationsPopup);
 

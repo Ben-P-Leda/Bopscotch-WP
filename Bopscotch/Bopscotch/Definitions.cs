@@ -29,8 +29,6 @@ namespace Bopscotch
         public const float Left_Button_Column_X = 500.0f;
         public const float Right_Button_Column_X = 1100.0f;
 
-        public const float Background_Texture_Thumbnail_Scale = 0.3f;
-
         public const string Avatar_Skeleton_Side = "player-side";
         public const string Avatar_Skeleton_Front = "player-front";
         public const int Avatar_Customisation_Slot_Count = 4;

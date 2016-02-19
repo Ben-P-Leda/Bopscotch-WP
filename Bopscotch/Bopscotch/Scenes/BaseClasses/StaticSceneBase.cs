@@ -58,9 +58,10 @@ namespace Bopscotch.Scenes.BaseClasses
             }
         }
 
-        public void CreateAnimatedBackground(string reference)
+        public void CreateAnimatedBackground(string reference, int[] componentSequence)
         {
             _animBackground = new AnimatedBackground(reference, new Point(Animated_Background_Width, Definitions.Back_Buffer_Height), 0);
+            _animBackground.ComponentSequence = componentSequence;
             _animBackground.CreateComponents();
             _animBackground.RegisterBackgroundObjects(RegisterGameObject);
         }

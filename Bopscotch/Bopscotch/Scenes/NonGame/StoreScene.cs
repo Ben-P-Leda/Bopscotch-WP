@@ -47,7 +47,9 @@ namespace Bopscotch.Scenes.NonGame
 
         protected override void CompletePostStartupLoadInitialization()
         {
-            base.CompletePostStartupLoadInitialization();
+            //base.CompletePostStartupLoadInitialization();
+            RegisterDialogs();
+            CreateAnimatedBackground(Background_Texture_Name, new int[] { 0, 1, 2, 3 });
 
             foreach (KeyValuePair<string, ButtonDialog> kvp in _dialogs) { kvp.Value.ExitCallback = HandleActiveDialogExit; }
         }

@@ -28,27 +28,38 @@
     <texture name="particle-star" file="Textures/Effects/Particles/star" />
     <texture name="particle-fireball" file="Textures/Effects/Particles/fireball" />
     <texture name="glow-effect" file="Textures/Effects/glow-effect" />
-    <texture name="background-tutorial" file="Textures/Backgrounds/background-tutorial" />
+    <!--<texture name="background-tutorial" file="Textures/Backgrounds/background-tutorial" />
     <texture name="background-1" file="Textures/Backgrounds/background-1" />
     <texture name="background-2" file="Textures/Backgrounds/background-2" />
     <texture name="background-3" file="Textures/Backgrounds/background-3" />
-    <texture name="background-4" file="Textures/Backgrounds/background-4" />
+    <texture name="background-4" file="Textures/Backgrounds/background-4" />-->
     <texture name="background-5" file="Textures/Backgrounds/background-5" />
-    <texture name="background-6" file="Textures/Backgrounds/background-6" />
+    <!--<texture name="background-6" file="Textures/Backgrounds/background-6" />
     <texture name="background-7" file="Textures/Backgrounds/background-7" />
-    <texture name="background-8" file="Textures/Backgrounds/background-8" />
+    <texture name="background-8" file="Textures/Backgrounds/background-8" />-->
+    <texture name="anim-background-tutorial" file="Textures/Backgrounds/Animated/Island/back" />
+    <texture name="anim-background-tutorial-segments" file="Textures/Backgrounds/Animated/Island/segments" />
+    <texture name="thumb-background-tutorial" file="Textures/Backgrounds/Animated/Island/thumbnail" />
     <texture name="anim-background-1" file="Textures/Backgrounds/Animated/Hilltops/back" />
     <texture name="anim-background-1-segments" file="Textures/Backgrounds/Animated/Hilltops/segments" />
+    <texture name="thumb-background-1" file="Textures/Backgrounds/Animated/Hilltops/thumbnail" />
+    <texture name="anim-background-2" file="Textures/Backgrounds/Animated/Stadium/back" />
+    <texture name="anim-background-2-segments" file="Textures/Backgrounds/Animated/Stadium/segments" />
     <texture name="anim-background-3" file="Textures/Backgrounds/Animated/Waterfall/back" />
     <texture name="anim-background-3-segments" file="Textures/Backgrounds/Animated/Waterfall/segments" />
+    <texture name="thumb-background-3" file="Textures/Backgrounds/Animated/Waterfall/thumbnail" />
     <texture name="anim-background-4" file="Textures/Backgrounds/Animated/Metropolis/back" />
     <texture name="anim-background-4-segments" file="Textures/Backgrounds/Animated/Metropolis/segments" />
+    <texture name="thumb-background-4" file="Textures/Backgrounds/Animated/Metropolis/thumbnail" />
     <texture name="anim-background-6" file="Textures/Backgrounds/Animated/Ghostberg/back" />
     <texture name="anim-background-6-segments" file="Textures/Backgrounds/Animated/Ghostberg/segments" />
+    <texture name="thumb-background-6" file="Textures/Backgrounds/Animated/Ghostberg/thumbnail" />
     <texture name="anim-background-7" file="Textures/Backgrounds/Animated/Snowville/back" />
     <texture name="anim-background-7-segments" file="Textures/Backgrounds/Animated/Snowville/segments" />
+    <texture name="thumb-background-7" file="Textures/Backgrounds/Animated/Snowville/thumbnail" />
     <texture name="anim-background-8" file="Textures/Backgrounds/Animated/Lava Cave/back" />
     <texture name="anim-background-8-segments" file="Textures/Backgrounds/Animated/Lava Cave/segments" />
+    <texture name="thumb-background-8" file="Textures/Backgrounds/Animated/Lava Cave/thumbnail" />
     <texture name="anim-background-clouds" file="Textures/Backgrounds/Animated/clouds" />
     <texture name="block-1" file="Textures/Blocks/Terrain/block-1" />
     <texture name="block-spring" file="Textures/Blocks/Special/spring" />

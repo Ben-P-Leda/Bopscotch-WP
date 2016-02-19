@@ -46,6 +46,12 @@ namespace Bopscotch.Scenes.NonGame
             }
         }
 
+        protected override void CompletePostStartupLoadInitialization()
+        {
+            base.CompletePostStartupLoadInitialization();
+            CreateAnimatedBackground(Background_Texture_Name, new int[] { 0, 1, 2, 3 });
+        }
+
         private TextContent CreateTextElementFromXml(XElement source)
         {
 

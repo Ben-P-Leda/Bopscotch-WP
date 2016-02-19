@@ -137,6 +137,7 @@
     <Compile Include="Gameplay\Objects\Display\Survival\PauseButton.cs" />
     <Compile Include="Gameplay\Objects\Display\Survival\SurvivalDataDisplay.cs" />
     <Compile Include="Gameplay\Objects\Display\Survival\TutorialRunner.cs" />
+    <Compile Include="Interface\Dialogs\SurvivalGameplayScene\TutorialDialog.cs" />
     <Compile Include="Scenes\Objects\AnimatedBackground.cs" />
     <Compile Include="Gameplay\Objects\Environment\Background.cs" />
     <Compile Include="Gameplay\Objects\Environment\Blackout.cs" />
@@ -376,10 +377,25 @@
     <None Include="Content\Textures\Backgrounds\Animated\Ghostberg\segments.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Ghostberg\thumbnail.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Textures\Backgrounds\Animated\Hilltops\back.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\Animated\Hilltops\segments.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Hilltops\thumbnail.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Island\back.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Island\segments.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Island\thumbnail.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\Animated\Lava Cave\back.xnb">
@@ -388,10 +404,16 @@
     <None Include="Content\Textures\Backgrounds\Animated\Lava Cave\segments.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Lava Cave\thumbnail.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Textures\Backgrounds\Animated\Metropolis\back.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\Animated\Metropolis\segments.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Metropolis\thumbnail.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\Animated\Snowville\back.xnb">
@@ -400,10 +422,22 @@
     <None Include="Content\Textures\Backgrounds\Animated\Snowville\segments.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Snowville\thumbnail.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Stadium\back.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Stadium\segments.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Content\Textures\Backgrounds\Animated\Waterfall\back.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\Animated\Waterfall\segments.xnb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Content\Textures\Backgrounds\Animated\Waterfall\thumbnail.xnb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Content\Textures\Backgrounds\background-1.xnb">

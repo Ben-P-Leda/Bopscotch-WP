@@ -25,6 +25,7 @@ namespace Bopscotch.Scenes.Objects
         private int _generatorSeed;
         private int _generatorLastValue;
         private int _generatorIteration;
+        private int _segmentSequenceIndex;
 
         private Vector2 _cloudScaling;
         private Color _cloudTint;
@@ -33,6 +34,7 @@ namespace Bopscotch.Scenes.Objects
         public bool Visible { get; set; }
         public int RenderLayer { get; set; }
         public Vector2 CameraPosition { set { UpdateComponentPositions(value); } }
+        public int[] ComponentSequence { private get; set; }
 
         public AnimatedBackground(string texture, Point worldDimensions, int segmentSeed)
         {
@@ -42,6 +44,7 @@ namespace Bopscotch.Scenes.Objects
             _generatorSeed = segmentSeed;
             _generatorLastValue = 0;
             _generatorIteration = 0;
+            _segmentSequenceIndex = 0;
 
             CalculateBackgroundTargetArea();
             RenderLayer = Render_Layer;
@@ -69,6 +72,11 @@ namespace Bopscotch.Scenes.Objects
                     _cloudTint = Color.White;
                     _cloudFloor = 400.0f;
                     break;
+                case "background-2":                // Stadium
+                    _cloudScaling = new Vector2(0.75f, 0.75f);
+                    _cloudTint = Color.White;
+                    _cloudFloor = 150.0f;
+                    break;
                 case "background-3":                // Waterfall
                     _cloudScaling = new Vector2(2.0f, 0.333f);
                     _cloudTint = Color.Lerp(Color.White, Color.Transparent, 0.5f);
@@ -93,6 +101,11 @@ namespace Bopscotch.Scenes.Objects
                     _cloudScaling = new Vector2(2.0f, 0.333f);
                     _cloudTint = Color.Lerp(Color.Gray, Color.Transparent, 0.5f);
                     _cloudFloor = 550.0f;
+                    break;
+                default:
+                    _cloudScaling = Vector2.One * 0.5f;
+                    _cloudTint = Color.White;
+                    _cloudFloor = 250.0f;
                     break;
             }
         }
@@ -135,7 +148,14 @@ namespace Bopscotch.Scenes.Objects
 
             while (nextSegmentX < _worldDimensions.X * 0.8f)
             {
-                AnimatedBackgroundSegment segment = new AnimatedBackgroundSegment(segmentTexture, segments.Count, NextGeneratorValue(), NextGeneratorValue());
+                int nextSegmentIndex = NextGeneratorValue();
+                if ((ComponentSequence != null) && (ComponentSequence.Length > 0))
+                {
+                    nextSegmentIndex = ComponentSequence[_segmentSequenceIndex];
+                    _segmentSequenceIndex = (_segmentSequenceIndex + 1) % ComponentSequence.Length;
+                }
+
+                AnimatedBackgroundSegment segment = new AnimatedBackgroundSegment(segmentTexture, segments.Count, nextSegmentIndex, NextGeneratorValue());
                 segments.Add(segment);
                 nextSegmentX += AnimatedBackgroundSegment.SegmentWidth(segmentTexture) + (NextGeneratorValue() * Segment_Spacing_Modifier);
             }

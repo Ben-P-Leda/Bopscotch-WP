@@ -83,7 +83,7 @@ namespace Bopscotch.Scenes.NonGame
         {
             //base.CompletePostStartupLoadInitialization();
             RegisterDialogs();
-            CreateAnimatedBackground(Background_Texture_Name);
+            CreateAnimatedBackground(Background_Texture_Name, new int[] { 0, 1, 2, 3 });
 
             _titlePopup.MappingName = Title_Texture_Name;
 
