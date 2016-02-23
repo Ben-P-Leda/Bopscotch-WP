@@ -149,22 +149,12 @@ namespace Bopscotch.Gameplay
         private void FinalizeLevelSetup(XElement levelData)
         {
             string backgroundName = levelData.Element(Background_Data_Element).Attribute("texture").Value;
+            int bgSeed = Profile.PlayingRaceMode ? RaceAreaName.Length : Profile.CurrentAreaData.LastSelectedLevel;
 
-            if (!Animated_Backgrounds.Contains(backgroundName))
-            {
-                Background inGameBackground = new Background();
-                inGameBackground.TextureReference = backgroundName;
-                _registerGameObject(inGameBackground);
-            }
-            else
-            {
-                int bgSeed = Profile.PlayingRaceMode ? RaceAreaName.Length : Profile.CurrentAreaData.LastSelectedLevel;
+            AnimatedBackground inGameBackground = new AnimatedBackground(backgroundName, Map.MapWorldDimensions, bgSeed);
+            inGameBackground.CreateComponents();
 
-                AnimatedBackground inGameBackground = new AnimatedBackground(backgroundName, Map.MapWorldDimensions, bgSeed);
-                inGameBackground.CreateComponents();
-
-                _registerGameObject(inGameBackground);
-            }
+            _registerGameObject(inGameBackground);
 
             Map.ViewportDimensionsInTiles = new Point(
                 (BackgroundDimensions.X / Definitions.Grid_Cell_Pixel_Size) + 1, 
@@ -212,7 +202,5 @@ namespace Bopscotch.Gameplay
         private const string Race_Data_Element = "race-laps";
         private const float Rank_B_Candy_Fraction = 0.70f;
         private const float Rank_A_Candy_Fraction = 0.85f;
-
-        private const string Animated_Backgrounds = "background-tutorial,background-1,background-3,background-4,background-6,background-7,background-8";
     }
 }

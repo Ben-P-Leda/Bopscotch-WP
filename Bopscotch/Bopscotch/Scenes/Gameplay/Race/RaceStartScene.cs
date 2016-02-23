@@ -24,7 +24,6 @@ namespace Bopscotch.Scenes.Gameplay.Race
         public RaceStartScene()
             : base()
         {
-            BackgroundTextureName = Background_Texture_Name;
         }
 
         public override void HandleAssetLoadCompletion(Type loaderSceneType)
@@ -58,7 +57,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
 
         protected override void CompletePostStartupLoadInitialization()
         {
-            RegisterDialogs();
+            base.CompletePostStartupLoadInitialization();
             CreateBackgroundForScene(Background_Texture_Name, new int[] { 0, 1, 2 });
         }
 

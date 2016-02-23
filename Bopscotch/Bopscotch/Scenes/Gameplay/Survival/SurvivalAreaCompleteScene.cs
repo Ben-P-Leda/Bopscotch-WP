@@ -77,8 +77,6 @@ namespace Bopscotch.Scenes.Gameplay.Survival
 
         protected override void CompletePostStartupLoadInitialization()
         {
-            base.CompletePostStartupLoadInitialization();
-
             _congratulationsPopup.MappingName = Popup_Texture_Name;
         }
 

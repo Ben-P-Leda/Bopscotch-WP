@@ -81,8 +81,7 @@ namespace Bopscotch.Scenes.NonGame
 
         protected override void CompletePostStartupLoadInitialization()
         {
-            //base.CompletePostStartupLoadInitialization();
-            RegisterDialogs();
+            base.CompletePostStartupLoadInitialization();
             CreateBackgroundForScene(Background_Texture_Name, new int[] { 0, 1, 2, 3 });
 
             _titlePopup.MappingName = Title_Texture_Name;

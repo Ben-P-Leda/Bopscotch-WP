@@ -35,8 +35,6 @@ namespace Bopscotch.Scenes.NonGame
             RegisterGameObject(_avatar);
 
             CreateAndRegisterGroundBlocks();
-
-            BackgroundTextureName = Background_Texture_Name;
         }
 
         private void CreateAndRegisterGroundBlocks()
@@ -49,9 +47,9 @@ namespace Bopscotch.Scenes.NonGame
 
         protected override void CompletePostStartupLoadInitialization()
         {
+            base.CompletePostStartupLoadInitialization();
             CreateBackgroundForScene("background-tutorial", new int[] { 0, 1, 2 });
             _animBackground.Wrap = true;
-            RegisterDialogs();
 
             foreach (KeyValuePair<string, ButtonDialog> kvp in _dialogs) { kvp.Value.ExitCallback = HandleActiveDialogExit; }
 

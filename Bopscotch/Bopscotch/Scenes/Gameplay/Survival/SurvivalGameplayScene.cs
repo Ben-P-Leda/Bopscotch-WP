@@ -224,7 +224,14 @@ namespace Bopscotch.Scenes.Gameplay.Survival
             {
                 if (!_rankingCoordinator.LevelCompleted)
                 {
-                    EnablePause();
+                    if (Profile.CurrentAreaData.Name == "Tutorial")
+                    {
+                        _tutorialRunner.CheckForStepTrigger(_player.WorldPosition);
+                    }
+                    if (!_paused)
+                    {
+                        EnablePause();
+                    }
                 }
                 Profile.PauseOnSceneActivation = false;
             }
@@ -399,7 +406,14 @@ namespace Bopscotch.Scenes.Gameplay.Survival
 
         protected override void HandleBackButtonPress()
         {
-            if ((!AttemptToPauseGame()) && (_pauseDialog.Active)) { _pauseDialog.Cancel(); }
+            if ((!AttemptToPauseGame()) && (_pauseDialog.Active))
+            {
+                _pauseDialog.Cancel(); 
+            }
+            else if (_tutorialDialog.Active)
+            {
+                _tutorialDialog.Cancel();
+            }
         }
 
         private void HoldForTutorialStep()

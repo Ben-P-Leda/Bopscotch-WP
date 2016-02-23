@@ -17,22 +17,16 @@ namespace Bopscotch.Scenes.BaseClasses
 {
     public abstract class StaticSceneBase : Scene
     {
-        private string _backgroundTextureName;
-
         protected List<Input.InputProcessorBase> _inputProcessors;
-        protected Background _background;
 
         protected AnimatedBackground _animBackground;
         private Vector2 _cameraPosition;
         private Vector2 _cameraStep;
 
-        protected string BackgroundTextureName { set { _backgroundTextureName = value; SetBackgroundTexture(); } }
-
         public StaticSceneBase()
             : base()
         {
             _inputProcessors = Data.Profile.Settings.AllControllers;
-            _backgroundTextureName = "";
 
             _cameraPosition = Vector2.Zero;
             _cameraStep = new Vector2(Background_Camera_Step, 0.0f);
@@ -43,20 +37,7 @@ namespace Bopscotch.Scenes.BaseClasses
             if (loaderSceneType == typeof(StartupLoadingScene)) { CompletePostStartupLoadInitialization(); }
         }
 
-        protected virtual void CompletePostStartupLoadInitialization()
-        {
-            _background = new Bopscotch.Gameplay.Objects.Environment.Background();
-            SetBackgroundTexture();
-            RegisterGameObject(_background);
-        }
-
-        private void SetBackgroundTexture()
-        {
-            if ((_background != null) && (!string.IsNullOrEmpty(_backgroundTextureName)))
-            {
-                _background.TextureReference = _backgroundTextureName;
-            }
-        }
+        protected virtual void CompletePostStartupLoadInitialization() {}
 
         public void CreateBackgroundForScene(string reference, int[] componentSequence)
         {
