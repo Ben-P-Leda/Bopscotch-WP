@@ -254,6 +254,7 @@
     <Compile Include="Scenes\NonGame\TitleScene.cs" />
     <Compile Include="Scenes\Objects\AnimatedBackgroundCloud.cs" />
     <Compile Include="Scenes\Objects\AnimatedBackgroundSegment.cs" />
+    <Compile Include="Scenes\Objects\IAnimatedBackgroundComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

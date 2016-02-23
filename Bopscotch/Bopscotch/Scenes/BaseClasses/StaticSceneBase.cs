@@ -22,9 +22,9 @@ namespace Bopscotch.Scenes.BaseClasses
         protected List<Input.InputProcessorBase> _inputProcessors;
         protected Background _background;
 
-        private AnimatedBackground _animBackground;
+        protected AnimatedBackground _animBackground;
         private Vector2 _cameraPosition;
-        private int _cameraStep;
+        private Vector2 _cameraStep;
 
         protected string BackgroundTextureName { set { _backgroundTextureName = value; SetBackgroundTexture(); } }
 
@@ -35,7 +35,7 @@ namespace Bopscotch.Scenes.BaseClasses
             _backgroundTextureName = "";
 
             _cameraPosition = Vector2.Zero;
-            _cameraStep = 2;
+            _cameraStep = new Vector2(Background_Camera_Step, 0.0f);
         }
 
         public override void HandleAssetLoadCompletion(Type loaderSceneType)
@@ -58,12 +58,10 @@ namespace Bopscotch.Scenes.BaseClasses
             }
         }
 
-        public void CreateAnimatedBackground(string reference, int[] componentSequence)
+        public void CreateBackgroundForScene(string reference, int[] componentSequence)
         {
-            _animBackground = new AnimatedBackground(reference, new Point(Animated_Background_Width, Definitions.Back_Buffer_Height), 0);
-            _animBackground.ComponentSequence = componentSequence;
-            _animBackground.CreateComponents();
-            _animBackground.RegisterBackgroundObjects(RegisterGameObject);
+            _animBackground = AnimatedBackground.Create(reference, componentSequence);
+            RegisterGameObject(_animBackground);
         }
 
         public override void Update(GameTime gameTime)
@@ -72,17 +70,36 @@ namespace Bopscotch.Scenes.BaseClasses
 
             if (_animBackground != null)
             {
-                if ((_cameraPosition.X + _cameraStep > Animated_Background_Width) || (_cameraPosition.X + _cameraStep < 0.0f))
+                if (_animBackground.Wrap)
                 {
-                    _cameraStep = -_cameraStep;
+                    UpdateWrappingBackground();
                 }
-                _cameraPosition += new Vector2(_cameraStep, 0.0f);
-                _animBackground.CameraPosition = _cameraPosition;
+                else
+                {
+                    UpdatePanningBackground();
+                }
             }
 
             base.Update(gameTime);
         }
 
-        private const int Animated_Background_Width = 4800;
+        private void UpdateWrappingBackground()
+        {
+            _animBackground.UpdateComponentPositions(_cameraStep * MillisecondsSinceLastUpdate);
+        }
+
+        private void UpdatePanningBackground()
+        {
+            float updatedX = _cameraPosition.X + (_cameraStep.X * MillisecondsSinceLastUpdate);
+            if ((updatedX > AnimatedBackground.Fixed_Width) || (updatedX < 0.0f))
+            {
+                _cameraStep.X = -_cameraStep.X;
+            }
+
+            _cameraPosition += _cameraStep * MillisecondsSinceLastUpdate;
+            _animBackground.CameraPosition = _cameraPosition;
+        }
+
+        private float Background_Camera_Step = 0.125f;
     }
 }

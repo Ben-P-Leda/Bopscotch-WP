@@ -7,7 +7,7 @@ using Leda.Core.Asset_Management;
 
 namespace Bopscotch.Scenes.Objects
 {
-    public class AnimatedBackgroundSegment : ISimpleRenderable
+    public class AnimatedBackgroundSegment : IAnimatedBackgroundComponent
     {
         private Texture2D _texture;
         private Rectangle _sourceArea;
@@ -15,8 +15,6 @@ namespace Bopscotch.Scenes.Objects
         private Vector2 _position;
 
         private float _heightRatio;
-        public bool Visible { get { return true; } set { } }
-        public int RenderLayer { get { return Render_Layer; } set { } }
 
         public AnimatedBackgroundSegment(string texture, int segmentIndex, int frameValue, int heightValue)
         {
@@ -31,19 +29,20 @@ namespace Bopscotch.Scenes.Objects
                 ((Definitions.Back_Buffer_Height - (Unscaled_Height * Base_Scale)) - 2) + (Height_Step * heightValue));
         }
 
-        public void Initialize()
-        { 
-
-        }
-
-        public void Reset()
-        {
-
-        }
-
         public void SetOffset(Vector2 offset)
         {
             _position = _initialPosition + offset;
+        }
+
+        public void UpdateAbsolutePosition(Vector2 step, float wrapEdge)
+        {
+            _initialPosition += step;
+            if (_initialPosition.X < -Definitions.Back_Buffer_Width)
+            {
+                _initialPosition.X += wrapEdge;
+            }
+
+            _position = _initialPosition;
         }
 
         public void Draw(SpriteBatch spriteBatch)

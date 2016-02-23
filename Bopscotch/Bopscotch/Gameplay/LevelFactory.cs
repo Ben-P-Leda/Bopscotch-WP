@@ -162,7 +162,8 @@ namespace Bopscotch.Gameplay
 
                 AnimatedBackground inGameBackground = new AnimatedBackground(backgroundName, Map.MapWorldDimensions, bgSeed);
                 inGameBackground.CreateComponents();
-                inGameBackground.RegisterBackgroundObjects(_registerGameObject);
+
+                _registerGameObject(inGameBackground);
             }
 
             Map.ViewportDimensionsInTiles = new Point(

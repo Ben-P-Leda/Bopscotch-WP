@@ -7,17 +7,15 @@ using Leda.Core.Asset_Management;
 
 namespace Bopscotch.Scenes.Objects
 {
-    public class AnimatedBackgroundCloud : ISimpleRenderable
+    public class AnimatedBackgroundCloud: IAnimatedBackgroundComponent
     {
         private Texture2D _texture;
         private Rectangle _sourceArea;
-        private int _initialX;
+        private float _initialX;
         private Rectangle _targetArea;
         private Color _tint;
         private float _scale;
 
-        public bool Visible { get { return true; } set { } }
-        public int RenderLayer { get { return Render_Layer; } set { } }
         public int Width { get { return _targetArea.Width; } }
 
         public AnimatedBackgroundCloud(Point initialPosition, Vector2 scaling, Color tint)
@@ -32,20 +30,27 @@ namespace Bopscotch.Scenes.Objects
             _sourceArea = new Rectangle(0, frame * Unscaled_Height, _texture.Width, Unscaled_Height);
 
             _scale = Random.Generator.Next(0.5f, 1.0f) * heightRatio;
-            _initialX = (int)(initialPosition.X * heightRatio);
+            _initialX = initialPosition.X * heightRatio;
             _targetArea = new Rectangle(0, (int)(initialPosition.Y * heightRatio), 
                 (int)(_texture.Width * scaling.X * _scale), (int)(Unscaled_Height * scaling.Y * _scale));
 
-            SetOffset(0.0f);
+            SetOffset(Vector2.Zero);
         }
 
-        public void Initialize() { }
-
-        public void Reset() { }
-
-        public void SetOffset(float offset)
+        public void SetOffset(Vector2 offset)
         {
-            _targetArea.X = (int)(_initialX + (offset * Base_Speed_Modifier * _scale));
+            _targetArea.X = (int)(_initialX + (offset.X * Base_Speed_Modifier * _scale));
+        }
+
+        public void UpdateAbsolutePosition(Vector2 step, float wrapEdge)
+        {
+            float x = _initialX + (step.X * Base_Speed_Modifier * _scale);
+            if (x + _targetArea.Width < 0)
+            {
+                x += wrapEdge;
+            }
+            _initialX = x;
+            _targetArea.X = (int)x;
         }
 
         public void Draw(SpriteBatch spriteBatch)

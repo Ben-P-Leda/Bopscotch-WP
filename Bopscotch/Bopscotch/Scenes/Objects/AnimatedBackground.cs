@@ -35,6 +35,16 @@ namespace Bopscotch.Scenes.Objects
         public int RenderLayer { get; set; }
         public Vector2 CameraPosition { set { UpdateComponentPositions(value); } }
         public int[] ComponentSequence { private get; set; }
+        public bool Wrap { get; set; }
+
+        public static AnimatedBackground Create(string reference, int[] componentSequence)
+        {
+            AnimatedBackground bg = new AnimatedBackground(reference, new Point(Fixed_Width, Definitions.Back_Buffer_Height), 0);
+            bg.ComponentSequence = componentSequence;
+            bg.CreateComponents();
+
+            return bg;
+        }
 
         public AnimatedBackground(string texture, Point worldDimensions, int segmentSeed)
         {
@@ -49,6 +59,7 @@ namespace Bopscotch.Scenes.Objects
             CalculateBackgroundTargetArea();
             RenderLayer = Render_Layer;
             Visible = true;
+            Wrap = false;
 
             SetCloudMetrics(texture);
         }
@@ -102,7 +113,8 @@ namespace Bopscotch.Scenes.Objects
                     _cloudTint = Color.Lerp(Color.Gray, Color.Transparent, 0.5f);
                     _cloudFloor = 550.0f;
                     break;
-                default:
+                default:                            // Override everything else to Bopper Island
+                    _texture = "anim-background-tutorial";
                     _cloudScaling = Vector2.One * 0.5f;
                     _cloudTint = Color.White;
                     _cloudFloor = 250.0f;
@@ -138,6 +150,7 @@ namespace Bopscotch.Scenes.Objects
         {
             float maximumCameraY = _worldDimensions.Y - Definitions.Back_Buffer_Height;
             float allowedVerticalRange = MathHelper.Min(maximumCameraY * Vertical_Range_Modifier, Maximum_Vertical_Range);
+            float horizontalRange = Wrap ? _worldDimensions.X * 0.5f : _worldDimensions.X * 0.8f;
 
             _maximumY = allowedVerticalRange;
             _verticalModifier = maximumCameraY == 0.0f ? 0.0f : allowedVerticalRange / maximumCameraY;
@@ -146,7 +159,7 @@ namespace Bopscotch.Scenes.Objects
             float nextSegmentX = 0.0f;
             List<AnimatedBackgroundSegment> segments = new List<AnimatedBackgroundSegment>();
 
-            while (nextSegmentX < _worldDimensions.X * 0.8f)
+            while (nextSegmentX < horizontalRange)
             {
                 int nextSegmentIndex = NextGeneratorValue();
                 if ((ComponentSequence != null) && (ComponentSequence.Length > 0))
@@ -170,9 +183,11 @@ namespace Bopscotch.Scenes.Objects
 
             Point nextCloudPosition = new Point(0, 0);
 
+            float horizontalRange = Wrap ? _worldDimensions.X * 0.2f : _worldDimensions.X * 0.5f;
+
             List<AnimatedBackgroundCloud> clouds = new List<AnimatedBackgroundCloud>();
 
-            while (nextCloudPosition.X < _worldDimensions.X * 0.5)
+            while (nextCloudPosition.X < horizontalRange)
             {
                 int row = Leda.Core.Random.Generator.NextInt(Cloud_Row_Count - 1);
                 row = row >= lastRow ? row + 1 : row;
@@ -187,37 +202,42 @@ namespace Bopscotch.Scenes.Objects
             return clouds.ToArray();
         }
 
-        public void RegisterBackgroundObjects(Scene.ObjectRegistrationHandler register)
-        {
-            register(this);
-            for (int i=0; i<_segments.Length; i++)
-            {
-                register(_segments[i]);
-            }
-
-            for (int i = 0; i < _clouds.Length; i++)
-            {
-                register(_clouds[i]);
-            }
-        }
-
         public void UpdateComponentPositions(Vector2 cameraPosition)
         {
             Vector2 offset = new Vector2(-(cameraPosition.X / 2.0f), MathHelper.Max(_maximumY - (cameraPosition.Y * _verticalModifier), 0.0f));
-            for (int i=0; i<_segments.Length; i++)
-            {
-                _segments[i].SetOffset(offset);
-            }
 
-            for (int i = 0; i < _clouds.Length; i++)
+            UpdateComponents(_segments, offset, _worldDimensions.X * 0.75f);
+            UpdateComponents(_clouds, -cameraPosition, _worldDimensions.X * 0.35f);
+        }
+
+        private void UpdateComponents(IAnimatedBackgroundComponent[] components, Vector2 step, float wrapWidth)
+        {
+            for (int i = 0; i < components.Length; i++)
             {
-                _clouds[i].SetOffset(-cameraPosition.X);
+                if (Wrap)
+                {
+                    components[i].UpdateAbsolutePosition(step, wrapWidth);
+                }
+                else
+                {
+                    components[i].SetOffset(step);
+                }
             }
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(TextureManager.Textures[_texture], _targetArea, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, Render_Depth);
+
+            for (int i = 0; i < _segments.Length; i++)
+            {
+                _segments[i].Draw(spriteBatch);
+            }
+
+            for (int i = 0; i < _clouds.Length; i++)
+            {
+                _clouds[i].Draw(spriteBatch);
+            }
         }
 
         private const int Render_Layer = 0;
@@ -228,5 +248,7 @@ namespace Bopscotch.Scenes.Objects
         private const float Segment_Spacing_Modifier = 15.0f;
         private const int Cloud_Row_Count = 4;
         private const float Cloud_Spacing_Modifier = 100.0f;
+
+        public const int Fixed_Width = 4800;
     }
 }

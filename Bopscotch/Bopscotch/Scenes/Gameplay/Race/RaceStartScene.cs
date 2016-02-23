@@ -59,7 +59,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
         protected override void CompletePostStartupLoadInitialization()
         {
             RegisterDialogs();
-            CreateAnimatedBackground(Background_Texture_Name, new int[] { 0, 1, 2 });
+            CreateBackgroundForScene(Background_Texture_Name, new int[] { 0, 1, 2 });
         }
 
         private void HandleOpponentStepButtonTouch(string buttonCaption)

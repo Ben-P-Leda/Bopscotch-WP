@@ -36,7 +36,7 @@ namespace Bopscotch.Scenes.Gameplay.Race
         {
             //base.CompletePostStartupLoadInitialization();
             RegisterDialogs();
-            CreateAnimatedBackground(Background_Texture_Name, new int[] { 0, 1, 2, 3 });
+            CreateBackgroundForScene(Background_Texture_Name, new int[] { 0, 1, 2, 3 });
 
             ((ResultsDialog)_dialogs["results"]).InitializeComponents();
         }
