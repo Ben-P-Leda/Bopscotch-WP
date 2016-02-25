@@ -166,17 +166,17 @@ namespace Bopscotch.Scenes.Gameplay.Race
 
 		private bool _doNotResumeMusic = false;
 
-#if IOS
+#if __IOS__
 		public override void HandleGameActivated ()
 		{
 			if (!_doNotResumeMusic) { MusicManager.PlayLoopedMusic ("title"); }
 			_doNotResumeMusic = false;
 		}
 
-		public override void HandleGameSentToBackground()
+		public override void HandleGameDeactivated()
 		{
 			_doNotResumeMusic = true;
-			base.HandleGameSentToBackground();
+			base.HandleGameDeactivated();
 		}
 #endif
 
