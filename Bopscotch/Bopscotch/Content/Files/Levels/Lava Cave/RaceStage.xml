@@ -413,6 +413,17 @@
       <smash-block x="10320" y="1520" texture="block-smash-crate">
         <contains-item texture="candy-1" units="1" action="score" value="25" />
       </smash-block>
+      <block x="8480" y="800" texture="block-1" />
+      <block x="8960" y="800" texture="block-1" />
+      <block x="8480" y="880" texture="block-1" />
+      <block x="8960" y="880" texture="block-1" />
+      <spike-block x="8560" y="880" texture="block-spike" />
+      <spike-block x="8640" y="880" texture="block-spike" />
+      <spike-block x="8720" y="880" texture="block-spike" />
+      <spike-block x="8800" y="880" texture="block-spike" />
+      <spike-block x="8880" y="880" texture="block-spike" />
+      <spike-block x="8160" y="800" texture="block-spike" />
+      <spike-block x="8240" y="800" texture="block-spike" />
     </blocks>
     <signposts>
       <one-way-signpost x="80" y="560" texture="sign-one-way" zone-top="-548" mirror="false" />

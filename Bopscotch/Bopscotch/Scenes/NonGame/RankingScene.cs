@@ -140,7 +140,6 @@ namespace Bopscotch.Scenes.NonGame
             AreaDataContainer areaData = Profile.GetDataForNamedArea(_selectedArea);
             if (areaData != null)
             {
-                //_background.TextureReference = areaData.SelectionTexture;
                 SetActiveBackground();
 
                 if (areaData.Locked)

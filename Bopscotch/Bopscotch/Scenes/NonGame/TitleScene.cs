@@ -55,8 +55,6 @@ namespace Bopscotch.Scenes.NonGame
             _dialogs.Add(Race_Aborted_Dialog, new DisconnectedDialog("Connection Broken - Race Aborted!"));
             _dialogs.Add("info", new InfoMenuDialog());
 
-            //BackgroundTextureName = Background_Texture_Name;
-
             RegisterGameObject(
                 new TextContent(Translator.Translation("Leda Entertainment Presents"), new Vector2(Definitions.Back_Buffer_Center.X, 60.0f))
                 {
