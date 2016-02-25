@@ -1,14 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using Leda.Core;
 using Leda.Core.Timing;
+using Leda.Core.Asset_Management;
+using Leda.Core.Game_Objects.Behaviours;
 
 namespace Bopscotch.Gameplay.Objects.Environment
 {
-    public class Blackout : Background
+    public class Blackout : ISimpleRenderable
     {
         private Timer _timer;
         private State _state;
+        private Color _tint;
+        private float _renderDepth;
+        private Rectangle _targetArea;
+
+        public bool Visible { get; set; }
+        public int RenderLayer { get { return Render_Layer; } set { } }
 
         public TimerController.TickCallbackRegistrationHandler TickCallback { set { value(_timer.Tick); } }
 
@@ -18,9 +27,7 @@ namespace Bopscotch.Gameplay.Objects.Environment
             _renderDepth = Render_Depth;
             _timer = new Timer("blackout-timer", HandleTimerActionComplete);
 
-            TextureReference = Texture_Reference;
-            RenderLayer = Render_Layer;
-
+            CalculateBackgroundTargetArea();
             Reset();
         }
 
@@ -34,7 +41,18 @@ namespace Bopscotch.Gameplay.Objects.Environment
             }
         }
 
-        public override void Reset()
+        private void CalculateBackgroundTargetArea()
+        {
+            float heightRatio = (float)Definitions.Back_Buffer_Height / (float)GameBase.Instance.GraphicsDevice.Viewport.Height;
+            float targetWidth = (float)Definitions.Back_Buffer_Width / heightRatio;
+            float xOffset = ((float)GameBase.Instance.GraphicsDevice.Viewport.Width - targetWidth) / 2.0f;
+
+            _targetArea = new Rectangle((int)xOffset, 0, (int)targetWidth, GameBase.Instance.GraphicsDevice.Viewport.Height);
+        }
+
+        public void Initialize() { }
+
+        public void Reset()
         {
             _tint = Color.Transparent;
             _state = State.FadingIn;
@@ -48,7 +66,7 @@ namespace Bopscotch.Gameplay.Objects.Environment
             Visible = true;
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
             switch (_state)
             {
@@ -57,7 +75,7 @@ namespace Bopscotch.Gameplay.Objects.Environment
                 case State.FadingOut: _tint = Color.Lerp(Color.Black, Color.Transparent, _timer.CurrentActionProgress); break;
             }
 
-            base.Draw(spriteBatch);
+            spriteBatch.Draw(TextureManager.Textures[Texture_Reference], _targetArea, null, _tint, 0.0f, Vector2.Zero, SpriteEffects.None, _renderDepth);
         }
 
         private enum State
