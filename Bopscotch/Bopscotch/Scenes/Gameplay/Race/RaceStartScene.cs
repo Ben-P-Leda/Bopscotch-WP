@@ -136,6 +136,8 @@ namespace Bopscotch.Scenes.Gameplay.Race
             NextSceneParameters.Set(RaceGameplayScene.Course_Area_Parameter, courseName);
             NextSceneParameters.Set(RaceGameplayScene.Course_Speed_Parameter, (int)areaData.Attribute("speed"));
 
+            Data.Profile.DecreasePlaysToNextRatingReminder();
+
             NextSceneType = typeof(RaceGameplayScene);
             Deactivate();
         }

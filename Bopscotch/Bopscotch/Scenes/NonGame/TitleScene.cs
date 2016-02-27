@@ -102,12 +102,12 @@ namespace Bopscotch.Scenes.NonGame
         {
             switch (selectedOption)
             {
-                case "Rate Game": RateGame(); break;
+                case "Rate Game": RateGame("main"); break;
                 case "Back": ActivateDialog("main"); break;
             }
         }
 
-        private void RateGame()
+        private void RateGame(string resumeDialog)
         {
             MarketplaceReviewTask marketplaceReviewTask = new MarketplaceReviewTask();
             marketplaceReviewTask.Show();
@@ -117,6 +117,10 @@ namespace Bopscotch.Scenes.NonGame
             {
                 Data.Profile.UnlockCostume("Angel");
                 DisplayRatingUnlockedContent();
+            }
+            else
+            {
+                ActivateDialog(resumeDialog);
             }
         }
 
@@ -129,7 +133,7 @@ namespace Bopscotch.Scenes.NonGame
                 case "Info": ActivateDialog("info"); break;
                 case "Options": ActivateDialog("options"); break;
                 case "Store": NextSceneType = typeof(StoreScene); Deactivate(); break;
-                case "Rate": RateGame(); break;
+                case "Rate": RateGame("main"); break;
                 case "Quit": ExitGame(); break;
             }
         }
@@ -141,7 +145,7 @@ namespace Bopscotch.Scenes.NonGame
                 case "Rankings": NextSceneType = typeof(RankingScene); Deactivate(); break;
                 case "About": NextSceneType = typeof(CreditsScene); Deactivate(); break;
                 case "More Games": OpenLedaPageOnStore(); ActivateDialog("main"); break;
-                case "Rate Game": RateGame(); ActivateDialog("main"); break;
+                case "Rate Game": RateGame("info"); break;
                 case "Back": ActivateDialog("main"); break;
             }
         }
@@ -199,6 +203,7 @@ namespace Bopscotch.Scenes.NonGame
             switch (selectedOption)
             {
                 case "Start!":
+                    Data.Profile.DecreasePlaysToNextRatingReminder();
                     NextSceneType = typeof(Gameplay.Survival.SurvivalGameplayScene);
                     _musicToStartOnDeactivation = "survival-gameplay";
                     _titlePopup.Dismiss();

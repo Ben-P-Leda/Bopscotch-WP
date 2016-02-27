@@ -49,7 +49,7 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
                 case "Facebook": webUrl = "http://www.facebook.com/ledaentertainment"; break;
                 case "Twitter": webUrl = "http://www.twitter.com/ledaentertain"; break;
                 case "Leda": webUrl = "http://www.ledaentertainment.com/games"; break;
-                case "Rate": buttonShouldDismissDialog = RateGame(); break;
+                case "Rate": _activeButtonCaption = "Rate"; buttonShouldDismissDialog = true; break;
                 case "Full Game": _activeButtonCaption = buttonCaption; buttonShouldDismissDialog = true; break;
                 default: buttonShouldDismissDialog = base.HandleButtonTouch(buttonCaption); break;
             }
@@ -62,22 +62,6 @@ namespace Bopscotch.Interface.Dialogs.TitleScene
             }
 
             return buttonShouldDismissDialog;
-        }
-
-        private bool RateGame()
-        {
-            MarketplaceReviewTask marketplaceReviewTask = new MarketplaceReviewTask();
-            marketplaceReviewTask.Show();
-            Data.Profile.FlagAsRated();
-
-            if (!Data.Profile.AvatarCostumeUnlocked("Angel")) 
-            { 
-                Data.Profile.UnlockCostume("Angel");
-                _activeButtonCaption = "Rate"; 
-                return true; 
-            }
-
-            return false;
         }
 
         private const int Dialog_Height = 480;
