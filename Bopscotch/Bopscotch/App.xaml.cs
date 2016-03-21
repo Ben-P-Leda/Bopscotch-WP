@@ -8,6 +8,9 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Bopscotch.Resources;
 
+using Facebook.Client;
+using Leda.FacebookAdapter;
+
 namespace Bopscotch
 {
     public partial class App : Application
@@ -25,6 +28,8 @@ namespace Bopscotch
         {
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
+
+            WinPhoneFacebookAdapter.CreateInstance();
 
             // Standard XAML initialization
             InitializeComponent();
@@ -55,6 +60,13 @@ namespace Bopscotch
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
 
+            Session.OnFacebookAuthenticationFinished += OnFacebookAuthenticationFinished;
+            RootFrame.UriMapper = new FacebookUriMapper();
+        }
+
+        private void OnFacebookAuthenticationFinished(AccessTokenData session)
+        {
+            WinPhoneFacebookAdapter.Instance.HandleAuthorizationComplete(session);
         }
 
         // Code to execute when the application is launching (eg, from Start)

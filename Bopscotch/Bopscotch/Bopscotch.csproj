@@ -110,6 +110,10 @@
     <Compile Include="Effects\Popups\PopupBase.cs" />
     <Compile Include="Effects\Popups\PopupRequiringDismissal.cs" />
     <Compile Include="Effects\FullScreenColourOverlay.cs" />
+    <Compile Include="Facebook\Definitions.cs" />
+    <Compile Include="Facebook\FacebookAdapterBase.cs" />
+    <Compile Include="Facebook\IFacebookAdapter.cs" />
+    <Compile Include="Facebook\WinPhoneFacebookAdapter.cs" />
     <Compile Include="Gameplay\Controllers\PlayerTrackingCameraController.cs" />
     <Compile Include="Gameplay\Coordination\RacePowerUpCoordinator.cs" />
     <Compile Include="Gameplay\Coordination\RaceProgressCoordinator.cs" />
@@ -810,6 +814,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="Interface\Dialogs\RaceJoinScene\JoinRaceOptionsDialog.cs" />
+    <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml">
       <SubType>Designer</SubType>
@@ -938,6 +943,7 @@
     <None Include="Content\Files\Levels\Lava Cave\Survival\9.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Content Include="FacebookConfig.xml" />
     <Content Include="Tile 358x173.png" />
     <Content Include="Tile 358x358.png" />
     <None Include="Content\Files\Levels\AdditionalAreas.xml">
@@ -1293,6 +1299,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Facebook">
+      <HintPath>..\packages\Facebook.7.0.6\lib\wp8\Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Facebook.Client">
+      <HintPath>..\packages\Facebook.Client.1.0.4\lib\wp8\Facebook.Client.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Phone.Controls, Version=8.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>

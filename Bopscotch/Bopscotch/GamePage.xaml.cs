@@ -25,6 +25,8 @@ namespace Bopscotch
             InitializeComponent();
 
             _game = XamlGame<Game1>.Create("", this);
+
+            Game1.FacebookAdapter = Leda.FacebookAdapter.WinPhoneFacebookAdapter.Instance;
         }
     }
 }

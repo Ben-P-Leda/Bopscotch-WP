@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Extensions>
+  <Facebook AppId="251583331847146" />
+
+  <!-- 
+    The following is needed only for Windows Phone Silverlight apps. Since the page to redirect after facebook authentication
+    can be different than MainPage.xaml, set this field here to get redirected to the appropriate page.
+    -->
+  <RedirectPage Name="GamePage.xaml" />
+</Extensions>

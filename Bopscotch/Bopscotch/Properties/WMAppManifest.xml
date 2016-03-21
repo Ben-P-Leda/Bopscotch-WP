@@ -33,6 +33,10 @@
         </TemplateFlip>
       </PrimaryToken>
     </Tokens>
+    <Extensions>
+      <Protocol Name="fb251583331847146" NavUriFragment="encodedLaunchUri=%s" TaskID="_default" />
+      <Protocol Name="msft-653cddc77c8c45638c5de9e547e27943" NavUriFragment="encodedLaunchUri=%s" TaskID="_default" />
+    </Extensions>
     <ScreenResolutions>
       <ScreenResolution Name="ID_RESOLUTION_WVGA" />
       <ScreenResolution Name="ID_RESOLUTION_WXGA" />
