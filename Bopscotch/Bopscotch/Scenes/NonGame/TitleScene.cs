@@ -315,32 +315,20 @@ namespace Bopscotch.Scenes.NonGame
             else if (string.IsNullOrEmpty(_firstDialog)) { _firstDialog = Default_First_Dialog; }
             else if ((_firstDialog == "start") && (Data.Profile.RateBuyRemindersOn)) { _firstDialog = Reminder_Dialog; }
 
-            if (_firstDialog != "unlocks") { UnlockFullVersionContent(); }
+            UnlockIfUpgradingFromLegacy();
 
-            _titlePopup.Activate(); 
+            _titlePopup.Activate();
             _doNotExitOnTitleDismiss = false;
 
             base.CompleteActivation();
         }
 
-        private void UnlockFullVersionContent()
+        private void UnlockIfUpgradingFromLegacy()
         {
-            _unlockNotificationDialog.PrepareForActivation();
-
             if ((Data.Profile.AreaIsLocked("Waterfall")) && (Data.Profile.AreaHasBeenCompleted("Hilltops")))
             {
                 Data.Profile.UnlockNamedArea("Waterfall");
-                _unlockNotificationDialog.AddItem("New Levels - Waterfall Area");
             }
-
-            if (!Data.Profile.AvatarCostumeUnlocked("Wizard"))
-            {
-                Data.Profile.UnlockCostume("Wizard");
-                Data.Profile.UnlockCostume("Mummy");
-                _unlockNotificationDialog.AddItem("New Costumes - Wizard, Mummy");
-            }
-
-            if (_unlockNotificationDialog.HasContent) { _firstDialog = "unlocks"; }
         }
 
         public override void Update(GameTime gameTime)
